@@ -541,6 +541,31 @@
     .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-weight:800;font-family:var(--font-display);white-space:nowrap}
     .pill i{font-style:normal}
     .pill.am{background:#fff1d6;color:#8a5300}.pill.pm{background:#e3e5ff;color:#3b3f9e}
+    .pill.ocaso{background:#ffe3cf;color:#9a3d00}
+    .pill i svg{display:block}
+    /* Config de reuniones */
+    .reu-list{display:flex;flex-direction:column;gap:8px}
+    .reu-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 12px;border-radius:14px;background:var(--surface-2)}
+    .reu-row b{min-width:92px;font-family:var(--font-display);font-size:.9rem}
+    /* Compartir QR */
+    .qr-box{display:flex;justify-content:center;margin:8px 0 14px}
+    .qr-box canvas{width:100%;max-width:280px;height:auto;background:#fff;padding:12px;border-radius:20px;box-shadow:var(--shadow-hover);image-rendering:pixelated}
+    .qr-url{word-break:break-all;text-align:center;font-size:.8rem;color:var(--text-sub);font-weight:500;margin-bottom:6px}
+    /* Manual de uso */
+    .ayuda-intro{font-size:.92rem;color:var(--text-sub);font-weight:500;margin-bottom:16px;line-height:1.55}
+    .ayuda-acc{border:1px solid var(--border-light);border-radius:18px;margin-bottom:10px;background:var(--surface);overflow:hidden}
+    .ayuda-acc>summary{cursor:pointer;padding:14px 18px;font-family:var(--font-display);font-weight:700;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .ayuda-acc>summary::-webkit-details-marker{display:none}
+    .ayuda-acc>summary::after{content:'+';font-size:1.3rem;line-height:1;color:var(--text-sub)}
+    .ayuda-acc[open]>summary::after{content:'–'}
+    .ayuda-acc[open]>summary{background:var(--surface-2)}
+    .ayuda-body{padding:6px 18px 16px;font-size:.88rem;line-height:1.6;color:var(--text-main)}
+    .ayuda-body p{margin:10px 0 0}
+    .ayuda-body ol,.ayuda-body ul{margin:8px 0 0;padding-left:20px}
+    .ayuda-body li{margin:5px 0}
+    .ayuda-h{font-family:var(--font-display);font-weight:800;font-size:1.05rem;margin:22px 0 10px}
+    .ayuda-nota{margin-top:10px;padding:10px 14px;border-radius:14px;background:var(--surface-2);font-size:.84rem}
+    .ayuda-leyenda{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
     .agenda-table td.warn-cond{background:#ffe0b2!important}
     .agenda-table td.warn-lugar{background:#f9dedc!important;color:#b3261e;font-weight:700}
     .export-app{font-family:var(--font-display);font-weight:700;color:#5e5e5e;font-size:.85rem;margin-bottom:4px}
@@ -721,6 +746,14 @@ async function instalarPWA() {
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
                     Instalar aplicación
                 </button>
+                <button type="button" class="menu-item" role="menuitem" onclick="abrirCompartirQR()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M20 14v.01"/><path d="M14 20h3"/><path d="M20 17v4"/></svg>
+                    Compartir QR
+                </button>
+                <button type="button" class="menu-item" role="menuitem" onclick="abrirAyuda()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    ¿Cómo usar?
+                </button>
                 <button type="button" class="menu-item danger" role="menuitem" onclick="cerrarSesion()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                     Cerrar sesión
@@ -734,8 +767,6 @@ async function instalarPWA() {
         <button class="tab-btn active" onclick="switchTab('tab-agenda')">Agenda<span id="badgeAgenda" class="tab-badge hidden"></span></button>
         <button class="tab-btn" onclick="switchTab('tab-personal')">Conductores</button>
         <button class="tab-btn" onclick="switchTab('tab-territorios')">Territorios</button>
-        <button class="tab-btn" onclick="switchTab('tab-grupos')">Grupos</button>
-        <button class="tab-btn" onclick="switchTab('tab-respaldo')">Respaldo</button>
         <button class="tab-btn" onclick="switchTab('tab-historial')">Actividad</button>
     </nav>
     
@@ -761,31 +792,6 @@ async function instalarPWA() {
                     <button class="btn-outline" onclick="toggleVisibility('listaTerritorios')">Ver Lista y Editar</button>
                 </div>
                 <div id="listaTerritorios" class="hidden" style="margin-top:16px;"><input type="search" id="buscaTerritorios" placeholder="Buscar por número, nombre o lugar..." oninput="renderListaTerritorios()" style="margin-bottom:12px"><div id="listaTerritoriosItems"></div></div>
-            </section>
-        </div>
-
-        <!-- === TAB GRUPOS === -->
-        <div id="tab-grupos" class="tab-content">
-            <section class="module-section">
-                <div class="module-title">Grupos de Predicación</div>
-                <div class="btn-vertical-group">
-                    <button class="btn-primary" onclick="openModalGrupo()">Agregar Grupo</button>
-                    <button class="btn-outline" onclick="toggleVisibility('listaGrupos')">Ver Grupos Registrados</button>
-                </div>
-                <div id="listaGrupos" class="hidden" style="margin-top:16px;"></div>
-            </section>
-        </div>
-
-        <!-- === TAB RESPALDO === -->
-        <div id="tab-respaldo" class="tab-content">
-            <section class="module-section">
-                <div class="module-title">Copia de Seguridad (Backup)</div>
-                <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 16px; font-weight: 500;">
-                    Descarga una copia de seguridad (.json) con todos tus datos como respaldo manual de seguridad.
-                </p>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn-primary" onclick="exportarBackupJSON()">Exportar Respaldo (.json)</button>
-                </div>
             </section>
         </div>
 
@@ -884,6 +890,8 @@ async function instalarPWA() {
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;"><div class="input-group"><label>Estado</label><select id="cEstado"><option value="activo">Activo</option><option value="pausa">En Pausa</option></select></div><div class="input-group"><label>Género (opcional)</label><select id="cGenero"><option value="">Automático</option><option value="M">Masculino</option><option value="F">Femenino</option></select></div></div><div class="input-group"><label>Rol / Experiencia (prioridad en sábados y domingos)</label><select id="cRol" onchange="syncRol(this.value)"><option value="">Publicador</option><option value="experimentado">Publicador experimentado</option><option value="siervo">Siervo ministerial</option><option value="anciano">Anciano</option></select></div><div class="input-group"><label>¿Es Anciano?</label><select id="cEsAnciano" onchange="syncAnciano(this.value)"><option value="no">No</option><option value="si">Sí</option></select></div>
             <div id="grupoSugerido" class="input-group hidden"><label>Asignar a Grupo:</label><select id="cGrupoAsignado"><option value="1">Grupo 1</option><option value="2">Grupo 2</option><option value="3">Grupo 3</option><option value="4">Grupo 4</option><option value="5">Grupo 5</option><option value="6">Grupo 6</option><option value="7">Grupo 7</option><option value="8">Grupo 8</option></select></div>
             
+            <div class="input-group"><label>Telegram</label><div><label class="chip-button"><input type="checkbox" id="cTelegram"> Saca grupos por Telegram</label></div></div>
+
             <div class="input-group">
                 <label>Disponibilidad Semanal</label>
                 <div id="disponibilidadSemanal" class="day-row-container">
@@ -995,15 +1003,218 @@ async function instalarPWA() {
     </div>
 </div>
 
-<div id="modalGrupo" class="modal">
-    <div class="modal-content">
-        <h2 class="module-title">Registrar Grupo</h2>
-        <form id="formGrupo">
-            <input type="hidden" id="editIndexGrupo">
-            <div class="input-group"><label>Número del Grupo</label><select id="gNumero" required><option value="1">Grupo 1</option><option value="2">Grupo 2</option><option value="3">Grupo 3</option><option value="4">Grupo 4</option><option value="5">Grupo 5</option><option value="6">Grupo 6</option><option value="7">Grupo 7</option><option value="8">Grupo 8</option></select></div>
-            <div class="input-group"><label>Anciano Responsable</label><select id="gAnciano" required></select></div>
-            <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalGrupo')">Cerrar</button><button type="submit" class="btn-primary">Guardar</button></div>
-        </form>
+<div id="modalQR" class="modal">
+    <div class="modal-content no-zoom">
+        <h2 class="module-title">Compartir QR</h2>
+        <p class="ayuda-intro" style="margin-bottom:8px">Pídele a la otra persona que escanee este código con la cámara de su celular. Se abrirá la aplicación y solo tendrá que escribir la contraseña para iniciar sesión.</p>
+        <div class="qr-box"><canvas id="qrCanvas" width="280" height="280" aria-label="Código QR de la aplicación"></canvas></div>
+        <div class="qr-url" id="qrUrl"></div>
+        <div class="hint warn hidden" id="qrAviso" style="text-align:center;margin-top:8px"></div>
+        <div class="modal-footer" style="flex-wrap:wrap;justify-content:center">
+            <button type="button" class="btn-outline" onclick="copiarEnlaceApp()">Copiar enlace</button>
+            <button type="button" class="btn-outline" onclick="descargarQR()">Descargar QR</button>
+            <button type="button" class="btn-outline hidden" id="btnQRCompartir" onclick="compartirEnlaceApp()">Compartir…</button>
+            <button type="button" class="btn-primary" onclick="closeModal('modalQR')">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalAyuda" class="modal">
+    <div class="modal-content no-zoom" style="max-width:720px">
+        <h2 class="module-title">¿Cómo usar la aplicación?</h2>
+        <p class="ayuda-intro">Esta guía te explica paso a paso cómo preparar y organizar las salidas de predicación del mes. Toca cada título para abrir o cerrar su explicación. Si es tu primera vez, sigue el orden de las secciones 1 a 5.</p>
+
+        <div class="ayuda-h">Manual</div>
+
+        <details class="ayuda-acc" open>
+            <summary>1. Conocer la pantalla principal</summary>
+            <div class="ayuda-body">
+                <p>Al abrir la app escribe la <b>contraseña</b> y toca <b>Acceder</b>. Arriba verás cuatro pestañas:</p>
+                <ul>
+                    <li><b>Agenda:</b> aquí se genera el mes, se corrige la tabla, se descarga y se avisa a los conductores.</li>
+                    <li><b>Conductores:</b> la lista de hermanos que dirigen la salida.</li>
+                    <li><b>Territorios:</b> la lista de territorios y los lugares de encuentro.</li>
+                    <li><b>Actividad:</b> el registro de todo lo que se agregó, editó o eliminó.</li>
+                </ul>
+                <p>Arriba a la derecha tienes la <b>lupa</b> (buscar conductores, territorios y asignaciones; también con Ctrl+F) y las <b>tres rayas</b>, que abren el menú con: Configuración, Instalar aplicación, Compartir QR, ¿Cómo usar? y Cerrar sesión.</p>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>2. Registrar a los conductores</summary>
+            <div class="ayuda-body">
+                <ol>
+                    <li>Ve a la pestaña <b>Conductores</b> y toca <b>Agregar Conductor</b>.</li>
+                    <li>Escribe nombre, apellido y teléfono (con código de país; por defecto +58).</li>
+                    <li>Elige el <b>rol</b>: Anciano, Siervo ministerial o Publicador experimentado. Quienes tienen rol de responsabilidad se priorizan al asignar turnos.</li>
+                    <li>Si es <b>Anciano</b>, elige su <b>número de grupo (1 al 8)</b>. Ese número es el que se usa el último sábado del mes, cuando salen los 8 grupos. Los grupos se manejan solo desde aquí.</li>
+                    <li>Marca <b>Saca grupos por Telegram</b> si el hermano puede dirigir la salida por Telegram.</li>
+                    <li>En <b>Disponibilidad semanal</b> marca los días y si puede en la mañana (AM), en la tarde (PM) o en ambas.</li>
+                    <li>Si algún día especial sí puede o no puede, usa las fechas de <b>disponible</b> o <b>no disponible</b>.</li>
+                    <li>Toca <b>Guardar</b>. Para cambiar datos más adelante usa <b>Ver Lista y Editar</b>.</li>
+                </ol>
+                <div class="ayuda-nota">Si un hermano no podrá salir por un tiempo, cámbialo a estado <b>En Pausa</b> y no se le asignarán turnos.</div>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>3. Registrar los territorios</summary>
+            <div class="ayuda-body">
+                <ol>
+                    <li>Ve a <b>Territorios</b> y toca <b>Agregar Territorio</b>.</li>
+                    <li>Escribe el número y el nombre. Si es un territorio pequeño sin número, marca la casilla <b>Pequeño</b>.</li>
+                    <li>Indica el <b>lugar de encuentro</b>.</li>
+                    <li>Marca los <b>días y horas</b> en que ese territorio se puede trabajar. Si necesitas una hora distinta, agrégala como hora personalizada.</li>
+                    <li>Toca <b>Guardar</b>.</li>
+                </ol>
+                <p>En la lista, un <b>semáforo de colores</b> te muestra qué tan reciente se usó cada territorio, para que se repartan de forma pareja.</p>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>4. Configurar las reuniones</summary>
+            <div class="ayuda-body">
+                <ol>
+                    <li>Abre el menú de <b>tres rayas</b> y toca <b>Configuración</b>.</li>
+                    <li>En <b>Reuniones de congregación</b> elige el día de la semana y si la reunión es en la <b>mañana</b> o en la <b>tarde</b>.</li>
+                    <li>Los cambios se guardan solos. En ese horario no se programará predicación.</li>
+                </ol>
+                <div class="ayuda-nota"><b>Regla del domingo:</b> la reunión es a las <b>9:00 AM</b>, pero el grupo de predicación de <b>11:00 AM a 12:00 PM</b> siempre se programa.</div>
+                <p>En Configuración también puedes cambiar el título, agregar una nota fija, definir el máximo de turnos al mes por conductor, elegir el tema claro u oscuro y ajustar el zoom.</p>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>5. Generar la agenda del mes</summary>
+            <div class="ayuda-body">
+                <ol>
+                    <li>En <b>Agenda</b> elige el mes y el año.</li>
+                    <li>Si hay días sin predicación (asambleas, visitas, feriados), toca primero <b>Excepciones / Eventos</b> y regístralos.</li>
+                    <li>Toca <b>Generar Todo el Mes</b>. La app reparte conductores y territorios automáticamente.</li>
+                </ol>
+                <p>Cosas que la app hace por ti:</p>
+                <ul>
+                    <li>Respeta la disponibilidad de cada conductor y el máximo de turnos al mes.</li>
+                    <li>Evita repetir un territorio o un lugar el mismo día y rota los territorios.</li>
+                    <li>El <b>último sábado</b> del mes programa los <b>8 grupos a las 9:00 AM</b>, cada uno con el anciano de ese grupo.</li>
+                    <li>El <b>viernes a las 6:30 PM</b> es la salida por <b>Telegram</b>.</li>
+                    <li>El domingo programa siempre el grupo de las 11:00 AM.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>6. Corregir la agenda a mano</summary>
+            <div class="ayuda-body">
+                <ul>
+                    <li>Toca una celda de <b>hora, lugar o grupos</b> para escribir el cambio. En <b>conductor</b> y <b>territorio</b> se abre una lista para elegir.</li>
+                    <li>El botón <b>＋</b> de la fila agrega otro turno ese día.</li>
+                    <li><b>Sustituir</b> busca un reemplazo de emergencia entre los conductores libres.</li>
+                    <li><b>↶ Deshacer</b> regresa el último cambio.</li>
+                    <li><b>Modo lectura</b> bloquea la edición para no tocar nada por error.</li>
+                    <li>Los avisos en color te alertan si un conductor o un lugar está repetido a la misma hora.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>7. Guardar, descargar y compartir la agenda</summary>
+            <div class="ayuda-body">
+                <ul>
+                    <li><b>Guardar Historial:</b> deja una copia del mes en <b>Historial Guardado</b>, donde puedes volver a abrirla cuando quieras.</li>
+                    <li><b>Descargar Imagen:</b> crea una imagen de la tabla para enviarla por WhatsApp.</li>
+                    <li><b>Copiar Resumen Semanal:</b> copia un texto corto por semana, listo para pegar en un chat.</li>
+                    <li><b>Exportar PDF</b> y <b>Exportar Excel (.csv)</b> generan los archivos para imprimir o abrir en la computadora.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>8. "Hoy y mañana" y avisar a los conductores</summary>
+            <div class="ayuda-body">
+                <p>Arriba en <b>Agenda</b> aparece el cuadro <b>Hoy y mañana</b> con las próximas salidas. Cada turno muestra un ícono:</p>
+                <div class="ayuda-leyenda">
+                    <span class="pill am"><i>☀</i><span>Mañana (AM)</span></span>
+                    <span class="pill ocaso"><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17a6 6 0 0 1 12 0"/><line x1="2" y1="17" x2="22" y2="17"/><line x1="12" y1="6" x2="12" y2="8.5"/><line x1="4.6" y1="9.6" x2="6.3" y2="11.3"/><line x1="19.4" y1="9.6" x2="17.7" y2="11.3"/><line x1="7" y1="21" x2="17" y2="21"/></svg></i><span>Tarde hasta las 6:00 PM</span></span>
+                    <span class="pill pm"><i>☾</i><span>Noche</span></span>
+                </div>
+                <p>Abajo, en <b>Contactar</b>, aparecen las asignaciones de los próximos 2 días. Para cada una puedes:</p>
+                <ul>
+                    <li><b>Copiar</b> el mensaje de aviso, o abrir <b>WhatsApp</b> con el mensaje ya escrito.</li>
+                    <li>Marcar <b>Confirmado ✓✓</b> cuando el hermano responda que sí asistirá.</li>
+                    <li><b>Sustituir</b> si el conductor no puede.</li>
+                </ul>
+                <p>El número rojo en la pestaña Agenda indica cuántos conductores faltan por avisar.</p>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>9. Compartir la app con otra persona</summary>
+            <div class="ayuda-body">
+                <ol>
+                    <li>Abre el menú de <b>tres rayas</b> y toca <b>Compartir QR</b>.</li>
+                    <li>La otra persona escanea el código con la cámara de su celular.</li>
+                    <li>Se abre la página y solo debe escribir la contraseña para entrar.</li>
+                </ol>
+                <p>También puedes tocar <b>Copiar enlace</b> o <b>Compartir…</b> para enviarlo por mensaje. Con <b>Instalar aplicación</b> (en el mismo menú, cuando aparece) la app queda como un ícono en la pantalla de inicio.</p>
+            </div>
+        </details>
+
+        <details class="ayuda-acc">
+            <summary>10. Tus datos se guardan solos en la nube</summary>
+            <div class="ayuda-body">
+                <p>Todo lo que haces se guarda automáticamente y se sincroniza en la nube, así que no necesitas hacer copias de respaldo. Puedes entrar desde otro celular o computadora con la misma contraseña y verás la misma información. Si trabajas sin internet, los cambios se guardan en el equipo y se suben cuando vuelva la conexión.</p>
+            </div>
+        </details>
+
+        <div class="ayuda-h">Preguntas frecuentes</div>
+
+        <details class="ayuda-acc">
+            <summary>¿Por qué un turno dice "Sin Asignar"?</summary>
+            <div class="ayuda-body"><p>No había ningún conductor disponible a esa hora o todos ya llegaron al máximo de turnos del mes. Elige uno manualmente en la celda, usa <b>Sustituir</b>, o sube el máximo de turnos en Configuración y vuelve a generar.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>¿Por qué un turno dice "Sin Territorio"?</summary>
+            <div class="ayuda-body"><p>Ningún territorio estaba marcado como disponible para ese día y esa hora, o ya se habían usado todos. Revisa los días y horas del territorio en la pestaña <b>Territorios</b> o elige uno a mano.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>¿Dónde quedaron "Grupos" y "Respaldo"?</summary>
+            <div class="ayuda-body"><p>Ya no son pestañas aparte. Los ancianos y su número de grupo se registran en <b>Conductores</b>, y el respaldo ya no hace falta porque los datos se guardan en la nube automáticamente.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>¿Qué pasa si vuelvo a generar un mes que ya existe?</summary>
+            <div class="ayuda-body"><p>La app te pregunta antes de continuar. Si aceptas, se crea una agenda nueva y se pierden las ediciones manuales de ese mes, pero puedes recuperarlas con <b>↶ Deshacer</b>. Si ya guardaste el mes en el historial, esa copia no cambia.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>¿Cómo marco un día sin predicación?</summary>
+            <div class="ayuda-body"><p>En <b>Agenda</b> toca <b>Excepciones / Eventos</b>, elige los días y escribe el motivo (por ejemplo, asamblea). Luego genera el mes: esos días aparecerán como evento y no tendrán turnos.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>El domingo no aparece la reunión, ¿es un error?</summary>
+            <div class="ayuda-body"><p>No. En la agenda solo se muestran las salidas de predicación. El domingo la reunión es a las 9:00 AM y no se programa nada en ese horario, pero el grupo de predicación de 11:00 AM siempre aparece.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>Un hermano no puede salir un día en particular</summary>
+            <div class="ayuda-body"><p>Edita al conductor y escribe esa fecha en <b>no disponible</b>. También puedes usar <b>Sustituir</b> en el turno para ponerle un reemplazo de inmediato.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>¿Cómo cambio entre tema claro y oscuro, o el tamaño de la letra?</summary>
+            <div class="ayuda-body"><p>Menú de tres rayas → <b>Configuración</b> → <b>Apariencia</b> y <b>Zoom de la página</b>. Esto solo cambia cómo ves la app, no la imagen que descargas.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>El código QR no funciona o dice que el enlace es local</summary>
+            <div class="ayuda-body"><p>Significa que estás usando la app desde un archivo guardado en tu equipo. Para que otra persona pueda abrirla, debe estar publicada en internet; abre la app desde esa dirección y vuelve a generar el QR.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>Veo el error "Error al sincronizar con la nube"</summary>
+            <div class="ayuda-body"><p>Probablemente se perdió la conexión a internet. Tus cambios quedan guardados en el equipo y se vuelven a subir en el siguiente guardado. Revisa tu conexión y haz cualquier cambio pequeño para forzar la sincronización.</p></div>
+        </details>
+        <details class="ayuda-acc">
+            <summary>¿Cómo cierro sesión?</summary>
+            <div class="ayuda-body"><p>Menú de tres rayas → <b>Cerrar sesión</b>. Úsalo siempre que entres desde un equipo que no es tuyo.</p></div>
+        </details>
+
+        <div class="modal-footer"><button type="button" class="btn-primary" onclick="closeModal('modalAyuda')">Cerrar</button></div>
     </div>
 </div>
 
@@ -1021,7 +1232,7 @@ async function instalarPWA() {
         <div class="input-group">
             <label>Zoom de la página: <span id="zoomValor">100%</span></label>
             <input type="range" id="zoomRange" min="70" max="160" step="5" value="100" oninput="setZoom(this.value)">
-            <span class="hint">Solo cambia cómo ves la app. La imagen descargada mantiene siempre su tamaño.</span></div><div class="input-group"><label>Título principal</label><input type="text" id="cfgTitulo" oninput="guardarConfig()"></div><div class="input-group"><label>Subtítulo o nota fija (también va en PNG y PDF)</label><input type="text" id="cfgSub" oninput="guardarConfig()"></div><div class="input-group"><label>Máximo de turnos al mes por conductor</label><input type="number" id="cfgMax" min="1" max="31" oninput="guardarConfig()"></div><div class="input-group"><label>Reuniones de congregación (no se programa predicación)</label><div class="chip-button-group" id="cfgReuniones" onchange="guardarConfig()"></div><span class="hint">Por defecto: miércoles 6:30 PM y domingo 9:00 AM (el domingo sí se predica a las 11:00 AM). Marca o desmarca las horas exactas de reunión.</span></div><div class="input-group"><label>Enlace de WhatsApp</label><select id="cfgWaModo" onchange="guardarConfig()"><option value="auto">Automático (según dispositivo)</option><option value="web">WhatsApp Web (PC)</option><option value="app">App Móvil</option></select></div>
+            <span class="hint">Solo cambia cómo ves la app. La imagen descargada mantiene siempre su tamaño.</span></div><div class="input-group"><label>Título principal</label><input type="text" id="cfgTitulo" oninput="guardarConfig()"></div><div class="input-group"><label>Subtítulo o nota fija (también va en PNG y PDF)</label><input type="text" id="cfgSub" oninput="guardarConfig()"></div><div class="input-group"><label>Máximo de turnos al mes por conductor</label><input type="number" id="cfgMax" min="1" max="31" oninput="guardarConfig()"></div><div class="input-group"><label>Reuniones de congregación (en ese horario no se programa predicación)</label><div class="reu-list" id="cfgReuniones" onchange="guardarConfig()"></div><span class="hint">Elige el día y si la reunión es en la mañana o en la tarde. Por defecto: miércoles en la tarde y domingo en la mañana. El domingo la reunión es a las 9:00 AM y, aun así, siempre se programa el grupo de predicación de 11:00 AM a 12:00 PM.</span></div><div class="input-group"><label>Enlace de WhatsApp</label><select id="cfgWaModo" onchange="guardarConfig()"><option value="auto">Automático (según dispositivo)</option><option value="web">WhatsApp Web (PC)</option><option value="app">App Móvil</option></select></div>
         <div style="display:none"></div>
         <div class="modal-footer">
             <button type="button" class="btn-outline" onclick="setZoom(100)">Restablecer zoom</button>
@@ -1069,7 +1280,7 @@ async function instalarPWA() {
 
 <div id="modalBuscar" class="modal"><div class="modal-content">
         <h2 class="module-title">Búsqueda global</h2>
-        <input type="search" id="gsInput" placeholder="Conductores, territorios, grupos, asignaciones..." oninput="buscarGlobal()">
+        <input type="search" id="gsInput" placeholder="Conductores, territorios, asignaciones..." oninput="buscarGlobal()">
         <div id="gsRes" style="margin-top:8px"></div>
         <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalBuscar')">Cerrar</button></div>
     </div></div>
@@ -1142,6 +1353,112 @@ async function instalarPWA() {
         }
     });
 
+    // === GENERADOR DE CÓDIGO QR (autocontenido, sin librerías externas; modo byte, corrección M, versiones 1-15) ===
+    const QR = (() => {
+        const ECC = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24];
+        const BLK = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10];
+        const MAXV = 15;
+        const bit = (x, i) => ((x >>> i) & 1) !== 0;
+        function raw(v) { let r = (16 * v + 128) * v + 64; if (v >= 2) { const n = Math.floor(v / 7) + 2; r -= (25 * n - 10) * n - 55; if (v >= 7) r -= 36; } return r; }
+        const dataCw = v => Math.floor(raw(v) / 8) - ECC[v] * BLK[v];
+        function mul(x, y) { let z = 0; for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; } return z; }
+        function divisor(d) { const r = []; for (let i = 0; i < d - 1; i++) r.push(0); r.push(1); let root = 1; for (let i = 0; i < d; i++) { for (let j = 0; j < r.length; j++) { r[j] = mul(r[j], root); if (j + 1 < r.length) r[j] ^= r[j + 1]; } root = mul(root, 2); } return r; }
+        function remainder(data, div) { const r = div.map(() => 0); data.forEach(b => { const f = b ^ r.shift(); r.push(0); div.forEach((c, i) => { r[i] ^= mul(c, f); }); }); return r; }
+        function bytesUtf8(s) { return Array.from(new TextEncoder().encode(s)); }
+        function codewords(bytes, v) {
+            const bits = []; const put = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+            put(4, 4); put(bytes.length, v < 10 ? 8 : 16); bytes.forEach(b => put(b, 8));
+            const cap = dataCw(v) * 8; put(0, Math.min(4, cap - bits.length)); put(0, (8 - bits.length % 8) % 8);
+            for (let p = 0xEC; bits.length < cap; p ^= 0xEC ^ 0x11) put(p, 8);
+            const out = []; for (let i = 0; i < bits.length; i += 8) { let b = 0; for (let j = 0; j < 8; j++) b = (b << 1) | bits[i + j]; out.push(b); }
+            return out;
+        }
+        function interleave(data, v) {
+            const nb = BLK[v], el = ECC[v], rc = Math.floor(raw(v) / 8), ns = nb - rc % nb, sl = Math.floor(rc / nb), div = divisor(el), blocks = [];
+            for (let i = 0, k = 0; i < nb; i++) { const dat = data.slice(k, k + sl - el + (i < ns ? 0 : 1)); k += dat.length; const ecc = remainder(dat, div); if (i < ns) dat.push(0); blocks.push(dat.concat(ecc)); }
+            const res = []; for (let i = 0; i < blocks[0].length; i++) blocks.forEach((b, j) => { if (i !== sl - el || j >= ns) res.push(b[i]); });
+            return res;
+        }
+        function build(text) {
+            const bytes = bytesUtf8(text); let v = 1;
+            while (v <= MAXV && 4 + (v < 10 ? 8 : 16) + bytes.length * 8 > dataCw(v) * 8) v++;
+            if (v > MAXV) return null;
+            const size = v * 4 + 17, mod = [], fn = [];
+            for (let i = 0; i < size; i++) { mod.push(new Array(size).fill(false)); fn.push(new Array(size).fill(false)); }
+            const setFn = (x, y, d) => { mod[y][x] = d; fn[y][x] = true; };
+            for (let i = 0; i < size; i++) { setFn(6, i, i % 2 === 0); setFn(i, 6, i % 2 === 0); }
+            const finder = (x, y) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.max(Math.abs(dx), Math.abs(dy)), xx = x + dx, yy = y + dy; if (xx >= 0 && xx < size && yy >= 0 && yy < size) setFn(xx, yy, d !== 2 && d !== 4); } };
+            finder(3, 3); finder(size - 4, 3); finder(3, size - 4);
+            const na = v === 1 ? 0 : Math.floor(v / 7) + 2, step = v === 32 ? 26 : Math.ceil((v * 4 + 4) / (na * 2 - 2)) * 2, ap = [6];
+            if (na) for (let p = size - 7; ap.length < na; p -= step) ap.splice(1, 0, p);
+            ap.forEach((cy, i) => ap.forEach((cx, j) => { if ((i === 0 && j === 0) || (i === 0 && j === na - 1) || (i === na - 1 && j === 0)) return; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) setFn(cx + dx, cy + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1); }));
+            const drawFormat = mask => {
+                const data = mask; let rem = data; for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+                const bits = ((data << 10) | rem) ^ 0x5412;
+                for (let i = 0; i <= 5; i++) setFn(8, i, bit(bits, i)); setFn(8, 7, bit(bits, 6)); setFn(8, 8, bit(bits, 7)); setFn(7, 8, bit(bits, 8));
+                for (let i = 9; i < 15; i++) setFn(14 - i, 8, bit(bits, i));
+                for (let i = 0; i < 8; i++) setFn(size - 1 - i, 8, bit(bits, i));
+                for (let i = 8; i < 15; i++) setFn(8, size - 15 + i, bit(bits, i));
+                setFn(8, size - 8, true);
+            };
+            drawFormat(0);
+            if (v >= 7) { let rem = v; for (let i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >>> 11) * 0x1F25); const bits = (v << 12) | rem; for (let i = 0; i < 18; i++) { const c = bit(bits, i), a = size - 11 + i % 3, b = Math.floor(i / 3); setFn(a, b, c); setFn(b, a, c); } }
+            const cw = interleave(codewords(bytes, v), v); let k = 0;
+            for (let right = size - 1; right >= 1; right -= 2) { if (right === 6) right = 5; for (let vert = 0; vert < size; vert++) for (let j = 0; j < 2; j++) { const x = right - j, up = ((right + 1) & 2) === 0, y = up ? size - 1 - vert : vert; if (!fn[y][x] && k < cw.length * 8) { mod[y][x] = bit(cw[k >>> 3], 7 - (k & 7)); k++; } } }
+            const applyMask = m => { for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { let inv; switch (m) { case 0: inv = (x + y) % 2 === 0; break; case 1: inv = y % 2 === 0; break; case 2: inv = x % 3 === 0; break; case 3: inv = (x + y) % 3 === 0; break; case 4: inv = (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0; break; case 5: inv = x * y % 2 + x * y % 3 === 0; break; case 6: inv = (x * y % 2 + x * y % 3) % 2 === 0; break; default: inv = ((x + y) % 2 + x * y % 3) % 2 === 0; } if (!fn[y][x] && inv) mod[y][x] = !mod[y][x]; } };
+            const penalty = () => {
+                let p = 0, dark = 0;
+                const lines = []; for (let y = 0; y < size; y++) { lines.push(mod[y].map(b => b ? 1 : 0)); } for (let x = 0; x < size; x++) { lines.push(mod.map(r => r[x] ? 1 : 0)); }
+                lines.forEach(l => { let run = 1; for (let i = 1; i <= l.length; i++) { if (i < l.length && l[i] === l[i - 1]) run++; else { if (run >= 5) p += 3 + (run - 5); run = 1; } } const s = l.join(''); [/10111010000/g, /00001011101/g].forEach(re => { const m = s.match(re); if (m) p += 40 * m.length; }); });
+                for (let y = 0; y < size - 1; y++) for (let x = 0; x < size - 1; x++) { const c = mod[y][x]; if (c === mod[y][x + 1] && c === mod[y + 1][x] && c === mod[y + 1][x + 1]) p += 3; }
+                mod.forEach(r => r.forEach(b => { if (b) dark++; }));
+                p += (Math.ceil(Math.abs(dark * 20 - size * size * 10) / (size * size)) - 1) * 10;
+                return p;
+            };
+            let best = 0, bestP = Infinity;
+            for (let m = 0; m < 8; m++) { applyMask(m); drawFormat(m); const p = penalty(); if (p < bestP) { bestP = p; best = m; } applyMask(m); }
+            applyMask(best); drawFormat(best);
+            return mod;
+        }
+        return { build };
+    })();
+
+    // === COMPARTIR QR ===
+    function urlApp() { return location.href.split('#')[0]; }
+    function dibujarQR(canvas, m, px) {
+        const q = 4, n = m.length, cell = Math.max(1, Math.floor(px / (n + 2 * q))), size = cell * (n + 2 * q);
+        canvas.width = canvas.height = size;
+        const g = canvas.getContext('2d'); g.fillStyle = '#ffffff'; g.fillRect(0, 0, size, size); g.fillStyle = '#000000';
+        for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (m[y][x]) g.fillRect((x + q) * cell, (y + q) * cell, cell, cell);
+    }
+    function abrirCompartirQR() {
+        cerrarMenu();
+        const url = urlApp(), cv = document.getElementById('qrCanvas'), av = document.getElementById('qrAviso');
+        document.getElementById('qrUrl').textContent = url;
+        document.getElementById('btnQRCompartir').classList.toggle('hidden', !navigator.share);
+        let aviso = '';
+        const m = QR.build(url);
+        if (m) { dibujarQR(cv, m, 560); cv.classList.remove('hidden'); }
+        else { cv.classList.add('hidden'); aviso = 'El enlace es demasiado largo para generar el código QR.'; }
+        if (/^(file|blob|about):/i.test(location.protocol) || /^(localhost|127\.|0\.0\.0\.0)/.test(location.hostname)) aviso = 'Este enlace solo funciona en este dispositivo. Para que otra persona pueda abrirlo, usa la app desde su dirección publicada en internet.';
+        av.textContent = aviso; av.classList.toggle('hidden', !aviso);
+        openModal('modalQR');
+    }
+    async function copiarEnlaceApp() { if (await copiar(urlApp())) mostrarToast('Enlace copiado'); else mostrarToast('No se pudo copiar el enlace', 'error'); }
+    function compartirEnlaceApp() { if (navigator.share) navigator.share({ title: (config.titulo || 'Gestión de Territorios'), url: urlApp() }).catch(() => {}); }
+    function descargarQR() {
+        const m = QR.build(urlApp()); if (!m) return mostrarToast('No se pudo generar el QR', 'error');
+        const c = document.createElement('canvas'); dibujarQR(c, m, 1000);
+        c.toBlob(b => { if (!b) return; const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'QR_Territorios.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); mostrarToast('QR descargado'); });
+    }
+
+    // === ¿CÓMO USAR? ===
+    function abrirAyuda() {
+        cerrarMenu();
+        const cont = document.querySelector('#modalAyuda .modal-content'); if (cont) cont.scrollTop = 0;
+        openModal('modalAyuda');
+    }
+
     // === MENÚ, TEMA Y ZOOM ===
     function toggleMenu(e) {
         if (e) e.stopPropagation();
@@ -1189,7 +1506,7 @@ async function instalarPWA() {
     initPreferencias();
 
     // === VARIABLES GLOBALES ===
-    let conductores = [], territorios = [], grupos = [], agendasMaestras = {}, historialAgendas = {}, historialActividad = [];
+    let conductores = [], territorios = [], agendasMaestras = {}, historialAgendas = {}, historialActividad = [];
     
     const MATRIZ_HORARIOS = { 
         'LUN': ['07:00 AM', '09:00 AM', '04:00 PM', '06:30 PM'], 
@@ -1203,16 +1520,68 @@ async function instalarPWA() {
 
 
     // === V2: HELPERS ===
-    function defConfig() { return { titulo: 'Gestión de Territorios Vista Al Mar', subtitulo: '', maxTurnos: 4, reuniones: ['MIÉ-06:30 PM', 'DOM-09:00 AM'], reunionesInit: true, waModo: 'auto' }; }
+    function defConfig() { return { titulo: 'Gestión de Territorios Vista Al Mar', subtitulo: '', maxTurnos: 4, reuniones: ['MIÉ-PM', 'DOM-AM'], reunionesInit: true, waModo: 'auto' }; }
     const STD_HORAS = ['07:00 AM', '09:00 AM', '11:00 AM', '04:00 PM', '06:30 PM'];
     const tk = t => String(t.numero !== '' && t.numero != null ? t.numero : 'S-' + t.nombre);
     const terrLabel = t => (t.numero !== '' && t.numero != null) ? `${t.numero}. ${t.nombre}` : t.nombre;
     const nomC = c => `${c.nombre} ${c.apellido}`;
     const hMin = h => { const m = /(\d+):(\d+)\s*(AM|PM)/i.exec(h || ''); if (!m) return 0; let H = +m[1] % 12; if (m[3].toUpperCase() === 'PM') H += 12; return H * 60 + +m[2]; };
     const bloqueDe = h => /PM/i.test(h) ? 'PM' : 'AM';
-    const pillHora = (h, attr = '') => { const p = bloqueDe(h) === 'PM'; return `<span class="pill ${p ? 'pm' : 'am'}"><i>${p ? '☾' : '☀'}</i><span${attr}>${esc(h)}</span></span>`; };
+    // Icono del turno: ☀ mañana (AM) · medio sol/atardecer: tarde hasta las 6:00 PM · ☾ noche (después de las 6:00 PM)
+    const SVG_ATARDECER = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Atardecer"><path d="M6 17a6 6 0 0 1 12 0"/><line x1="2" y1="17" x2="22" y2="17"/><line x1="12" y1="6" x2="12" y2="8.5"/><line x1="4.6" y1="9.6" x2="6.3" y2="11.3"/><line x1="19.4" y1="9.6" x2="17.7" y2="11.3"/><line x1="7" y1="21" x2="17" y2="21"/></svg>';
+    function iconoTurno(h) {
+        if (bloqueDe(h) === 'AM') return { cls: 'am', ico: '☀', tit: 'Mañana' };
+        if (hMin(h) <= 18 * 60) return { cls: 'ocaso', ico: SVG_ATARDECER, tit: 'Atardecer' };
+        return { cls: 'pm', ico: '☾', tit: 'Noche' };
+    }
+    const pillHora = (h, attr = '') => { const t = iconoTurno(h); return `<span class="pill ${t.cls}" title="${t.tit}"><i>${t.ico}</i><span${attr}>${esc(h)}</span></span>`; };
     const ROLES = { anciano: 'Anciano', siervo: 'Siervo ministerial', experimentado: 'Publicador experimentado' };
     const esPrioritario = c => !!c.esAnciano || ['siervo', 'experimentado'].includes(c.rol);
+
+    // === Parte 1: constantes de turnos especiales ===
+    const NUM_GRUPOS = 8;                 // Último sábado: siempre 8 grupos (1 al 8)
+    const HORA_ULT_SAB = '09:00 AM';      // Hora de los 8 grupos del último sábado
+    const HORA_GRUPO_DOM = '11:00 AM';    // Domingo: grupo de predicación 11:00 AM-12:00 PM (la reunión es a las 9:00 AM)
+    const HORA_TELEGRAM = '06:30 PM';     // Salida por Telegram (viernes 6:30 PM)
+    const esTelegram = (dia, hora) => hora === HORA_TELEGRAM;
+    const esAncianoC = c => !!c && (!!c.esAnciano || c.rol === 'anciano');
+
+    // Duración INTERNA de cada turno (solo para calcular el estado en "Hoy y mañana"; nunca se muestra en agenda/tabla/resumen).
+    //  07:00 AM → 7:00-9:00 AM · 09:00 AM → 9:00-11:00 AM
+    //  LUN tarde → 5:00-7:00 PM · MAR-VIE tarde → 6:00-7:00 PM (fin 7:00 PM)
+    //  DOM: reunión 9:00 AM · grupo 11:00 AM-12:00 PM
+    const FIN_AM = { 420: 540, 540: 660 };   // inicio (min) → fin (min)
+    function ventanaTurno(dia, hora) {
+        const ini = hMin(hora); let fin;
+        if (dia === 'DOM') fin = ini < 660 ? ini + 120 : ini + 60;
+        else if (ini < 720) fin = FIN_AM[ini] || ini + 120;
+        else if (['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE'].includes(dia)) fin = 19 * 60;
+        else fin = ini + 120;
+        if (fin <= ini) fin = ini + 60;
+        return { ini, fin };
+    }
+    // 'fin' = ya finalizó · 'en' = en curso · 'prox' = por empezar
+    function estadoTurno(f, ahoraMin) {
+        const v = ventanaTurno(f.diaSemana, f.hora);
+        return ahoraMin >= v.fin ? 'fin' : (ahoraMin >= v.ini ? 'en' : 'prox');
+    }
+    // Anciano registrado para el grupo n (1-8): se toma de Conductores (rol Anciano + número de grupo)
+    function ancianoDeGrupo(n, iso, usados) {
+        const libre = c => c.estado !== 'pausa' && c.fechaNoDisponible !== iso && !usados.includes(nomC(c));
+        const c = conductores.find(x => esAncianoC(x) && String(x.grupo) === String(n) && libre(x));
+        return c ? nomC(c) : '';
+    }
+    // Migración única: los grupos del apartado "Grupos" (eliminado) pasan a ser el número de grupo del anciano en Conductores.
+    function migrarGruposLegacy(lista) {
+        let cambio = false;
+        (lista || []).forEach(g => {
+            const c = conductores.find(x => nomC(x) === g.anciano); if (!c) return;
+            const n = String(g.numero);
+            if (conductores.some(x => esAncianoC(x) && String(x.grupo) === n)) return;
+            c.esAnciano = true; c.grupo = n; cambio = true;
+        });
+        return cambio;
+    }
 
     function limpiarTelefono(raw) {
         raw = String(raw || '').trim();
@@ -1242,11 +1611,12 @@ async function instalarPWA() {
         const sal = c ? `¡Hola ${generoDe(c) === 'F' ? 'hermana' : 'hermano'} ${c.nombre}!` : '¡Hola!';
         return `${sal} ¿Cómo estás?. Este mensaje es para notificarte que tienes el privilegio de dirigir el grupo del ${String(f.diaSemana).toLowerCase()} ${f.diaMes} a las ${f.hora}. Ese día estarán abarcando el territorio ${f.territorio}. El lugar de encuentro será en ${f.lugar}. ¿Podrías confirmarme si vas a asistir? Estaré atento a tu respuesta. ¡Muchas gracias!`;
     }
-    function payloadCompleto() { return { conductores, territorios, grupos, historial: historialAgendas, actividad: historialActividad, borradores: agendasMaestras, excepciones, config }; }
+    function payloadCompleto() { return { conductores, territorios, historial: historialAgendas, actividad: historialActividad, borradores: agendasMaestras, excepciones, config }; }
     function aplicarPayload(p) {
-        conductores = p.conductores || []; territorios = p.territorios || []; grupos = p.grupos || [];
+        conductores = p.conductores || []; territorios = p.territorios || [];
         historialAgendas = migrarClaves(p.historial); agendasMaestras = migrarClaves(p.borradores); excepciones = migrarClaves(p.excepciones);
-        historialActividad = p.actividad || []; config = Object.assign(defConfig(), p.config || {});
+        historialActividad = p.actividad || []; config = Object.assign(defConfig(), p.config || {}); config.reuniones = migrarReuniones(config.reuniones);
+        migrarGruposLegacy(p.grupos);
         guardarLocal(); initApp(false);
     }
 
@@ -1261,11 +1631,9 @@ async function instalarPWA() {
     function poblarConfigUI() {
         document.getElementById('cfgTitulo').value = config.titulo || ''; document.getElementById('cfgSub').value = config.subtitulo || '';
         document.getElementById('cfgMax').value = config.maxTurnos || 4; document.getElementById('cfgWaModo').value = config.waModo || 'auto';
-        const box = document.getElementById('cfgReuniones'), R = reunionesCfg(), extra = new Set(R.map(v => v.split('-').slice(1).join('-')));
-        territorios.forEach(t => (t.disponibilidadHoras || []).forEach(h => extra.add(h)));
-        const horas = [...new Set([...STD_HORAS, ...extra])].sort((x, y) => hMin(x) - hMin(y));
-        box.innerHTML = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'].map(d => `<div class="reu-dia"><b>${DIAS_LARGOS[d]}</b><div class="chip-button-group">${horas.map(h => `<label class="chip-button"><input type="checkbox" value="${d}-${h}"${R.includes(d + '-' + h) ? ' checked' : ''}> ${h.replace(/^0/, '')}</label>`).join('')}</div></div>`).join('');
-        box.innerHTML = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'].map(d => ['AM', 'PM'].map(b => `<label class="chip-button"><input type="checkbox" value="${d}-${b}"${(config.reuniones || []).includes(d + '-' + b) ? ' checked' : ''}> ${DIAS_LARGOS[d].slice(0, 3)} ${b}</label>`).join('')).join('');
+        // Reuniones: solo día de la semana + mañana o tarde (el domingo la reunión es a las 9:00 AM)
+        const box = document.getElementById('cfgReuniones'), R = reunionesCfg();
+        box.innerHTML = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'].map(d => `<div class="reu-row"><b>${DIAS_LARGOS[d]}</b><div class="chip-button-group">${['AM', 'PM'].map(b => `<label class="chip-button"><input type="checkbox" value="${d}-${b}"${R.includes(d + '-' + b) ? ' checked' : ''}> ${b === 'AM' ? '☀ Mañana' : 'Tarde'}${d === 'DOM' && b === 'AM' ? ' (9:00 AM)' : ''}</label>`).join('')}</div></div>`).join('');
     }
     function guardarConfig() {
         config.titulo = document.getElementById('cfgTitulo').value; config.subtitulo = document.getElementById('cfgSub').value;
@@ -1321,20 +1689,18 @@ async function instalarPWA() {
     function abrirBuscador() { document.getElementById('gsInput').value = ''; buscarGlobal(); openModal('modalBuscar'); setTimeout(() => document.getElementById('gsInput').focus(), 60); }
     function buscarGlobal() {
         const ws = norm(document.getElementById('gsInput').value).trim().split(/\s+/).filter(Boolean), el = document.getElementById('gsRes');
-        if (!ws.length) { el.innerHTML = '<p class="hint">Escribe para buscar conductores, territorios, grupos y asignaciones del mes.</p>'; return; }
+        if (!ws.length) { el.innerHTML = '<p class="hint">Escribe para buscar conductores, territorios y asignaciones del mes.</p>'; return; }
         const m = txt => { const t = norm(txt); return ws.every(w => t.includes(w)); };
         const it = (t, sub, fn) => `<div class="group-card gs-it" onclick="${fn}"><div><strong>${esc(t)}</strong><br><small>${esc(sub)}</small></div></div>`;
         const sec = (t, a) => a.length ? `<div class="gs-t">${t}</div>${a.join('')}` : '';
         const R = agendasMaestras[agendaKey()] || [];
         el.innerHTML = sec('Conductores', conductores.map((c, i) => [c, i]).filter(([c]) => m(`${nomC(c)} ${c.telefono}`)).map(([c, i]) => it(nomC(c), c.estado === 'pausa' ? 'En pausa' : (ROLES[c.rol] || (c.esAnciano ? 'Anciano' : 'Conductor')), `irConductor(${i})`)))
             + sec('Territorios', territorios.map((t, i) => [t, i]).filter(([t]) => m(`${t.numero} ${t.nombre} ${t.lugar}`)).map(([t, i]) => it(terrLabel(t), t.lugar || '', `irTerritorio(${i})`)))
-            + sec('Grupos', grupos.filter(g => m(`grupo ${g.numero} ${g.anciano}`)).map(g => it('Grupo ' + g.numero, g.anciano, `irGrupo()`)))
             + sec(`Asignaciones de ${nombreMesSel()}`, R.map((f, i) => [f, i]).filter(([f]) => !f.evento && m(`${DIAS_LARGOS[f.diaSemana]} ${f.diaMes} ${f.hora} ${f.conductor} ${f.territorio} ${f.lugar} ${f.grupos}`)).slice(0, 30).map(([f, i]) => it(`${DIAS_LARGOS[f.diaSemana]} ${f.diaMes} · ${f.hora}`, `${f.conductor} — ${f.territorio} — ${f.lugar}`, `irFila(${i})`)))
             || '<p class="hint">Sin resultados.</p>';
     }
     function irConductor(i) { closeModal('modalBuscar'); switchTab('tab-personal'); filtroCond = 'todos'; document.getElementById('listaConductores').classList.remove('hidden'); document.getElementById('buscaConductores').value = nomC(conductores[i]); renderListaConductores(); }
     function irTerritorio(i) { closeModal('modalBuscar'); switchTab('tab-territorios'); document.getElementById('listaTerritorios').classList.remove('hidden'); document.getElementById('buscaTerritorios').value = territorios[i].nombre; renderListaTerritorios(); }
-    function irGrupo() { closeModal('modalBuscar'); switchTab('tab-grupos'); document.getElementById('listaGrupos').classList.remove('hidden'); }
     function irFila(i) {
         closeModal('modalBuscar'); switchTab('tab-agenda'); const tr = document.querySelector(`#tablaCuerpoAgenda tr[data-idx="${i}"]`);
         if (tr) { tr.scrollIntoView({ block: 'center', behavior: 'smooth' }); tr.style.outline = '3px solid var(--blue)'; setTimeout(() => tr.style.outline = '', 2500); }
@@ -1531,15 +1897,28 @@ async function instalarPWA() {
     }
     function esUltimoSabado(a, m, d) { return new Date(a, m - 1, d).getDay() === 6 && d + 7 > new Date(a, m, 0).getDate(); }
     // Reuniones por día y hora exacta (p. ej. 'MIÉ-06:30 PM'). Por defecto: miércoles 6:30 PM y domingo 9:00 AM.
-    function reunionesCfg() {
-        if (!config.reunionesInit) { if (!(config.reuniones || []).length) config.reuniones = defConfig().reuniones.slice(); config.reunionesInit = true; }
+    // Formato simple: 'DÍA-AM' o 'DÍA-PM'. Convierte el formato antiguo con hora exacta (p. ej. 'MIÉ-06:30 PM' → 'MIÉ-PM').
+    function migrarReuniones(arr) {
         const out = new Set();
-        (config.reuniones || []).forEach(v => { const m = /^(\S+)-(AM|PM)$/.exec(v); if (m) STD_HORAS.filter(h => bloqueDe(h) === m[2]).forEach(h => out.add(`${m[1]}-${h}`)); else out.add(v); });
+        (arr || []).forEach(v => {
+            if (/^[^-]+-(AM|PM)$/.test(v)) { out.add(v); return; }
+            const m = /^([^-]+)-(\d{1,2}:\d{2}\s*(?:AM|PM))$/i.exec(v); if (m) out.add(`${m[1]}-${bloqueDe(m[2])}`);
+        });
         return [...out];
     }
-    function reunionBloquea(dia, hora) { return reunionesCfg().includes(`${dia}-${hora}`); }
+    function reunionesCfg() {
+        if (!config.reunionesInit) { if (!(config.reuniones || []).length) config.reuniones = defConfig().reuniones.slice(); config.reunionesInit = true; }
+        config.reuniones = migrarReuniones(config.reuniones);
+        return config.reuniones;
+    }
+    // Regla del domingo: la reunión es a las 9:00 AM, pero el grupo de las 11:00 AM (11:00 AM-12:00 PM) SIEMPRE se programa.
+    function reunionBloquea(dia, hora) {
+        if (dia === 'DOM' && hMin(hora) === 11 * 60) return false;
+        return reunionesCfg().includes(`${dia}-${bloqueDe(hora)}`);
+    }
     function horasDelDia(dia) {
         const st = new Set(MATRIZ_HORARIOS[dia] || []);
+        if (dia === 'VIE') st.add(HORA_TELEGRAM);
         territorios.forEach(t => { if ((t.disponibilidadDias || []).includes(dia)) (t.disponibilidadHoras || []).forEach(h => { if (!STD_HORAS.includes(h)) st.add(h); }); });
         return [...st].sort((a, b) => hMin(a) - hMin(b));
     }
@@ -1564,28 +1943,35 @@ async function instalarPWA() {
             if (evt) { nuevaAgenda.push(filaEvento(anio, mes, i, evt.motivo)); continue; }
             const diaNombre = DIAS[new Date(anio, mes - 1, i).getDay()], fechaIso = `${anio}-${pad(mes)}-${pad(i)}`, usadosHoy = [];
 
-            // Último sábado: 8 salidas simultáneas, una por grupo, dirigidas por su anciano
-            if (esUltimoSabado(anio, mes, i) && grupos.length) {
-                const hora = (MATRIZ_HORARIOS['SÁB'] || ['07:00 AM'])[0];
-                if (!reunionBloquea(diaNombre, hora)) {
-                    const lugares = [];
-                    [...grupos].sort((a, b) => a.numero - b.numero).forEach(g => {
-                        const cond = conductores.find(c => nomC(c) === g.anciano);
+            const esUltSab = esUltimoSabado(anio, mes, i);
+            const horasDia = horasDelDia(diaNombre);
+            if (esUltSab && !horasDia.includes(HORA_ULT_SAB)) { horasDia.push(HORA_ULT_SAB); horasDia.sort((x, y) => hMin(x) - hMin(y)); }
+            if (diaNombre === 'DOM' && !horasDia.includes(HORA_GRUPO_DOM)) horasDia.push(HORA_GRUPO_DOM);   // domingo: siempre grupo de 11:00 AM
+
+            horasDia.forEach(hora => {
+                if (reunionBloquea(diaNombre, hora)) return;
+
+                // Último sábado: 8 grupos a las 9:00 AM, uno por grupo (1-8), dirigidos por su anciano
+                if (esUltSab && hora === HORA_ULT_SAB) {
+                    const lugares = [], conductoresSlot = [];
+                    for (let n = 1; n <= NUM_GRUPOS; n++) {
+                        const nombreAnc = ancianoDeGrupo(n, fechaIso, conductoresSlot);
+                        if (nombreAnc) conductoresSlot.push(nombreAnc);
                         let pool = territorios.filter(t => !usadosHoy.includes(tk(t)) && !(t.lugar && lugares.includes(norm(t.lugar))));
                         const sab = pool.filter(t => (t.disponibilidadDias || []).includes('SÁB')); if (sab.length) pool = sab;
                         const t = elegirTerritorio(pool, ultimo, usosMes, fechaIso);
                         if (t) { usadosHoy.push(tk(t)); if (t.lugar) lugares.push(norm(t.lugar)); marcar(t, fechaIso); }
-                        nuevaAgenda.push({ diaSemana: diaNombre, diaMes: i, hora, conductor: cond ? nomC(cond) : (g.anciano || 'Sin Asignar'), territorio: t ? terrLabel(t) : 'Sin Territorio', terrNum: t ? tk(t) : null, lugar: t ? (t.lugar || 'Por Definir') : 'Por Definir', grupos: `Grupo ${g.numero}`, avisado: false, confirmado: false });
-                    });
-                    continue;
+                        nuevaAgenda.push({ diaSemana: diaNombre, diaMes: i, hora, conductor: nombreAnc || 'Sin Asignar', territorio: t ? terrLabel(t) : 'Sin Territorio', terrNum: t ? tk(t) : null, lugar: t ? (t.lugar || 'Por Definir') : 'Por Definir', grupos: `Grupo ${n}`, avisado: false, confirmado: false });
+                    }
+                    return;
                 }
-            }
 
-            horasDelDia(diaNombre).forEach(hora => {
-                if (reunionBloquea(diaNombre, hora)) return;
-                const conds = conductores.filter(c => condDispo(c, diaNombre, hora, fechaIso));
+                const tele = esTelegram(diaNombre, hora);
+                let conds = conductores.filter(c => condDispo(c, diaNombre, hora, fechaIso));
+                // Telegram: se prioriza a quienes sacan grupos por Telegram
+                if (tele) { const tg = conds.filter(c => c.telegram); if (tg.length) conds = tg; }
                 const terrs = territorios.filter(t => (t.disponibilidadDias || []).includes(diaNombre) && (t.disponibilidadHoras || []).includes(hora) && !usadosHoy.includes(tk(t)));
-                const grupoObjetivo = ((i % Math.max(grupos.length, 1)) + 1).toString();
+                const grupoObjetivo = ((i % NUM_GRUPOS) + 1).toString();
                 const c = obtenerConductorOptimo(conds, nuevaAgenda, i, grupoObjetivo, { max: maxT, diaNombre });
                 const t = elegirTerritorio(terrs, ultimo, usosMes, fechaIso);
                 if (t) { usadosHoy.push(tk(t)); marcar(t, fechaIso); }
@@ -1593,8 +1979,8 @@ async function instalarPWA() {
                     diaSemana: diaNombre, diaMes: i, hora,
                     conductor: c ? nomC(c) : 'Sin Asignar',
                     territorio: t ? terrLabel(t) : 'Sin Territorio', terrNum: t ? tk(t) : null,
-                    lugar: t ? (t.lugar || 'Por Definir') : (hora === '06:30 PM' ? 'Vía Telegram' : 'Por Definir'),
-                    grupos: (hora === '06:30 PM') ? 'Telegram' : 'Todos', avisado: false, confirmado: false
+                    lugar: tele ? 'Vía Telegram' : (t ? (t.lugar || 'Por Definir') : 'Por Definir'),
+                    grupos: tele ? 'Telegram' : 'Todos', avisado: false, confirmado: false
                 });
             });
         }
@@ -1780,9 +2166,9 @@ async function instalarPWA() {
         const [h, m] = proximos2(), hoy = filasDeFecha(h), man = filasDeFecha(m);
         if (!hoy.length && !man.length) { el.classList.add('hidden'); return; }
         el.classList.remove('hidden');
-        const now = h.getHours() * 60 + h.getMinutes(); let prox = -1; hoy.forEach((x, j) => { if (prox < 0 && hMin(x.f.hora) > now) prox = j; });
+        const now = h.getHours() * 60 + h.getMinutes(); let prox = -1; hoy.forEach((x, j) => { if (prox < 0 && estadoTurno(x.f, now) === 'prox') prox = j; });
         const fila = (x, tag) => `<div class="hoy-row">${pillHora(x.f.hora)}<div><strong>${esc(x.f.conductor)}</strong>${tag}<br><small>${esc(x.f.territorio)} · ${esc(x.f.lugar)}${x.f.grupos ? ' · ' + esc(x.f.grupos) : ''}</small></div></div>`;
-        const col = (t, L, esHoy) => `<div><div class="hoy-dia">${t}</div>${L.map((x, j) => fila(x, esHoy ? (hMin(x.f.hora) <= now && now < hMin(x.f.hora) + 120 ? ' <span class="tag en">Turno en curso</span>' : j === prox ? ' <span class="tag prox">Próxima salida</span>' : '') : '')).join('') || '<small class="hint">Sin salidas</small>'}</div>`;
+        const col = (t, L, esHoy) => `<div><div class="hoy-dia">${t}</div>${L.map((x, j) => fila(x, esHoy ? (estadoTurno(x.f, now) === 'en' ? ' <span class="tag en">Turno en curso</span>' : estadoTurno(x.f, now) === 'fin' ? ' <span class="tag">Finalizado</span>' : j === prox ? ' <span class="tag prox">Próxima salida</span>' : '') : '')).join('') || '<small class="hint">Sin salidas</small>'}</div>`;
         el.innerHTML = `<div class="module-title" style="margin-bottom:14px">Hoy y mañana</div><div class="hoy-grid">${col('Hoy · ' + DIAS_LARGOS[DIAS[h.getDay()]] + ' ' + h.getDate(), hoy, true)}${col('Mañana · ' + DIAS_LARGOS[DIAS[m.getDay()]] + ' ' + m.getDate(), man, false)}</div>`;
     }
     function actualizarBadge() {
@@ -1886,21 +2272,20 @@ async function instalarPWA() {
 
         conductores = local.conductores || [];
         territorios = local.territorios || [];
-        grupos = local.grupos || [];
         agendasMaestras = migrarClaves(local.borradores); historialAgendas = migrarClaves(local.historial); excepciones = migrarClaves(local.excepciones); poblarAnios();
         historialActividad = local.actividad || [];
-        config = Object.assign(defConfig(), local.config || {}); lectura = localStorage.getItem('vdm_lock') === '1';
+        config = Object.assign(defConfig(), local.config || {}); config.reuniones = migrarReuniones(config.reuniones); lectura = localStorage.getItem('vdm_lock') === '1';
         conductores.forEach(c => { const t = limpiarTelefono(c.telefono); if (t) c.telefono = t; });
+        if (migrarGruposLegacy(local.grupos)) guardarLocal();
 
         renderListaConductores(); 
         renderListaTerritorios(); 
-        renderListaGrupos(); 
         renderHistorial(); 
         renderActividad();
         cargarAgendaDelMes(); 
         
         let lastTab = localStorage.getItem('vdm_active_tab') || 'tab-agenda';
-        if (lastTab === 'tab-config') lastTab = 'tab-grupos'; if (!document.getElementById(lastTab)) lastTab = 'tab-agenda';
+        if (!document.getElementById(lastTab)) lastTab = 'tab-agenda';
         aplicarConfigUI();
         switchTab(lastTab);
         actualizarDatalists();
@@ -1992,6 +2377,7 @@ async function instalarPWA() {
             estado: document.getElementById('cEstado').value, rol: document.getElementById('cRol').value, genero: document.getElementById('cGenero').value, 
             esAnciano: document.getElementById('cEsAnciano').value === 'si' || document.getElementById('cRol').value === 'anciano',
             grupo: document.getElementById('cGrupoAsignado').value,
+            telegram: document.getElementById('cTelegram').checked,
             disponibilidadDias: disponibilidadActualizada, 
             fechaDisponible: document.getElementById('cFechaDisponible').value, 
             fechaNoDisponible: document.getElementById('cFechaNoDisponible').value
@@ -2006,7 +2392,7 @@ async function instalarPWA() {
             conductores[index] = c;
             registrarActividad('Editar', `Conductor: ${anterior} → ${c.nombre} ${c.apellido}`);
         }
-        guardarLocal(); renderListaConductores(); actualizarDatalists(); actualizarSelectAncianos(); closeModal('modalConductor');
+        guardarLocal(); renderListaConductores(); actualizarDatalists(); closeModal('modalConductor');
     });
 
     // Sincroniza el chip del día con sus bloques AM/PM
@@ -2028,6 +2414,7 @@ async function instalarPWA() {
         document.querySelectorAll('#disponibilidadSemanal input[type="checkbox"]').forEach(cb => {
             cb.checked = (c.disponibilidadDias || []).includes(cb.value);
         });
+        document.getElementById('cTelegram').checked = !!c.telegram;
         document.getElementById('cFechaDisponible').value = c.fechaDisponible || "";
         document.getElementById('cFechaNoDisponible').value = c.fechaNoDisponible || "";
         openModal('modalConductor');
@@ -2089,65 +2476,6 @@ async function instalarPWA() {
             territorios.splice(i,1); 
             guardarLocal(); renderListaTerritorios();
             registrarActividad('Eliminar', `Territorio: ${nombre}`);
-        } 
-    }
-
-    // === CRUD GRUPOS ===
-    function openModalGrupo() { 
-        document.getElementById('formGrupo').reset(); 
-        document.getElementById('editIndexGrupo').value = ""; 
-        actualizarSelectAncianos();
-        openModal('modalGrupo'); 
-    }
-
-    function actualizarSelectAncianos() {
-        const select = document.getElementById('gAnciano');
-        select.innerHTML = '<option value="">Seleccionar...</option>';
-        conductores.filter(c => c.esAnciano).forEach(c => {
-            select.innerHTML += `<option value="${c.nombre} ${c.apellido}">${c.nombre} ${c.apellido}</option>`;
-        });
-    }
-
-    document.getElementById('formGrupo').addEventListener('submit', (e) => {
-        e.preventDefault(); if (!antiDoble(e)) return;
-        const index = document.getElementById('editIndexGrupo').value;
-        const g = { 
-            numero: document.getElementById('gNumero').value, 
-            anciano: document.getElementById('gAnciano').value
-        };
-        if(index === "") {
-            grupos.push(g);
-            registrarActividad('Agregar', `Grupo ${g.numero} - Anciano: ${g.anciano}`);
-        } else {
-            const anterior = `Grupo ${grupos[index].numero} - ${grupos[index].anciano}`;
-            grupos[index] = g;
-            registrarActividad('Editar', `Grupo: ${anterior} → Grupo ${g.numero} - ${g.anciano}`);
-        }
-        guardarLocal(); renderListaGrupos(); closeModal('modalGrupo');
-    });
-
-    function renderListaGrupos() {
-        const cont = document.getElementById('listaGrupos'); cont.innerHTML = '';
-        grupos.forEach((g, i) => {
-            cont.innerHTML += `<div class="group-card"><div><strong>Grupo ${g.numero}</strong><br><small>${g.anciano}</small></div><div><button class="btn-edit-outline" onclick="editarGrupo(${i})">Edit</button><button class="btn-danger-outline" onclick="eliminarGrupo(${i})">X</button></div></div>`;
-        });
-    }
-
-    function editarGrupo(i) {
-        const g = grupos[i]; 
-        document.getElementById('editIndexGrupo').value = i;
-        document.getElementById('gNumero').value = g.numero; 
-        actualizarSelectAncianos();
-        document.getElementById('gAnciano').value = g.anciano;
-        openModal('modalGrupo');
-    }
-
-    async function eliminarGrupo(i) { 
-        if(await confirmar("¿Eliminar este registro?", 'Eliminar')) { 
-            const nombre = `Grupo ${grupos[i].numero}`;
-            grupos.splice(i,1); 
-            guardarLocal(); renderListaGrupos();
-            registrarActividad('Eliminar', nombre);
         } 
     }
 
@@ -2214,17 +2542,6 @@ async function instalarPWA() {
             guardarLocal();
             renderActividad();
         }
-    }
-
-    // === BACKUP Y RESTAURACIÓN JSON ===
-    function exportarBackupJSON() {
-        const payload = payloadCompleto();
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute("href", dataStr);
-        dlAnchorElem.setAttribute("download", `Respaldo_Territorios_${new Date().toISOString().slice(0,10)}.json`);
-        dlAnchorElem.click();
-        registrarActividad('Exportar', 'Copia de seguridad en formato JSON'); mostrarToast('Respaldo exportado');
     }
 
     function validarDatosConductor(c, idx) {
