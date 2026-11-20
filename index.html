@@ -594,6 +594,8 @@
     .toggle-password-btn svg,#eye-icon{width:20px!important;height:20px!important;min-width:20px;min-height:20px;stroke:currentColor;display:block}
 </style>
 <meta name="theme-color" content="#0b57d0">
+<link rel="icon" type="image/png" href="./icono.png">
+<link rel="apple-touch-icon" href="./icono.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -634,31 +636,8 @@ async function instalarPWA() {
 }
 
 (function () {
-    var ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">' +
-        '<rect width="512" height="512" fill="#0b57d0"/>' +
-        '<path d="M256 70c-67 0-120 52-120 118 0 88 120 190 120 190s120-102 120-190c0-66-53-118-120-118z" fill="#ffffff"/>' +
-        '<circle cx="256" cy="188" r="46" fill="#0b57d0"/>' +
-        '<text x="256" y="462" font-family="Arial,Helvetica,sans-serif" font-size="68" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="6">VDM</text>' +
-        '</svg>';
-    var ICON_SVG_URI = 'data:image/svg+xml;base64,' + btoa(ICON_SVG);
-
-    function setLink(rel, href, extra) {
-        var l = document.createElement('link');
-        l.rel = rel; l.href = href;
-        if (extra) for (var k in extra) l.setAttribute(k, extra[k]);
-        document.head.appendChild(l);
-        return l;
-    }
-    setLink('icon', ICON_SVG_URI, { type: 'image/svg+xml' });
-
-    function aPNG(img, size) {
-        var c = document.createElement('canvas');
-        c.width = c.height = size;
-        c.getContext('2d').drawImage(img, 0, 0, size, size);
-        return c.toDataURL('image/png');
-    }
-
-    function inyectarManifest(icons) {
+    // Manifest dinámico: icono real ./icono.png (misma carpeta que index.html)
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
         try {
             var base = location.origin + location.pathname;
             var manifest = {
@@ -669,38 +648,16 @@ async function instalarPWA() {
                 display: 'standalone',
                 background_color: '#f8fafd',
                 theme_color: '#0b57d0',
-                icons: icons
+                icons: [
+                    { src: new URL('./icono.png', location.href).href, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+                ]
             };
             var blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-            setLink('manifest', URL.createObjectURL(blob));
+            var l = document.createElement('link');
+            l.rel = 'manifest';
+            l.href = URL.createObjectURL(blob);
+            document.head.appendChild(l);
         } catch (err) { console.warn('No se pudo crear el manifest:', err); }
-    }
-
-    var iconosSVG = [{ src: ICON_SVG_URI, sizes: '512x512', type: 'image/svg+xml', purpose: 'any' }];
-
-    if (location.protocol === 'http:' || location.protocol === 'https:') {
-        var img = new Image();
-        img.onload = function () {
-            try {
-                var png180 = aPNG(img, 180), png192 = aPNG(img, 192), png512 = aPNG(img, 512);
-                setLink('apple-touch-icon', png180);
-                inyectarManifest([
-                    { src: png192, sizes: '192x192', type: 'image/png', purpose: 'any' },
-                    { src: png512, sizes: '512x512', type: 'image/png', purpose: 'any' },
-                    { src: png512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
-                ].concat(iconosSVG));
-            } catch (err) {
-                setLink('apple-touch-icon', ICON_SVG_URI);
-                inyectarManifest(iconosSVG);
-            }
-        };
-        img.onerror = function () {
-            setLink('apple-touch-icon', ICON_SVG_URI);
-            inyectarManifest(iconosSVG);
-        };
-        img.src = ICON_SVG_URI;
-    } else {
-        setLink('apple-touch-icon', ICON_SVG_URI);
     }
 
     // Service Worker: archivo ./sw.js (publicar junto a index.html)
