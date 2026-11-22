@@ -656,7 +656,7 @@ async function instalarPWA() {
     try {
         ev.prompt();
         await ev.userChoice;
-    } catch (err) { console.warn('Instalación cancelada o no disponible:', err); }
+    } catch (err) { /* instalación cancelada o no disponible */ }
     actualizarBotonInstalar();
 }
 
@@ -682,16 +682,14 @@ async function instalarPWA() {
             l.rel = 'manifest';
             l.href = URL.createObjectURL(blob);
             document.head.appendChild(l);
-        } catch (err) { console.warn('No se pudo crear el manifest:', err); }
+        } catch (err) { /* manifest no disponible */ }
     }
 
     // Service Worker: archivo ./sw.js (publicar junto a index.html)
     var seguro = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     if (seguro && 'serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-            navigator.serviceWorker.register('./sw.js').catch(function (err) {
-                console.info('Service Worker no registrado:', err && err.message);
-            });
+            navigator.serviceWorker.register('./sw.js').catch(function () { /* sin Service Worker */ });
         });
     }
 })();
@@ -707,12 +705,15 @@ async function instalarPWA() {
             <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill="#1a73e8"/>
         </svg>
         <h2>Acceso Protegido</h2>
-        <p>Introduce la clave de acceso para continuar</p>
-        
-        <form id="form-auth" onsubmit="verificarAcceso(event)">
+        <p id="auth-sub">Verificando sesión…</p>
+
+        <form id="form-auth" class="hidden" onsubmit="iniciarSesion(event)" novalidate>
+            <div class="auth-input-group" style="margin-bottom:14px">
+                <input type="email" id="auth-email" placeholder="Correo electrónico" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required>
+            </div>
             <div class="auth-input-group">
                 <div class="password-wrapper">
-                    <input type="password" id="auth-pass" placeholder="Contraseña de la app" autocomplete="current-password" required autofocus>
+                    <input type="password" id="auth-pass" placeholder="Contraseña" autocomplete="current-password" required>
                     <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility()" title="Mostrar u ocultar contraseña">
                         <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -720,9 +721,9 @@ async function instalarPWA() {
                         </svg>
                     </button>
                 </div>
-                <div id="auth-msg-error" class="auth-error">Contraseña incorrecta. Inténtalo de nuevo.</div>
+                <div id="auth-msg-error" class="auth-error" role="alert"></div>
             </div>
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px;">Acceder</button>
+            <button type="submit" id="auth-submit" class="btn-primary" style="width: 100%; padding: 12px;">Iniciar sesión</button>
         </form>
     </div>
 </div>
@@ -1006,7 +1007,7 @@ async function instalarPWA() {
 <div id="modalQR" class="modal">
     <div class="modal-content no-zoom">
         <h2 class="module-title">Compartir QR</h2>
-        <p class="ayuda-intro" style="margin-bottom:8px">Pídele a la otra persona que escanee este código con la cámara de su celular. Se abrirá la aplicación y solo tendrá que escribir la contraseña para iniciar sesión.</p>
+        <p class="ayuda-intro" style="margin-bottom:8px">Pídele a la otra persona que escanee este código con la cámara de su celular. Se abrirá la aplicación y solo tendrá que iniciar sesión con su correo y contraseña.</p>
         <div class="qr-box"><canvas id="qrCanvas" width="280" height="280" aria-label="Código QR de la aplicación"></canvas></div>
         <div class="qr-url" id="qrUrl"></div>
         <div class="hint warn hidden" id="qrAviso" style="text-align:center;margin-top:8px"></div>
@@ -1029,7 +1030,7 @@ async function instalarPWA() {
         <details class="ayuda-acc" open>
             <summary>1. Conocer la pantalla principal</summary>
             <div class="ayuda-body">
-                <p>Al abrir la app escribe la <b>contraseña</b> y toca <b>Acceder</b>. Arriba verás cuatro pestañas:</p>
+                <p>Al abrir la app escribe tu <b>correo</b> y <b>contraseña</b> y toca <b>Iniciar sesión</b>. Arriba verás cuatro pestañas:</p>
                 <ul>
                     <li><b>Agenda:</b> aquí se genera el mes, se corrige la tabla, se descarga y se avisa a los conductores.</li>
                     <li><b>Conductores:</b> la lista de hermanos que dirigen la salida.</li>
@@ -1154,7 +1155,7 @@ async function instalarPWA() {
                 <ol>
                     <li>Abre el menú de <b>tres rayas</b> y toca <b>Compartir QR</b>.</li>
                     <li>La otra persona escanea el código con la cámara de su celular.</li>
-                    <li>Se abre la página y solo debe escribir la contraseña para entrar.</li>
+                    <li>Se abre la página y solo debe iniciar sesión con su correo y contraseña para entrar.</li>
                 </ol>
                 <p>También puedes tocar <b>Copiar enlace</b> o <b>Compartir…</b> para enviarlo por mensaje. Con <b>Instalar aplicación</b> (en el mismo menú, cuando aparece) la app queda como un ícono en la pantalla de inicio.</p>
             </div>
@@ -1163,7 +1164,7 @@ async function instalarPWA() {
         <details class="ayuda-acc">
             <summary>10. Tus datos se guardan solos en la nube</summary>
             <div class="ayuda-body">
-                <p>Todo lo que haces se guarda automáticamente y se sincroniza en la nube, así que no necesitas hacer copias de respaldo. Puedes entrar desde otro celular o computadora con la misma contraseña y verás la misma información. Si trabajas sin internet, los cambios se guardan en el equipo y se suben cuando vuelva la conexión.</p>
+                <p>Todo lo que haces se guarda automáticamente y se sincroniza en la nube, así que no necesitas hacer copias de respaldo. Puedes entrar desde otro celular o computadora con tu mismo correo y contraseña y verás la misma información. Si trabajas sin internet, los cambios se guardan en el equipo y se suben cuando vuelva la conexión.</p>
             </div>
         </details>
 
@@ -1294,15 +1295,24 @@ async function instalarPWA() {
 </div>
 
 <script>
-    // === SUPABASE (pega tus credenciales aquí) ===
+    // === SUPABASE ===
+    // La clave "publishable" es pública por diseño: la protección real la dan Supabase Auth + RLS en public.estado_app.
     const SUPABASE_URL = "https://srtoeambotobemygadvy.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_w6oz1etGxhF5A2yRVhMFmg_DlViQ1nC";
-    const supabaseClient = (window.supabase && !SUPABASE_URL.startsWith("AQUI_") && !SUPABASE_ANON_KEY.startsWith("AQUI_"))
+    const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY)
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
         : null;
 
-    // === AUTENTICACIÓN Y SEGURIDAD ===
-    const CLAVE_TOKENS = ["VmlzdGFBbE1hcjIwMjY="];
+    // === AUTENTICACIÓN (Supabase Auth) ===
+    // _sesionActiva solo es true entre un inicio de sesión válido y el cierre/expiración de la sesión.
+    // Mientras sea false no se lee, se renderiza ni se guarda nada de estado_app (ni en la nube ni en caché local).
+    let _sesionActiva = false;
+    let _appIniciada = false;
+    const CLAVES_DATOS_LOCALES = ['vdm_data', 'vdm_sync_pendiente'];
+
+    function limpiarCacheLocal() {
+        try { CLAVES_DATOS_LOCALES.forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    }
 
     function togglePasswordVisibility() {
         const passInput = document.getElementById('auth-pass');
@@ -1323,35 +1333,93 @@ async function instalarPWA() {
         }
     }
 
-    function verificarAcceso(e) {
-        if (e) e.preventDefault();
-        const passInput = document.getElementById('auth-pass').value;
-        const passCodificada = btoa(unescape(encodeURIComponent(passInput)));
+    function mostrarErrorAuth(msg) {
+        const el = document.getElementById('auth-msg-error');
+        el.textContent = msg || '';
+        el.style.display = msg ? 'block' : 'none';
+    }
 
-        if (CLAVE_TOKENS.includes(passCodificada)) {
-            sessionStorage.setItem('vdm_authenticated', 'true');
+    function mostrarLogin(mensaje) {
+        _sesionActiva = false;
+        document.getElementById('app-content').style.display = 'none';
+        document.getElementById('auth-overlay').style.display = 'flex';
+        document.getElementById('auth-sub').textContent = 'Inicia sesión con tu correo y contraseña';
+        document.getElementById('form-auth').classList.remove('hidden');
+        mostrarErrorAuth(mensaje || '');
+        const em = document.getElementById('auth-email');
+        if (em && !em.value) em.focus(); else document.getElementById('auth-pass').focus();
+    }
+
+    async function iniciarSesion(e) {
+        if (e) e.preventDefault();
+        if (!supabaseClient) { mostrarErrorAuth('No se pudo cargar el servicio de acceso. Revisa tu conexión y recarga la página.'); return; }
+        const email = document.getElementById('auth-email').value.trim();
+        const passEl = document.getElementById('auth-pass');
+        const password = passEl.value;
+        if (!email || !password) { mostrarErrorAuth('Escribe tu correo y tu contraseña.'); return; }
+
+        const btn = document.getElementById('auth-submit');
+        btn.disabled = true; mostrarErrorAuth('');
+        try {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error || !data || !data.session) {
+                const st = error && error.status;
+                mostrarErrorAuth(st === 429 ? 'Demasiados intentos. Espera un momento e inténtalo de nuevo.'
+                    : (st === 400 || st === 401 || st === 422) ? 'Correo o contraseña incorrectos.'
+                    : 'No se pudo iniciar sesión. Revisa tu conexión e inténtalo de nuevo.');
+                passEl.value = '';
+                return;
+            }
+            passEl.value = '';
             desbloquearInterfaz();
-        } else {
-            document.getElementById('auth-msg-error').style.display = 'block';
+        } catch (err) {
+            mostrarErrorAuth('No se pudo iniciar sesión. Revisa tu conexión e inténtalo de nuevo.');
+        } finally {
+            btn.disabled = false;
         }
     }
 
     function desbloquearInterfaz() {
+        if (_appIniciada) return;
+        _sesionActiva = true; _appIniciada = true;
         document.getElementById('auth-overlay').style.display = 'none';
         document.getElementById('app-content').style.display = 'block';
         initApp();
     }
 
-    function cerrarSesion() {
-        sessionStorage.removeItem('vdm_authenticated');
+    // Cierra la sesión, borra la caché local con datos y recarga para vaciar toda la memoria de la página
+    async function cerrarSesion() {
+        _sesionActiva = false;
+        try { if (supabaseClient) await supabaseClient.auth.signOut({ scope: 'local' }); } catch (e) {}
+        limpiarCacheLocal();
         window.location.reload();
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        if (sessionStorage.getItem('vdm_authenticated') === 'true') {
-            desbloquearInterfaz();
+    // Sesión terminada (cierre manual, otra pestaña, token vencido o revocado): bloquear todo de inmediato
+    function bloquearPorSesionTerminada() {
+        _sesionActiva = false;
+        limpiarCacheLocal();
+        if (_appIniciada) window.location.reload(); else mostrarLogin();
+    }
+
+    async function arrancarAuth() {
+        if (!supabaseClient) {
+            document.getElementById('auth-sub').textContent = '';
+            document.getElementById('form-auth').classList.remove('hidden');
+            mostrarErrorAuth('No se pudo cargar el servicio de acceso. Revisa tu conexión y recarga la página.');
+            return;
         }
-    });
+        // Escucha cambios de sesión (callback síncrono: sin llamadas a Supabase dentro)
+        supabaseClient.auth.onAuthStateChange((evento, sesion) => {
+            if (evento === 'SIGNED_OUT' || (!sesion && _appIniciada)) bloquearPorSesionTerminada();
+        });
+        let sesion = null;
+        try { const r = await supabaseClient.auth.getSession(); sesion = r && r.data && r.data.session; } catch (e) {}
+        if (sesion) desbloquearInterfaz();
+        else { limpiarCacheLocal(); mostrarLogin(); }
+    }
+
+    window.addEventListener('DOMContentLoaded', arrancarAuth);
 
     // === GENERADOR DE CÓDIGO QR (autocontenido, sin librerías externas; modo byte, corrección M, versiones 1-15) ===
     const QR = (() => {
@@ -1736,7 +1804,7 @@ async function instalarPWA() {
         if (q.trim()) { const lim = Math.max(1, Math.floor(norm(q).trim().length / 3)); L = L.filter(x => x.s <= lim); }
         L.sort((a, b) => a.s - b.s || (cnt[nomC(a.c)] || 0) - (cnt[nomC(b.c)] || 0) || nomC(a.c).localeCompare(nomC(b.c)));
         const sin = `<div class="group-card"><div><strong>Sin Asignar</strong></div><button class="btn-edit-outline" onclick="asignarConductor(-1,false)">Asignar</button></div>`;
-        document.getElementById('selLista').innerHTML = (modo === 'todos' && !q.trim() ? sin : '') + (L.map(x => `<div class="group-card"><div><strong>${esc(nomC(x.c))}</strong>${x.c.estado === 'pausa' ? ' <span class="tag pausa">En pausa</span>' : ''}<br><small>${x.libre ? 'Libre en este horario' : 'No disponible / ocupado'} · ${cnt[nomC(x.c)] || 0} turno(s) este mes</small></div><div><button class="btn-edit-outline" onclick="asignarConductor(${x.i},false)">Asignar</button><a class="btn-whatsapp" href="${waUrl(limpiarTelefono(x.c.telefono).replace('+', ''), mensajeWA(x.c, f))}" target="_blank" rel="noopener" onclick="asignarConductor(${x.i},'a')">+ WhatsApp</a></div></div>`).join('') || '<p class="hint">Sin conductores que coincidan.</p>');
+        document.getElementById('selLista').innerHTML = (modo === 'todos' && !q.trim() ? sin : '') + (L.map(x => `<div class="group-card"><div><strong>${esc(nomC(x.c))}</strong>${x.c.estado === 'pausa' ? ' <span class="tag pausa">En pausa</span>' : ''}<br><small>${x.libre ? 'Libre en este horario' : 'No disponible / ocupado'} · ${cnt[nomC(x.c)] || 0} turno(s) este mes</small></div><div><button class="btn-edit-outline" onclick="asignarConductor(${x.i},false)">Asignar</button><a class="btn-whatsapp" href="${esc(waUrl(limpiarTelefono(x.c.telefono).replace('+', ''), mensajeWA(x.c, f)))}" target="_blank" rel="noopener" onclick="asignarConductor(${x.i},'a')">+ WhatsApp</a></div></div>`).join('') || '<p class="hint">Sin conductores que coincidan.</p>');
     }
     function asignarConductor(ci, wa) {
         const { k, idx } = selCtx, R = agendasMaestras[k], f = R[idx], c = ci >= 0 ? conductores[ci] : null; pushUndo(k);
@@ -2001,14 +2069,14 @@ async function instalarPWA() {
         datos.forEach((f, i) => {
             const nuevo = ultimoDia !== f.diaMes;
             const cls = (ultimoDia && nuevo) ? ' class="day-separator"' : '';
-            const cab = `<td class="bold-cell">${nuevo ? f.diaSemana : ''}</td><td class="bold-cell">${nuevo ? f.diaMes : ''}</td>`;
+            const cab = `<td class="bold-cell">${nuevo ? esc(f.diaSemana) : ''}</td><td class="bold-cell">${nuevo ? esc(f.diaMes) : ''}</td>`;
             const ed = (c, v) => `<td data-campo="${c}" contenteditable="${CE}" onblur="actualizarCelda(${i},'${c}',this.innerText)">${esc(v)}</td>`;
             const sel = (c, v, vacio) => `<td class="${lectura ? '' : 'edit-select '}${esVacio(v, vacio) ? 'sin-asignar' : ''}" data-campo="${c}">${esc(v)}</td>`;
             const acc = lectura ? '<td class="no-export"></td>' : `<td class="no-export acc">${f.evento ? '' : `<button class="btn-outline mini" title="Agregar turno en este día" onclick="agregarFila(${i})">＋</button><button class="btn-outline mini" title="Reemplazo de emergencia" onclick="abrirSelectorConductor(agendaKey(),${i},'libres')">Sustituir</button>`}<button class="btn-outline mini del" title="Eliminar fila" onclick="eliminarFila(${i})">✕</button></td>`;
             const cuerpoFila = f.evento
                 ? `<td colspan="5" class="evento-cell" contenteditable="${CE}" onblur="actualizarCelda(${i},'motivo',this.innerText)">${esc(f.motivo)}</td>`
                 : `<td><span class="hora-plana" contenteditable="${CE}" onblur="actualizarCelda(${i},'hora',this.innerText)">${esc(f.hora)}</span></td>${sel('conductor', f.conductor, 'Sin Asignar')}${sel('territorio', f.territorio, 'Sin Territorio')}${ed('lugar', f.lugar)}${ed('grupos', f.grupos)}`;
-            html += `<tr data-diames="${f.diaMes}" data-idx="${i}" style="--i:${Math.min(i, 40)}"${cls}>${cab}${cuerpoFila}${acc}</tr>`;
+            html += `<tr data-diames="${esc(f.diaMes)}" data-idx="${i}" style="--i:${Math.min(i, 40)}"${cls}>${cab}${cuerpoFila}${acc}</tr>`;
             ultimoDia = f.diaMes;
         });
         cuerpo.innerHTML = html;
@@ -2187,7 +2255,7 @@ async function instalarPWA() {
                 <div class="pase-r"><strong>${esc(f.conductor)}</strong> ${chk}<br><small>${f.grupos ? esc(f.grupos) + ' · ' : ''}${esc(f.lugar)}</small>
                 <div class="contact-actions" style="margin-top:10px;flex-wrap:wrap">
                     <button class="btn-outline mini" onclick="copiarTextoNotificacion('${encodeURIComponent(msg).replace(/'/g, '%27')}');marcarComoAvisado('${x.k}',${x.i})">Copiar</button>
-                    <a href="${waUrl(telf, msg)}" target="_blank" rel="noopener" class="btn-whatsapp" onclick="marcarComoAvisado('${x.k}',${x.i})">WhatsApp</a>
+                    <a href="${esc(waUrl(telf, msg))}" target="_blank" rel="noopener" class="btn-whatsapp" onclick="marcarComoAvisado('${x.k}',${x.i})">WhatsApp</a>
                     <button class="btn-outline mini conf${f.confirmado ? ' on' : ''}" onclick="toggleConfirmado('${x.k}',${x.i})">Confirmado ✓✓</button>
                     <button class="btn-outline mini" onclick="abrirSelectorConductor('${x.k}',${x.i},'libres')">Sustituir</button>
                 </div></div></div>`;
@@ -2216,7 +2284,7 @@ async function instalarPWA() {
     }
     function renderHistorial() {
         const cont = document.getElementById('listaHistorial'); if (!cont) return;
-        cont.innerHTML = Object.keys(historialAgendas).sort((a, b) => { const [x, y] = a.split('-').map(Number), [p, q] = b.split('-').map(Number); return x - p || y - q; })
+        cont.innerHTML = Object.keys(historialAgendas).filter(k => /^\d{4}-\d{1,2}$/.test(k)).sort((a, b) => { const [x, y] = a.split('-').map(Number), [p, q] = b.split('-').map(Number); return x - p || y - q; })
             .map(k => { const [a, m] = k.split('-').map(Number); return `<div class="group-card"><span>Agenda de ${MESES[m - 1]} ${a}</span> <div><button class="btn-edit-outline" onclick="cargarDeHistorial('${k}')">Cargar</button><button class="btn-danger-outline" onclick="borrarDeHistorial('${k}')">Borrar</button></div></div>`; }).join('');
     }
     function cargarDeHistorial(k) {
@@ -2245,20 +2313,26 @@ async function instalarPWA() {
 
     // === INICIALIZACIÓN DE DATOS ===
     function leerLocal() {
+        if (!_sesionActiva) return {};
         try { return JSON.parse(localStorage.getItem('vdm_data') || '{}') || {}; } catch (e) { return {}; }
     }
     async function leerNube() {
         // Devuelve el objeto 'datos' de la fila id=1, o null si no hay nube / no hay datos / falla la red
-        if (!supabaseClient) return null;
+        if (!supabaseClient || !_sesionActiva) return null;
         try {
             const consulta = supabaseClient.from('estado_app').select('datos').eq('id', 1).maybeSingle();
             const limite = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000));
             const { data, error } = await Promise.race([consulta, limite]);
-            if (error) throw error;
+            if (error) {
+                // Sesión inválida o vencida en el servidor: volver a pedir inicio de sesión
+                if (error.status === 401 || error.status === 403 || /jwt/i.test(error.message || '')) bloquearPorSesionTerminada();
+                throw error;
+            }
             return (data && data.datos && Object.keys(data.datos).length) ? data.datos : null;
-        } catch (e) { console.warn('Supabase no disponible, se usa caché local:', e); return null; }
+        } catch (e) { return null; }
     }
     async function initApp(desdeNube = true) {
+        if (!_sesionActiva) return;
         let local = leerLocal();
         // Si quedaron cambios locales sin subir, tienen prioridad sobre la nube (y se vuelven a enviar)
         let pendiente = false; try { pendiente = localStorage.getItem('vdm_sync_pendiente') === '1'; } catch (e) {}
@@ -2266,6 +2340,7 @@ async function instalarPWA() {
             if (pendiente && Object.keys(local).length) { sincronizarNube(); }
             else {
                 const nube = await leerNube();
+                if (!_sesionActiva) return;
                 if (nube) { local = nube; try { localStorage.setItem('vdm_data', JSON.stringify(nube)); } catch (e) {} }
             }
         }
@@ -2292,6 +2367,7 @@ async function instalarPWA() {
     }
 
     function guardarLocal() { 
+        if (!_sesionActiva) return;
         const payload = payloadCompleto();
         localStorage.setItem('vdm_data', JSON.stringify(payload)); 
         sincronizarNube();
@@ -2300,15 +2376,15 @@ async function instalarPWA() {
     // Subida a Supabase en segundo plano (en cola, para que lleguen en orden)
     let _colaSync = Promise.resolve(), _verSync = 0, _ultAvisoSync = 0;
     function sincronizarNube() {
-        if (!supabaseClient) return;
+        if (!supabaseClient || !_sesionActiva) return;
         const miVer = ++_verSync;
         try { localStorage.setItem('vdm_sync_pendiente', '1'); } catch (e) {}
         _colaSync = _colaSync.then(async () => {
+            if (!_sesionActiva) return;
             const { error } = await supabaseClient.from('estado_app').upsert({ id: 1, datos: payloadCompleto() });
             if (error) throw error;
             if (miVer === _verSync) { try { localStorage.removeItem('vdm_sync_pendiente'); } catch (e) {} }
         }).catch(e => {
-            console.warn('Error al sincronizar con Supabase:', e);
             if (Date.now() - _ultAvisoSync > 10000) { _ultAvisoSync = Date.now(); mostrarToast("Error al sincronizar con la nube", "error"); }
         });
     }
@@ -2527,12 +2603,11 @@ async function instalarPWA() {
             return;
         }
         historialActividad.forEach(act => {
-            cont.innerHTML += `
-                <div class="historial-item">
-                    <strong>${act.accion}</strong>: ${act.detalle}
-                    <small>${act.fecha}</small>
-                </div>
-            `;
+            const item = document.createElement('div'); item.className = 'historial-item';
+            const fuerte = document.createElement('strong'); fuerte.textContent = String(act.accion ?? '');
+            const chico = document.createElement('small'); chico.textContent = String(act.fecha ?? '');
+            item.append(fuerte, document.createTextNode(': ' + String(act.detalle ?? '') + ' '), chico);
+            cont.appendChild(item);
         });
     }
 
@@ -2664,7 +2739,7 @@ async function instalarPWA() {
             const sufijo = rango === 'mes' ? 'mes-completo' : rango.startsWith('q') ? 'quincena-' + rango.slice(1) : 'semana-' + rango.slice(3);
             return { canvas, etiqueta, nombre: `Agenda-${String(mes).padStart(2, '0')}-${anio}-${sufijo}.png` };
         } catch (err) {
-            mostrarToast("Error al generar la imagen: " + err.message, "error"); return null;
+            mostrarToast("No se pudo generar la imagen. Inténtalo de nuevo.", "error"); return null;
         }
     }
     async function previsualizar(rango) {
