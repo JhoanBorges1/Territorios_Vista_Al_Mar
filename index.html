@@ -28,8 +28,8 @@
         --blue-soft: #eaf1fb;
         --red: #b3261e;
         --red-container: #f9dedc;
-        --green: #146c2e;
-        --green-container: #c4eed0;
+        --green: var(--blue);
+        --green-container: var(--blue-container);
         --bg: #f8fafd;
         --surface: #ffffff;
         --surface-2: #f0f4f9;
@@ -39,7 +39,7 @@
         --border-light: #e1e5ea;
         --shadow-soft: 0 1px 2px rgba(31,31,31,.06), 0 2px 8px rgba(31,31,31,.06);
         --shadow-hover: 0 4px 16px rgba(31,31,31,.12);
-        --gradient: linear-gradient(90deg, #4285f4 0%, #9b72cb 50%, #d96570 100%);
+        --gradient: linear-gradient(90deg, #4285f4 0%, #1a73e8 50%, #0b57d0 100%);
         --radius-xl: 28px;
         --radius-lg: 24px;
         --radius-md: 16px;
@@ -58,8 +58,8 @@
             --blue-soft: #1b2535;
             --red: #f2b8b5;
             --red-container: #601410;
-            --green: #6dd58c;
-            --green-container: #0f5223;
+            --green: var(--blue);
+            --green-container: var(--blue-container);
             --bg: #131314;
             --surface: #1e1f20;
             --surface-2: #282a2c;
@@ -79,8 +79,8 @@
         --blue-soft: #1b2535;
         --red: #f2b8b5;
         --red-container: #601410;
-        --green: #6dd58c;
-        --green-container: #0f5223;
+        --green: var(--blue);
+        --green-container: var(--blue-container);
         --bg: #131314;
         --surface: #1e1f20;
         --surface-2: #282a2c;
@@ -367,7 +367,7 @@
     .export-header { margin-bottom: 22px; text-align: center; width: 100%; box-sizing: border-box; }
     .export-header h2 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; margin: 0 0 6px; color: #0b57d0; }
     .export-header p { margin: 0 0 14px; color: #5e5e5e; font-size: .95rem; font-weight: 600; }
-    .export-bar { width: 100%; height: 4px; border-radius: 4px; background: linear-gradient(90deg,#4285f4,#9b72cb,#d96570); }
+    .export-bar { width: 100%; height: 4px; border-radius: 4px; background: linear-gradient(90deg,#4285f4,#1a73e8,#0b57d0); }
 
     .table-responsive { width: 100%; overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border-light); }
     .agenda-table { width: 100%; border-collapse: collapse; font-size: .9rem; font-family: var(--font-body); }
@@ -529,13 +529,11 @@
     .hint.warn{color:var(--red)}
 
     /* ===== PARTE 2 ===== */
-    .warn-ico{display:inline-flex;vertical-align:middle;margin-left:6px;color:#b26a00;cursor:help}
+    .warn-ico{display:inline-flex;vertical-align:middle;margin-left:6px;color:var(--text-sub);cursor:help}
     .warn-ico svg{width:16px;height:16px}
-    :root[data-theme="dark"] .warn-ico{color:#ffb74d}
-    @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warn-ico{color:#ffb74d}}
     .mini.lock.on{background:var(--blue-container);color:var(--blue);border-color:transparent}
     .tag.sug{background:var(--green-container);color:var(--green)}
-    .tag.prio{background:#ffe0b2;color:#8a5300}
+    .tag.prio{background:var(--blue-container);color:var(--blue)}
     .group-card.sugerido{border-color:var(--green)}
     .bloque{margin:0 0 14px}
     .bloque>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 8px;padding:4px 2px;font-family:var(--font-display);font-weight:800;color:var(--text-main)}
@@ -546,9 +544,7 @@
     .bloque>summary span{flex:1}
     .toolbar select{padding:8px 12px;font-size:.82rem;border-radius:100px;width:auto;max-width:190px}
     .hist-estado{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;color:var(--text-sub)}
-    .hist-estado.ok{color:var(--green)}.hist-estado.pend{color:#8a5300}
-    :root[data-theme="dark"] .hist-estado.pend{color:#ffb74d}
-    @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hist-estado.pend{color:#ffb74d}}
+    .hist-estado.ok{color:var(--green)}.hist-estado.pend{color:var(--text-sub)}
     .aus-lista,.extra-lista{display:flex;flex-direction:column;gap:6px;margin:8px 0}
     .aus-item{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem;padding:6px 10px;border-radius:12px;background:var(--surface-3)}
     .aus-add{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -557,7 +553,7 @@
     .hor-row>b{min-width:84px;font-size:.85rem}
     .hor-row input[type=time]{width:auto}
     .eq{display:inline-block;font-size:.72rem;font-weight:700;border-radius:100px;padding:2px 10px}
-    .eq.ok{background:var(--green-container);color:var(--green)}.eq.mid{background:#ffe0b2;color:#8a5300}.eq.bad{background:var(--red-container);color:var(--red)}
+    .eq.ok{background:var(--green-container);color:var(--green)}.eq.mid{background:var(--surface-3);color:var(--text-main)}.eq.bad{background:var(--red-container);color:var(--red)}
     .stats-scroll{max-height:320px;overflow:auto;padding-right:4px}
     .stats-sec{margin-top:14px;padding-top:12px;border-top:1px solid var(--border-light)}
     .stats-sec h4{margin:0 0 6px;font-family:var(--font-display);font-weight:800;font-size:.95rem;color:var(--text-main)}
@@ -576,8 +572,6 @@
     @keyframes rowIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
     .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-weight:800;font-family:var(--font-display);white-space:nowrap}
     .pill i{font-style:normal}
-    .pill.am{background:#fff1d6;color:#8a5300}.pill.pm{background:#e3e5ff;color:#3b3f9e}
-    .pill.ocaso{background:#ffe3cf;color:#9a3d00}
     .pill i svg{display:block}
     /* Config de reuniones */
     .reu-list{display:flex;flex-direction:column;gap:8px}
@@ -602,7 +596,7 @@
     .ayuda-h{font-family:var(--font-display);font-weight:800;font-size:1.05rem;margin:22px 0 10px}
     .ayuda-nota{margin-top:10px;padding:10px 14px;border-radius:14px;background:var(--surface-2);font-size:.84rem}
     .ayuda-leyenda{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .agenda-table td.warn-cond{background:#ffe0b2!important}
+    .agenda-table td.warn-cond{background:#e9eef6!important}
     .agenda-table td.warn-lugar{background:#f9dedc!important;color:#b3261e;font-weight:700}
     .export-app{font-family:var(--font-display);font-weight:700;color:#5e5e5e;font-size:.85rem;margin-bottom:4px}
     .export-note{font-size:.8rem!important;font-weight:500!important;margin:-6px 0 12px!important}
@@ -614,7 +608,7 @@
     .hoy-dia{font-family:var(--font-display);font-weight:700;color:var(--blue);margin-bottom:8px}
     .hoy-row{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:8px}
     .tag{font-size:.68rem;font-weight:700;border-radius:100px;padding:2px 8px;background:var(--surface-3);color:var(--text-sub)}
-    .tag.en{background:var(--green-container);color:var(--green)}.tag.prox{background:var(--blue-container);color:var(--blue)}.tag.pausa{background:#ffe0b2;color:#8a5300}
+    .tag.en{background:var(--text-main);color:var(--bg)}.tag.prox{background:var(--blue-container);color:var(--blue)}.tag.pausa{background:var(--surface-3);color:var(--text-sub)}
     .contact-item.pase{padding:0;overflow:hidden;gap:0;flex-wrap:nowrap;align-items:stretch;animation:rowIn .4s both;animation-delay:calc(var(--i,0)*60ms)}
     .pase-l{background:var(--blue-container);color:var(--blue);padding:14px 16px;min-width:130px;text-align:center;border-right:2px dashed var(--border-light);display:flex;flex-direction:column;justify-content:center;gap:2px}
     .pase-dia{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
@@ -629,7 +623,7 @@
     .dias-mini i.on{background:var(--blue);color:var(--bg)}
     .res-cond summary{cursor:pointer;font-size:.8rem;color:var(--blue);font-weight:600}
     .sem{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
-    .sem.verde{background:#1e8e3e}.sem.amarillo{background:#f9ab00}.sem.rojo{background:#d93025}
+    .sem.verde{background:var(--blue)}.sem.amarillo{background:#9aa0a6}.sem.rojo{background:#d93025}
     .hora-custom{display:flex;gap:8px;margin-bottom:6px}.hora-custom input{max-width:160px}
     .check-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-weight:600}.check-row input{width:auto}
     .gs-t{font-family:var(--font-display);font-weight:700;color:var(--blue);margin:14px 0 6px}
@@ -772,7 +766,7 @@
     .tab-btn { transition: background .3s var(--ease), color .3s var(--ease), box-shadow .3s var(--ease), transform .3s var(--spring); }
     .tab-btn:hover { transform: translateY(-1px); }
     .tab-btn.active {
-        background: linear-gradient(135deg, var(--blue-container), color-mix(in srgb, var(--blue-container) 70%, #9b72cb));
+        background: linear-gradient(135deg, var(--blue-container), color-mix(in srgb, var(--blue-container) 70%, #1a73e8));
         box-shadow: 0 0 0 1px color-mix(in srgb, var(--blue) 22%, transparent), 0 6px 18px -6px color-mix(in srgb, var(--blue) 55%, transparent);
     }
     #badgeAgenda { animation: badgePop 2.4s var(--spring) infinite; box-shadow: 0 0 0 0 rgba(217,48,37,.5); }
@@ -857,13 +851,10 @@
     .tag.en::before { content: ""; position: absolute; left: 6px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: currentColor; }
     @keyframes tagPulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 40%, transparent); } 50% { box-shadow: 0 0 0 5px transparent; } }
     .pill { padding: 5px 13px; font-size: .86rem; box-shadow: inset 0 0 0 1px rgba(0,0,0,.05); }
-    .pill.am { background: linear-gradient(135deg, #fff4dc, #ffe6b3); }
-    .pill.ocaso { background: linear-gradient(135deg, #ffe8d6, #ffcfae); }
-    .pill.pm { background: linear-gradient(135deg, #e8eaff, #d3d8ff); }
     .contact-item.pase { background: var(--surface); box-shadow: var(--shadow-soft); border-radius: 20px; }
     .pase-l {
         position: relative; min-width: 128px;
-        background: linear-gradient(160deg, color-mix(in srgb, var(--blue-container) 92%, #fff), color-mix(in srgb, var(--blue-container) 70%, #9b72cb));
+        background: linear-gradient(160deg, color-mix(in srgb, var(--blue-container) 92%, #fff), color-mix(in srgb, var(--blue-container) 70%, #1a73e8));
         border-right: 2px dashed color-mix(in srgb, var(--blue) 30%, transparent);
     }
     .pase-l::before, .pase-l::after { content: ""; position: absolute; right: -8px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 1px var(--border-light); z-index: 1; }
@@ -894,7 +885,7 @@
         font-family: var(--font-display); font-size: .95rem; font-weight: 700; letter-spacing: -0.01em;
     }
     #areaExportar .export-note { color: #5b6b8c; font-size: .82rem !important; font-weight: 500 !important; font-style: italic; margin: 0 auto 16px !important; max-width: 620px; line-height: 1.45; }
-    #areaExportar .export-bar { height: 3px; border-radius: 3px; background: linear-gradient(90deg, #4285f4 0%, #7c6cf0 50%, #e0606f 100%); }
+    #areaExportar .export-bar { height: 3px; border-radius: 3px; background: linear-gradient(90deg, #4285f4 0%, #1a73e8 50%, #0b57d0 100%); }
     #areaExportar .table-responsive { background: #fff; border: 1px solid #e3e9f4; border-radius: 18px; box-shadow: 0 1px 2px rgba(18,32,66,.04); }
     #areaExportar .agenda-table { border-collapse: separate; border-spacing: 0; color: #14213d; font-size: .92rem; }
     #areaExportar .agenda-table thead th {
@@ -918,7 +909,7 @@
         font-family: var(--font-display); font-weight: 800; letter-spacing: .02em; padding: 15px 12px;
     }
     #areaExportar .agenda-table td.sin-asignar { background: #f9dedc; color: #b3261e; }
-    #areaExportar .agenda-table td.warn-cond { background: #ffe0b2 !important; }
+    #areaExportar .agenda-table td.warn-cond { background: #e9eef6 !important; }
     #areaExportar .agenda-table td.warn-lugar { background: #f9dedc !important; color: #b3261e; }
     #areaExportar .agenda-table tbody tr:last-child td:first-child { border-bottom-left-radius: 17px; }
     #areaExportar .agenda-table tbody tr:last-child td:last-child { border-bottom-right-radius: 17px; }
@@ -984,7 +975,7 @@
     }
     .sync-ico { display: inline-flex; }
     .sync-ico .ico { width: 18px; height: 18px; }
-    .sync-status[data-estado="ok"] { color: var(--green); }
+    .sync-status[data-estado="ok"] { color: var(--text-sub); }
     .sync-status[data-estado="pending"] { color: var(--blue); }
     .sync-status[data-estado="offline"] { color: var(--red); }
     .sync-status[data-estado="pending"] .sync-ico .ico { animation: syncPulse 1.4s ease-in-out infinite; }
@@ -1019,7 +1010,7 @@
     .kpi.kpi-eq > span:first-child { font-size: .8rem; }
     .kpi.kpi-eq .eq { font-size: .85rem; padding: 4px 12px; align-self: flex-start; }
     .cov-track { height: 10px; border-radius: 100px; background: var(--surface-3); overflow: hidden; margin-bottom: 10px; }
-    .cov-track i { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, #4285f4, #9b72cb); transition: width .6s var(--ease); }
+    .cov-track i { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, #4285f4, #1a73e8); transition: width .6s var(--ease); }
     .mes-chart { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; align-items: end; height: 170px; margin-top: 8px; }
     .mes-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; font-size: .68rem; color: var(--text-sub); font-weight: 700; font-variant-numeric: tabular-nums; min-width: 0; }
     .mes-col i { display: block; width: 100%; max-width: 30px; border-radius: 8px 8px 4px 4px; background: var(--blue-container); min-height: 4px; transition: height .5s var(--ease); }
@@ -1035,9 +1026,7 @@
     .rot-scroll { max-height: 420px; }
     .rot-n { min-width: 0; overflow-wrap: anywhere; }
     .tag.eqs.sat { background: var(--red-container); color: var(--red); }
-    .tag.eqs.rez { background: #ffe0b2; color: #8a5300; }
-    :root[data-theme="dark"] .tag.eqs.rez { color: #ffb74d; background: #4a3512; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tag.eqs.rez { color: #ffb74d; background: #4a3512; } }
+    .tag.eqs.rez { background: var(--surface-3); color: var(--text-main); }
     @media (max-width: 520px) { .rot-row { grid-template-columns: minmax(100px, 2fr) 34px 34px minmax(40px, 1fr); gap: 6px; padding: 7px 6px; } .mes-chart { gap: 3px; } }
 
     /* Búsqueda dentro del filtro de Agenda */
@@ -1050,13 +1039,11 @@
     /* Contactar Pro */
     .tag.alerta { font-weight: 800; }
     .tag.alerta.urgente, .tag.alerta.curso { background: var(--red-container); color: var(--red); }
-    .tag.alerta.cercano { background: #ffe0b2; color: #8a5300; }
-    :root[data-theme="dark"] .tag.alerta.cercano { background: #4a3512; color: #ffb74d; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tag.alerta.cercano { background: #4a3512; color: #ffb74d; } }
+    .tag.alerta.cercano { background: var(--blue-container); color: var(--blue); }
     .tag.sin-tel { background: var(--surface-3); color: var(--red); }
     .contact-item.pase.urgente, .contact-item.pase.curso { box-shadow: 0 0 0 2px var(--red), var(--shadow-soft); border-color: var(--red); }
-    .contact-item.pase.cercano { box-shadow: 0 0 0 2px #f9ab00, var(--shadow-soft); border-color: #f9ab00; }
-    .contact-item.pase.urgente .pase-l, .contact-item.pase.curso .pase-l { background: linear-gradient(160deg, var(--red-container), color-mix(in srgb, var(--red-container) 70%, #f9ab00)); color: var(--red); }
+    .contact-item.pase.cercano { box-shadow: 0 0 0 2px var(--blue), var(--shadow-soft); border-color: var(--blue); }
+    .contact-item.pase.urgente .pase-l, .contact-item.pase.curso .pase-l { background: linear-gradient(160deg, var(--red-container), color-mix(in srgb, var(--red-container) 70%, var(--red))); color: var(--red); }
     .contact-item.pase.urgente { animation: rowIn .5s var(--ease) both, alertaPulso 2.2s ease-in-out infinite; animation-delay: calc(var(--i, 0) * 60ms), 0s; }
     @keyframes alertaPulso { 0%, 100% { box-shadow: 0 0 0 2px var(--red), var(--shadow-soft); } 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--red) 28%, transparent), var(--shadow-soft); } }
     #listaContactos.quiet .contact-item.pase { animation: none; }
@@ -1069,7 +1056,115 @@
     .cola-fin b { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); }
     .btn-whatsapp { border: 0; cursor: pointer; font-family: var(--font-display); }
     .cola-avisos button:disabled { opacity: .4; cursor: default; }
-</style>
+
+    /* === PARTE 4: Predicación con Exhibidores === */
+    .menu-item.destacado { background: var(--blue-soft); color: var(--blue); font-weight: 700; border-bottom: 1px solid var(--border-light); }
+    .menu-item.destacado:hover { background: var(--blue-container); }
+    .agenda-table td.choque-exh { background: var(--red-container) !important; color: var(--red) !important; box-shadow: inset 3px 0 0 var(--red); }
+
+    .exh-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .exh-semana { margin: 0 0 22px; border: 1px solid var(--border-light); border-radius: var(--radius-md); overflow: hidden; background: var(--surface); page-break-inside: avoid; break-inside: avoid; }
+    .exh-sem-head { padding: 12px 16px; background: var(--blue-soft); color: var(--blue); font-family: var(--font-display); font-weight: 700; font-size: .82rem; letter-spacing: .06em; border-bottom: 1px solid var(--border-light); }
+    .exh-table { width: 100%; min-width: 680px; border-collapse: collapse; font-size: .88rem; }
+    .exh-table th { text-align: left; padding: 9px 12px; font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-sub); background: var(--surface-2); border-bottom: 1px solid var(--border-light); }
+    .exh-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); vertical-align: middle; color: var(--text-main); }
+    .exh-table tr:last-child td { border-bottom: none; }
+    .exh-dia { width: 92px; border-right: 1px solid var(--border-light); background: var(--surface-2); text-align: center; }
+    .exh-dia b { display: block; font-family: var(--font-display); font-size: .82rem; }
+    .exh-dia span { display: block; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: var(--blue); line-height: 1.1; }
+    .exh-hora { white-space: nowrap; font-weight: 600; color: var(--text-sub); font-size: .82rem; }
+    .exh-lug { font-weight: 600; }
+    .exh-lug small { display: block; color: var(--text-sub); font-weight: 500; font-size: .7rem; margin-top: 2px; }
+    .exh-p { position: relative; }
+    .exh-p.vacio { color: var(--text-sub); font-style: italic; }
+    .exh-p.edit, .exh-lug.edit { cursor: pointer; }
+    .exh-p.edit:hover, .exh-lug.edit:hover { background: var(--blue-soft); }
+    .exh-p.choque { background: var(--red-container) !important; color: var(--red); font-weight: 700; box-shadow: inset 3px 0 0 var(--red); }
+    .exh-p.aviso { background: var(--surface-3); }
+    .exh-ico { display: inline-flex; vertical-align: middle; margin-left: 6px; color: var(--red); cursor: help; }
+    .exh-p.aviso .exh-ico { color: var(--text-sub); }
+    .exh-bloq { text-align: center; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; background: var(--surface-3); color: var(--text-sub); }
+    .exh-pautas { padding: 12px 16px; text-align: center; background: var(--surface-2); border-top: 1px solid var(--border-light); font-size: .76rem; line-height: 1.55; font-weight: 800; color: var(--text-main); }
+    .exh-pautas div:first-child { color: var(--blue); }
+    .exh-card { border: 1px solid var(--border-light); border-radius: var(--radius-md); background: var(--surface); margin-bottom: 14px; overflow: hidden; }
+    .exh-card-head { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 12px 16px; background: var(--blue-soft); }
+    .exh-card-head b { font-family: var(--font-display); color: var(--blue); }
+    .exh-card-head small { color: var(--text-sub); font-weight: 600; }
+    .exh-card-p { padding: 12px 16px; border-top: 1px solid var(--border-light); }
+    .exh-card-p .chk { display: inline-flex; vertical-align: middle; color: var(--text-sub); margin-left: 6px; }
+    .exh-card-p .chk.ok { color: var(--green); }
+    .exh-card-p .contact-actions { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .exh-cfg-t { border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px; }
+    .exh-cfg-dias { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .exh-cfg-dias label { font-size: .7rem; font-weight: 700; text-align: center; color: var(--text-sub); }
+    .exh-cfg-dias select { padding: 6px 2px; text-align: center; }
+    .exh-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .exh-chips .tag { cursor: pointer; }
+    .exh-export { font-family: var(--font-body); color: #1f1f1f; }
+    .exh-exp-head { text-align: center; margin-bottom: 18px; }
+    .exh-exp-head h2 { font-family: var(--font-display); margin: 4px 0; font-size: 1.5rem; }
+    .exh-exp-head p { margin: 0 0 10px; color: #5e5e5e; font-weight: 600; }
+    .exh-export .exh-table { min-width: 0; }
+
+    /* ==========================================================
+       PARTE A — Paleta sobria, "Hoy y mañana", menú y tablas
+       ========================================================== */
+    /* Hoy y mañana: tarjetas en azul sólido (el mismo azul de los botones principales) */
+    :root { --on-blue: #ffffff; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --on-blue: #062e6f; } }
+    :root[data-theme="dark"] { --on-blue: #062e6f; }
+    #cardHoy, #cardHoyExh { background: var(--surface); border-color: var(--border-light); }
+    #tab-exh-agenda .hoy-card { margin-bottom: 20px; }
+    .hoy-row {
+        background: var(--blue); color: var(--on-blue); border: 0; border-radius: 20px; padding: 14px 16px; gap: 14px; align-items: center;
+        box-shadow: var(--shadow-soft);
+    }
+    .hoy-row:hover { background: var(--blue-hover); border-color: transparent; box-shadow: var(--shadow-hover); }
+    .hoy-row strong { color: var(--on-blue); font-weight: 800; }
+    .hoy-row small { color: color-mix(in srgb, var(--on-blue) 86%, transparent); font-weight: 600; }
+    .hoy-row .pill, .hoy-row .pill i, .hoy-row .pill span { color: var(--on-blue) !important; }
+    .hoy-row .tag, .hoy-row .tag.prox { background: color-mix(in srgb, var(--on-blue) 20%, transparent); color: var(--on-blue); }
+    .hoy-row .tag.en { background: var(--on-blue); color: var(--blue); }
+
+    /* Menú: opción de cambio de modo igual al resto */
+    #btnCambiarModo, #btnCambiarModo:hover { color: var(--text-main); font-weight: inherit; border-bottom: 0; }
+    #btnCambiarModo { background: transparent; }
+    #btnCambiarModo:hover { background: var(--surface-2); }
+    #btnCambiarModo span { color: var(--text-main); }
+
+    /* Tablas: negrita en todas las celdas */
+    .agenda-table td, .agenda-table td .hora-plana,
+    #areaExportar .agenda-table td, #areaExportar .agenda-table td .hora-plana,
+    .exh-table td, .exh-table td b, .exh-table td span, .exh-table td small,
+    .exh-export .exh-table td, .exh-export .exh-table td small {
+        font-weight: 700 !important;
+    }
+    /* Columna Territorio (Predicación por grupos): negro sólido */
+    .agenda-table td[data-campo="territorio"]:not(.sin-asignar):not(.warn-lugar) { color: #1f1f1f; }
+    .agenda-table td:nth-child(5):not(.sin-asignar):not(.warn-lugar):not(.evento-cell):not(.hint) { color: #1f1f1f; }
+    #areaExportar .agenda-table td[data-campo="territorio"]:not(.sin-asignar):not(.warn-lugar),
+    #areaExportar .agenda-table td:nth-child(5):not(.sin-asignar):not(.warn-lugar):not(.evento-cell):not(.hint) { color: #000000 !important; }
+
+    /* ==========================================================
+       PARTE B — Búsqueda de Agenda, selector sin disponibles
+       ========================================================== */
+    #filtroBusqBox { margin: 0 0 14px; }
+    #filtroBusqBox .filtro-busq-campo input { padding-right: 46px; }
+    .busq-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; min-width: 34px; min-height: 34px; padding: 0; border-radius: 50%; background: transparent; color: var(--text-sub); display: inline-flex; align-items: center; justify-content: center; }
+    .busq-clear:hover { background: var(--surface-3); color: var(--text-main); box-shadow: none; transform: translateY(-50%); }
+    .sel-vacio { display: flex; align-items: center; gap: 10px; margin: 8px 0; padding: 16px 18px; border-radius: var(--radius-md); background: var(--blue-soft); color: var(--blue); border: 1px solid var(--blue-container); font-family: var(--font-display); font-weight: 700; font-size: .95rem; line-height: 1.35; }
+    .sel-vacio .ico { width: 22px; height: 22px; flex-shrink: 0; }
+
+    /* ==========================================================
+       PARTE C — Vinculación, Resumen de Exhibidores, aislamiento
+       ========================================================== */
+    .vinc-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin: -4px 0 16px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--blue-soft); border: 1px solid var(--blue-container); color: var(--text-main); font-size: .85rem; font-weight: 600; line-height: 1.4; }
+    .vinc-banner .ico { color: var(--blue); flex-shrink: 0; }
+    .vinc-banner .vt { flex: 1 1 220px; min-width: 0; }
+    .vinc-banner .vb { display: flex; gap: 8px; flex-wrap: wrap; }
+    .exh-res-sec .rot-row { grid-template-columns: minmax(130px, 2.2fr) 44px 44px minmax(70px, 2fr); }
+    .exh-res-sec .tag.sat { background: var(--red-container); color: var(--red); margin-left: 6px; }
+    </style>
 <meta name="theme-color" content="#0b57d0">
 <link rel="icon" type="image/png" href="./icono.png">
 <link rel="apple-touch-icon" href="./icono.png">
@@ -1192,6 +1287,10 @@ async function instalarPWA() {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
             </button>
             <div class="menu-dropdown hidden" id="menuDropdown" role="menu">
+                <button type="button" class="menu-item" id="btnCambiarModo" role="menuitem" onclick="alternarModo()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                    <span id="btnCambiarModoTxt">Predicación con Exhibidores</span>
+                </button>
                 <button type="button" class="menu-item" role="menuitem" onclick="abrirConfiguracion()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                     Configuración
@@ -1217,12 +1316,19 @@ async function instalarPWA() {
         </div>
     </header>
 
-    <nav class="tab-bar">
+    <nav class="tab-bar" id="tabBarGrupos">
         <button class="tab-btn active" onclick="switchTab('tab-agenda')">Agenda<span id="badgeAgenda" class="tab-badge hidden"></span></button>
         <button class="tab-btn" onclick="switchTab('tab-personal')">Conductores</button>
         <button class="tab-btn" onclick="switchTab('tab-territorios')">Territorios</button>
         <button class="tab-btn" onclick="switchTab('tab-resumen')">Resumen</button>
         <button class="tab-btn" onclick="switchTab('tab-historial')">Actividad</button>
+    </nav>
+    <nav class="tab-bar hidden" id="tabBarExh">
+        <button class="tab-btn" onclick="switchTab('tab-exh-agenda')">Agenda<span id="badgeExhAgenda" class="tab-badge hidden"></span></button>
+        <button class="tab-btn" onclick="switchTab('tab-exh-part')">Participantes</button>
+        <button class="tab-btn" onclick="switchTab('tab-exh-lug')">Lugares</button>
+        <button class="tab-btn" onclick="switchTab('tab-exh-res')">Resumen</button>
+        <button class="tab-btn" onclick="switchTab('tab-exh-act')">Actividad</button>
     </nav>
     
     <div class="container">
@@ -1274,12 +1380,13 @@ async function instalarPWA() {
                 
                 <div id="resultadoAgenda" class="hidden" style="margin-top: 24px;">
                     <div class="toolbar"><button type="button" class="btn-outline" id="btnUndo" onclick="deshacer()" title="Deshacer (Ctrl+Z)"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Deshacer</span></button><button type="button" class="btn-outline" id="btnRedo" onclick="rehacer()" title="Rehacer (Ctrl+Y)" disabled><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Rehacer</span></button><button type="button" class="btn-outline" id="btnLock" onclick="toggleLectura()"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Editando</span></button><select id="filtroConductor" onchange="aplicarFiltrosAgenda()" title="Filtrar por conductor" aria-label="Filtrar por conductor"><option value="">Conductor: Todos</option></select><select id="filtroTerritorio" onchange="aplicarFiltrosAgenda()" title="Filtrar por territorio" aria-label="Filtrar por territorio"><option value="">Territorio: Todos</option></select></div>
-                    <div class="filtro-busq hidden" id="filtroBusqBox">
+                    <div class="filtro-busq" id="filtroBusqBox">
                         <div class="filtro-busq-campo">
                             <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-                            <input type="search" id="filtroBusqueda" placeholder="Buscar en las asignaciones: conductor, territorio, lugar, día o grupo..." oninput="aplicarBusquedaAgenda(this.value)" autocomplete="off" aria-label="Buscar en las asignaciones filtradas">
+                            <input type="search" id="filtroBusqueda" placeholder="Buscar en la agenda: conductor, territorio, lugar, día o grupo..." oninput="aplicarBusquedaAgenda(this.value)" autocomplete="off" aria-label="Buscar en la agenda">
+                            <button type="button" class="busq-clear hidden" id="filtroBusqClear" onclick="limpiarBusquedaAgenda()" title="Limpiar búsqueda" aria-label="Limpiar búsqueda"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
                         </div>
-                        <div class="filtro-busq-info"><span id="filtroBusqInfo"></span><button type="button" class="btn-outline mini" onclick="limpiarFiltrosAgenda(true)">Limpiar filtro</button></div>
+                        <div class="filtro-busq-info"><span id="filtroBusqInfo"></span><button type="button" class="btn-outline mini hidden" id="filtroBusqLimpiarTodo" onclick="limpiarFiltrosAgenda(true)">Limpiar filtros</button></div>
                     </div>
                     <div class="table-responsive">
                         <div id="areaExportar">
@@ -1357,6 +1464,102 @@ async function instalarPWA() {
                 </div>
             </section>
         </div>
+
+        <!-- === MODO EXHIBIDORES === -->
+        <div id="tab-exh-agenda" class="tab-content">
+            <section class="module-section hoy-card hidden" id="cardHoyExh"></section>
+            <section class="module-section">
+                <div class="module-title">Generación de Exhibidores</div>
+                <div class="btn-vertical-group">
+                    <div class="input-group"><label>Mes y año</label><div style="display:grid;grid-template-columns:2fr 1fr;gap:10px">
+                        <select id="exhMes" onchange="exhRenderTodo()"><option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option><option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option><option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select><select id="exhAnio" onchange="exhRenderTodo()"></select></div></div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap">
+                        <button type="button" class="btn-primary" onclick="exhGenerar()">Generar Todo el Mes</button>
+                        <button type="button" class="btn-outline" onclick="exhGuardarHist()">Guardar copia</button>
+                        <button type="button" class="btn-outline" onclick="exhCargarHist()">Restaurar copia</button>
+                    </div>
+                </div>
+                <div id="exhResultado" class="hidden" style="margin-top:24px">
+                    <div class="filtro-busq">
+                        <div class="filtro-busq-campo">
+                            <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+                            <input type="search" id="exhBusca" placeholder="Buscar participante, lugar, día..." oninput="exhRenderAgenda()" autocomplete="off" aria-label="Buscar en la agenda de exhibidores">
+                        </div>
+                        <div class="filtro-busq-info"><span id="exhBuscaInfo"></span><button type="button" class="btn-outline mini" onclick="exhLimpiarBusca()">Limpiar</button></div>
+                    </div>
+                    <div class="exh-scroll"><div id="exhSemanas"></div></div>
+                    <div style="margin-top:20px;display:flex;gap:12px;align-items:center;border-top:1px solid var(--border-light);padding-top:20px;flex-wrap:wrap">
+                        <button type="button" class="btn-outline" onclick="exhAbrirDescarga()" style="width:auto">Descargar Imagen</button>
+                        <button type="button" class="btn-outline" onclick="exhAbrirResumen()" style="width:auto">Copiar Resumen Semanal</button>
+                        <button type="button" class="btn-outline" onclick="exhPDF()" style="width:auto">Exportar PDF</button>
+                        <button type="button" class="btn-outline" onclick="exhCSV()" style="width:auto">Exportar Excel (.csv)</button>
+                    </div>
+                </div>
+                <p id="exhVacio" class="hint" style="margin-top:16px">Aún no hay agenda de exhibidores para este mes. Registra participantes y lugares y pulsa «Generar Todo el Mes».</p>
+            </section>
+            <section class="module-section">
+                <div class="module-title">Contactar</div>
+                <p style="font-size:.9rem;color:var(--text-sub);margin-bottom:12px;font-weight:500">Próximas asignaciones (2 días):</p>
+                <div id="exhContactos"></div>
+            </section>
+        </div>
+
+        <div id="tab-exh-part" class="tab-content">
+            <section class="module-section">
+                <div class="module-title">Participantes de Exhibidores</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+                    <button type="button" class="btn-primary" onclick="exhAbrirPart(-1)" style="width:auto">Añadir participante</button>
+                </div>
+                <input type="search" id="exhBuscaPart" placeholder="Buscar participante..." oninput="exhRenderPart()" style="margin-bottom:12px">
+                <div id="exhListaPart"></div>
+            </section>
+        </div>
+
+        <div id="tab-exh-lug" class="tab-content">
+            <section class="module-section">
+                <div class="module-title">Lugares de Exhibidores</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+                    <button type="button" class="btn-primary" onclick="exhAbrirLug(-1)" style="width:auto">Añadir lugar</button>
+                </div>
+                <div id="exhListaLug"></div>
+            </section>
+        </div>
+
+        <div id="tab-exh-res" class="tab-content">
+            <section class="module-section">
+                <div class="module-title">Resumen de Exhibidores</div>
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:6px">
+                    <div class="input-group" style="margin-bottom:0"><label for="exhResMes">Mes</label>
+                        <select id="exhResMes" onchange="exhRenderRes()">
+                            <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                            <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                            <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                            <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                        </select></div>
+                    <div class="input-group" style="margin-bottom:0"><label for="exhResAnio">Año</label><select id="exhResAnio" onchange="exhRenderRes()"></select></div>
+                </div>
+                <p class="hint" id="exhResEstado"></p>
+                <div id="exhResKpis"></div>
+            </section>
+            <section class="module-section exh-res-sec">
+                <div class="module-title">Participación por hermano/hermana</div>
+                <p class="hint" style="margin-bottom:8px">Veces que cada persona está asignada en el mes y en el año, para verificar que el reparto sea equilibrado.</p>
+                <div id="exhResPart"></div>
+            </section>
+            <section class="module-section exh-res-sec">
+                <div class="module-title">Uso de lugares</div>
+                <p class="hint" style="margin-bottom:8px">Veces que cada lugar de exhibidor se ha asignado en el mes y en el año.</p>
+                <div id="exhResLug"></div>
+            </section>
+        </div>
+
+        <div id="tab-exh-act" class="tab-content">
+            <section class="module-section">
+                <div class="module-title">Historial de Cambios (Exhibidores)</div>
+                <div id="exhListaAct"></div>
+                <div style="margin-top:16px"><button type="button" class="btn-danger-outline" onclick="exhBorrarAct()" style="width:auto">Borrar Historial</button></div>
+            </section>
+        </div>
     </div> 
 </div>
 
@@ -1367,10 +1570,11 @@ async function instalarPWA() {
         <form id="formConductor">
             <input type="hidden" id="editIndexConductor">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-                <div class="input-group"><label>Nombre</label><input type="text" id="cNombre" placeholder="Nombre" required></div>
-                <div class="input-group"><label>Apellido</label><input type="text" id="cApellido" placeholder="Apellido" required></div>
+                <div class="input-group"><label>Nombre</label><input type="text" id="cNombre" placeholder="Nombre" oninput="vincRefrescarBanner('C')" required></div>
+                <div class="input-group"><label>Apellido</label><input type="text" id="cApellido" placeholder="Apellido" oninput="vincRefrescarBanner('C')" required></div>
             </div>
-            <div class="input-group"><label>Teléfono</label><input type="tel" id="cTelefono" value="+58 " required onblur="limpiarTelInput()" onpaste="setTimeout(limpiarTelInput,0)"></div>
+            <div class="input-group"><label>Teléfono</label><input type="tel" id="cTelefono" value="+58 " required oninput="vincRefrescarBanner('C')" onblur="limpiarTelInput()" onpaste="setTimeout(limpiarTelInput,0)"></div>
+            <div id="vincBannerC" class="vinc-banner hidden" role="status"></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;"><div class="input-group"><label>Estado</label><select id="cEstado"><option value="activo">Activo</option><option value="pausa">En Pausa</option></select></div><div class="input-group"><label>Género (opcional)</label><select id="cGenero"><option value="">Automático</option><option value="M">Masculino</option><option value="F">Femenino</option></select></div></div><div class="input-group"><label>Rol / Experiencia (prioridad en sábados y domingos)</label><select id="cRol" onchange="syncRol(this.value)"><option value="">Publicador</option><option value="experimentado">Publicador experimentado</option><option value="siervo">Siervo ministerial</option><option value="anciano">Anciano</option></select></div><div class="input-group"><label>¿Es Anciano?</label><select id="cEsAnciano" onchange="syncAnciano(this.value)"><option value="no">No</option><option value="si">Sí</option></select></div>
             <div id="grupoSugerido" class="input-group hidden"><label>Asignar a Grupo:</label><select id="cGrupoAsignado"><option value="1">Grupo 1</option><option value="2">Grupo 2</option><option value="3">Grupo 3</option><option value="4">Grupo 4</option><option value="5">Grupo 5</option><option value="6">Grupo 6</option><option value="7">Grupo 7</option><option value="8">Grupo 8</option></select></div>
             
@@ -1643,7 +1847,7 @@ async function instalarPWA() {
                 <ul>
                     <li><b>Copiar</b> el mensaje de aviso, o abrir <b>WhatsApp</b> con el mensaje ya escrito (si el conductor no tiene un teléfono válido, la app te avisa y no abre nada).</li>
                     <li>Filtrar con los chips <b>Todos, Por avisar, Por confirmar y Confirmados</b>, y usar la <b>Cola de avisos</b> para avanzar uno a uno por los pendientes.</li>
-                    <li>Los turnos sin confirmar que están por empezar se resaltan en color (naranja si faltan pocas horas, rojo si faltan menos de 3 horas o ya empezaron).</li>
+                    <li>Los turnos sin confirmar que están por empezar se resaltan en color (azul si faltan pocas horas, rojo si faltan menos de 3 horas o ya empezaron).</li>
                     <li>Marcar <b>Confirmado</b> cuando el hermano responda que sí asistirá.</li>
                     <li><b>Sustituir</b> si el conductor no puede.</li>
                 </ul>
@@ -1736,6 +1940,9 @@ async function instalarPWA() {
             <label>Zoom de la página: <span id="zoomValor">100%</span></label>
             <input type="range" id="zoomRange" min="70" max="160" step="5" value="100" oninput="setZoom(this.value)">
             <span class="hint">Solo cambia cómo ves la app. La imagen descargada mantiene siempre su tamaño.</span></div><div class="input-group"><label>Título principal</label><input type="text" id="cfgTitulo" oninput="guardarConfig()"></div><div class="input-group"><label>Subtítulo o nota fija (también va en PNG y PDF)</label><input type="text" id="cfgSub" oninput="guardarConfig()"></div><div class="input-group"><label>Máximo de turnos al mes por conductor</label><input type="number" id="cfgMax" min="1" max="31" oninput="guardarConfig()"></div><div class="input-group"><label>Reuniones de congregación (en ese horario no se programa predicación)</label><div class="reu-list" id="cfgReuniones" onchange="guardarConfig()"></div><span class="hint">Elige el día y si la reunión es en la mañana o en la tarde. Por defecto: miércoles en la tarde y domingo en la mañana. El domingo la reunión es a las 9:00 AM y, aun así, siempre se programa el grupo de predicación de 11:00 AM a 12:00 PM.</span></div><div class="input-group"><label>Horarios base por día</label><div id="cfgHorarios" onchange="guardarConfig()"></div><span class="hint">Se usan al generar el mes. Reglas fijas: último sábado 09:00 AM, viernes 06:30 PM (Telegram) y domingo 11:00 AM siempre se programan.</span><div style="margin-top:8px"><button type="button" class="btn-outline" onclick="restablecerHorariosBase()">Restablecer horarios base</button></div></div><div class="input-group"><label>Enlace de WhatsApp</label><select id="cfgWaModo" onchange="guardarConfig()"><option value="auto">Automático (según dispositivo)</option><option value="web">WhatsApp Web (PC)</option><option value="app">App Móvil</option></select></div>
+        <div class="input-group"><label>Horarios de Exhibidores</label>
+            <span class="hint">Escribe el horario de cada turno y cuántos puntos de exhibidor salen cada día (cada punto = 1 exhibidor con 3 participantes). 0 = no se programa.</span>
+            <div id="cfgExhBox"></div></div>
         <div style="display:none"></div>
         <div class="modal-footer">
             <button type="button" class="btn-outline" onclick="setZoom(100)">Restablecer zoom</button>
@@ -1787,6 +1994,65 @@ async function instalarPWA() {
         <div id="gsRes" style="margin-top:8px"></div>
         <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalBuscar')">Cerrar</button></div>
     </div></div>
+
+
+<div id="modalExhPart" class="modal"><div class="modal-content">
+    <h2 class="module-title" id="epTitulo">Nuevo participante</h2>
+    <form id="formExhPart" onsubmit="exhGuardarPart(event)">
+        <input type="hidden" id="epIdx" value="-1">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="input-group"><label>Nombre</label><input type="text" id="epNombre" oninput="vincRefrescarBanner('P')" required></div>
+            <div class="input-group"><label>Apellido</label><input type="text" id="epApellido" oninput="vincRefrescarBanner('P')" required></div>
+        </div>
+        <div class="input-group"><label>Teléfono</label><input type="tel" id="epTel" value="+58 " required oninput="vincRefrescarBanner('P')" onblur="this.value=limpiarTelefono(this.value)||'+58 '"></div>
+        <div id="vincBannerP" class="vinc-banner hidden" role="status"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="input-group"><label>Género</label><select id="epGenero"><option value="M">Hermano (M)</option><option value="F">Hermana (F)</option></select></div>
+            <div class="input-group"><label>Estado</label><select id="epEstado"><option value="activo">Activo</option><option value="pausa">En Pausa</option></select></div>
+        </div>
+        <div class="input-group"><label>Disponibilidad semanal</label><div id="epDisp" class="day-row-container"></div></div>
+        <div class="input-group"><label>Fechas específicas disponibles</label>
+            <div style="display:flex;gap:8px"><input type="date" id="epFechaDisp"><button type="button" class="btn-outline" onclick="exhAddFecha('extra')">Añadir</button></div>
+            <div class="exh-chips" id="epChipsDisp"></div></div>
+        <div class="input-group"><label>Fechas específicas NO disponibles</label>
+            <div style="display:flex;gap:8px"><input type="date" id="epFechaNo"><button type="button" class="btn-outline" onclick="exhAddFecha('no')">Añadir</button></div>
+            <div class="exh-chips" id="epChipsNo"></div></div>
+        <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalExhPart')">Cancelar</button><button type="submit" class="btn-primary">Guardar</button></div>
+    </form>
+</div></div>
+
+<div id="modalExhLug" class="modal"><div class="modal-content">
+    <h2 class="module-title" id="elTitulo">Nuevo lugar</h2>
+    <form id="formExhLug" onsubmit="exhGuardarLug(event)">
+        <input type="hidden" id="elIdx" value="-1">
+        <div class="input-group"><label>Nombre del lugar</label><input type="text" id="elNombre" placeholder="Ej: La Recta" required></div>
+        <p class="hint" style="margin:0 0 14px">Cada punto funciona siempre con 1 exhibidor por turno (con 3 participantes).</p>
+        <div class="input-group"><label>Días y horarios permitidos</label><div id="elDias" class="day-row-container"></div></div>
+        <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalExhLug')">Cancelar</button><button type="submit" class="btn-primary">Guardar</button></div>
+    </form>
+</div></div>
+
+<div id="modalExhSel" class="modal"><div class="modal-content">
+    <h2 class="module-title" id="exhSelTitulo">Seleccionar</h2>
+    <p class="hint" id="exhSelSub" style="margin:-8px 0 12px"></p>
+    <input type="search" id="exhSelBusca" placeholder="Buscar..." oninput="exhRenderSel()" style="margin-bottom:12px">
+    <div id="exhSelLista"></div>
+    <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalExhSel')">Cerrar</button></div>
+</div></div>
+
+<div id="modalExhDescarga" class="modal"><div class="modal-content">
+    <h2 class="module-title">Descargar imagen</h2>
+    <p style="font-size:.9rem;color:var(--text-sub);margin:-8px 0 16px;font-weight:500">Elige qué parte de la agenda quieres guardar:</p>
+    <div id="exhOpcDescarga" class="download-options"></div>
+    <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalExhDescarga')">Cancelar</button></div>
+</div></div>
+
+<div id="modalExhResumen" class="modal"><div class="modal-content">
+    <h2 class="module-title">Copiar resumen semanal</h2>
+    <p class="hint" style="margin:-8px 0 16px">Elige la semana para copiarla en formato WhatsApp:</p>
+    <div id="exhOpcResumen" class="download-options"></div>
+    <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalExhResumen')">Cancelar</button></div>
+</div></div>
 
 <div id="modalHistorial" class="modal">
     <div class="modal-content">
@@ -2044,7 +2310,7 @@ async function instalarPWA() {
 
     function abrirConfiguracion() {
         cerrarMenu();
-        initPreferencias(); poblarConfigUI();
+        initPreferencias(); poblarConfigUI(); exhPoblarCfg();
         openModal('modalConfig');
     }
 
@@ -2226,12 +2492,12 @@ async function instalarPWA() {
         return o;
     }
 
-    function payloadCompleto() { return { conductores, territorios, historial: historialAgendas, actividad: historialActividad, borradores: agendasMaestras, excepciones, config }; }
+    function payloadCompleto() { return { conductores, territorios, historial: historialAgendas, actividad: historialActividad, borradores: agendasMaestras, excepciones, config, exhibidores: exh }; }
     function aplicarPayload(p) {
         p = sanearDatos(p || {});
         conductores = p.conductores || []; territorios = p.territorios || [];
         historialAgendas = migrarClaves(p.historial); agendasMaestras = migrarClaves(p.borradores); excepciones = migrarClaves(p.excepciones);
-        historialActividad = p.actividad || []; config = Object.assign(defConfig(), p.config || {}); config.reuniones = migrarReuniones(config.reuniones);
+        historialActividad = p.actividad || []; exh = exhNormalizar(p.exhibidores); config = Object.assign(defConfig(), p.config || {}); config.reuniones = migrarReuniones(config.reuniones);
         migrarGruposLegacy(p.grupos);
         guardarLocal(); initApp(false);
     }
@@ -2404,13 +2670,19 @@ async function instalarPWA() {
         const q = document.getElementById('selBusca').value, cnt = {}, iso = isoFila(k, f); R.forEach(x => { if (!x.evento) cnt[x.conductor] = (cnt[x.conductor] || 0) + 1; });
         const sug = esVacio(f.conductor, 'Sin Asignar') ? sugerirConductor(k, f) : null;
         let L = conductores.map((c, i) => ({ c, i, s: scoreFuzzy(q, nomC(c) + ' ' + (c.telefono || '')), libre: libreEn(c, k, f), sug: !!sug && sug.i === i }));
-        if (modo === 'libres') L = L.filter(x => x.libre);
+        let sinDisp = false;
+        if (modo === 'libres') {
+            const actual = norm(f.conductor || '').trim();
+            // Nunca ofrecer al conductor que ya está asignado en este turno
+            L = L.filter(x => x.libre && (!actual || norm(nomC(x.c)).trim() !== actual));
+            sinDisp = !L.length;
+        }
         if (q.trim()) { const lim = Math.max(1, Math.floor(norm(q).trim().length / 3)); L = L.filter(x => x.s <= lim); }
         L.sort((a, b) => (b.sug ? 1 : 0) - (a.sug ? 1 : 0) || a.s - b.s || (cnt[nomC(a.c)] || 0) - (cnt[nomC(b.c)] || 0) || nomC(a.c).localeCompare(nomC(b.c)));
-        const estado = x => { if (x.libre) return 'Libre en este horario'; if (x.c.estado === 'pausa') return 'En pausa'; const au = enAusencia(x.c, iso); return au ? 'Ausente en esa fecha' + (au.motivo ? ' (' + esc(au.motivo) + ')' : '') : 'No disponible / ocupado'; };
+        const estado = x => { if (x.libre) return 'Libre en este horario'; if (x.c.estado === 'pausa') return 'En pausa'; if (exhEnExh(nomC(x.c), exhTel(x.c.telefono), iso)) return 'Ya tiene turno de exhibidor ese día'; const au = enAusencia(x.c, iso); return au ? 'Ausente en esa fecha' + (au.motivo ? ' (' + esc(au.motivo) + ')' : '') : 'No disponible / ocupado'; };
         const card = x => `<div class="group-card${x.sug ? ' sugerido' : ''}"><div><strong>${esc(nomC(x.c))}</strong>${x.sug ? ' <span class="tag sug">Sugerido</span>' : ''}${x.c.estado === 'pausa' ? ' <span class="tag pausa">En pausa</span>' : ''}<br><small>${estado(x)} · ${cnt[nomC(x.c)] || 0} turno(s) este mes${x.sug ? ' · opción más equilibrada' : ''}</small></div><div><button class="btn-edit-outline" onclick="asignarConductor(${x.i},false)">Asignar</button><button type="button" class="btn-whatsapp" title="${telefonoValido(x.c) ? 'Asignar y abrir WhatsApp' : 'Sin teléfono válido'}" onclick="asignarConductor(${x.i},true)">+ WhatsApp</button></div></div>`;
         const sin = `<div class="group-card"><div><strong>Sin Asignar</strong></div><button class="btn-edit-outline" onclick="asignarConductor(-1,false)">Asignar</button></div>`;
-        document.getElementById('selLista').innerHTML = L.filter(x => x.sug).map(card).join('') + (modo === 'todos' && !q.trim() ? sin : '') + (L.filter(x => !x.sug).map(card).join('') || (L.some(x => x.sug) ? '' : '<p class="hint">Sin conductores que coincidan.</p>'));
+        document.getElementById('selLista').innerHTML = L.filter(x => x.sug).map(card).join('') + (modo === 'todos' && !q.trim() ? sin : '') + (L.filter(x => !x.sug).map(card).join('') || (L.some(x => x.sug) ? '' : (sinDisp ? `<div class="sel-vacio" role="alert">${IC.aviso}<span>No hay conductores disponibles para ese horario</span></div>` : '<p class="hint">Sin conductores que coincidan.</p>')));
     }
     function asignarConductor(ci, wa) {
         const { k, idx } = selCtx, R = agendasMaestras[k], f = R[idx], c = ci >= 0 ? conductores[ci] : null; pushUndo(k);
@@ -2551,7 +2823,7 @@ async function instalarPWA() {
             const circ = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'].map((x, j) => `<i class="${on(x) ? 'on' : ''}" title="${DIAS_LARGOS[x]}">${'LMMJVSD'[j]}</i>`).join('');
             const r = R3[nomC(c)] || { n: 0, d: {} }, top = Object.entries(r.d).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([x]) => DIAS_LARGOS[x]).join(', ') || '—';
             const rol = c.esAnciano ? 'Anciano' : (ROLES[c.rol] || '');
-            html += `<div class="group-card"><div><strong>${esc(c.nombre)} ${esc(c.apellido)}</strong>${c.estado === 'pausa' ? ' <span class="tag pausa">En pausa</span>' : ''}${rol ? `<br><small>${rol}</small>` : ''}${(() => { const n = ausenciasDe(c).filter(a => a.hasta >= hoyIso()).length; return n ? `<br><small>Ausencias próximas: ${n}</small>` : ''; })()}<div class="dias-mini">${circ}</div><details class="res-cond"><summary>Resumen</summary><small>Últimos 3 meses: <b>${r.n}</b> turno(s) dirigidos<br>Días más frecuentes: ${top}</small></details></div><div class="row-actions"><button type="button" class="btn-edit-outline icon-btn" title="${c.estado === 'pausa' ? 'Activar' : 'Pausar'}" aria-label="${c.estado === 'pausa' ? 'Activar conductor' : 'Pausar conductor'}" onclick="alternarEstado(${i})">${c.estado === 'pausa' ? IC.play : IC.pausa}</button><button type="button" class="btn-edit-outline icon-btn" title="Editar" aria-label="Editar conductor" onclick="editarConductor(${i})">${IC.edit}</button><button type="button" class="btn-danger-outline icon-btn" title="Eliminar" aria-label="Eliminar conductor" onclick="eliminarConductor(${i})">${IC.trash}</button></div></div>`;
+            html += `<div class="group-card"><div><strong>${esc(c.nombre)} ${esc(c.apellido)}</strong>${c.vinc ? ' <span class="tag prox" title="Vinculado con un participante de Exhibidores">Vinculado</span>' : ''}${c.estado === 'pausa' ? ' <span class="tag pausa">En pausa</span>' : ''}${rol ? `<br><small>${rol}</small>` : ''}${(() => { const n = ausenciasDe(c).filter(a => a.hasta >= hoyIso()).length; return n ? `<br><small>Ausencias próximas: ${n}</small>` : ''; })()}<div class="dias-mini">${circ}</div><details class="res-cond"><summary>Resumen</summary><small>Últimos 3 meses: <b>${r.n}</b> turno(s) dirigidos<br>Días más frecuentes: ${top}</small></details></div><div class="row-actions"><button type="button" class="btn-edit-outline icon-btn" title="${c.estado === 'pausa' ? 'Activar' : 'Pausar'}" aria-label="${c.estado === 'pausa' ? 'Activar conductor' : 'Pausar conductor'}" onclick="alternarEstado(${i})">${c.estado === 'pausa' ? IC.play : IC.pausa}</button><button type="button" class="btn-edit-outline icon-btn" title="Editar" aria-label="Editar conductor" onclick="editarConductor(${i})">${IC.edit}</button><button type="button" class="btn-danger-outline icon-btn" title="Eliminar" aria-label="Eliminar conductor" onclick="eliminarConductor(${i})">${IC.trash}</button></div></div>`;
         });
         cont.innerHTML = html || '<p class="hint">Sin resultados.</p>';
     }
@@ -2569,10 +2841,8 @@ async function instalarPWA() {
     // Subterritorio: marcado como pequeño o sin número. Tiene su propia categoría y se ordena por número dentro de su bloque.
     const esSubterritorio = t => !!t.pequeno || t.numero === '' || t.numero == null;
     function bloqueDeTerritorio(t) {
-        const sub = esSubterritorio(t), p = partesNum(t.numero);
-        if (!p) return sub ? { id: 'sub-sin', ini: 2e9, titulo: 'Subterritorios' } : { id: 'sin', ini: 1e9, titulo: 'Territorios sin número' };
-        const ini = p.b <= 0 ? 0 : Math.floor((p.b - 1) / 10) * 10 + 1, rango = p.b <= 0 ? 'Bloque 0' : `Bloque ${ini} – ${ini + 9}`;
-        return sub ? { id: 'sub-' + ini, ini: 1e6 + ini, titulo: `Subterritorios · ${rango}` } : { id: String(ini), ini, titulo: rango };
+        // Dos secciones: "Territorios" y "Subterritorios". El orden numérico lo da el sort previo (cmpNumTerr).
+        return esSubterritorio(t) ? { id: 'sub', ini: 1e6, titulo: 'Subterritorios' } : { id: 'terr', ini: 0, titulo: 'Territorios' };
     }
     function toggleBloque(id, abierto) { if (abierto) bloquesCerrados.delete(id); else bloquesCerrados.add(id); }
     function renderListaTerritorios() {
@@ -2646,6 +2916,7 @@ async function instalarPWA() {
     function extraDisp(c, iso) { return (c.fechasExtraDisp || []).includes(iso) || c.fechaDisponible === iso; }
     function condDispo(c, dia, hora, iso) {
         if (c.estado === 'pausa') return false;
+        if (exhChoqueConductor(c, iso)) return false;   // Parte 4: ya tiene exhibidor ese día
         if (extraDisp(c, iso)) return true;
         return conductorDisponible(c, dia, bloqueDe(hora)) && !enAusencia(c, iso);
     }
@@ -2660,6 +2931,7 @@ async function instalarPWA() {
             if (au && !extraDisp(c, iso)) out.push(`Ausente en esa fecha${au.motivo ? ' (' + au.motivo + ')' : ''}: ${fCorta(au.desde)}${au.hasta !== au.desde ? ' – ' + fCorta(au.hasta) : ''}`);
             else if (c.estado !== 'pausa' && !extraDisp(c, iso) && !conductorDisponible(c, f.diaSemana, bloqueDe(f.hora))) out.push(`No tiene marcada disponibilidad el ${DIAS_LARGOS[f.diaSemana] || f.diaSemana} en la ${bloqueDe(f.hora) === 'AM' ? 'mañana' : 'tarde'}`);
         }
+        { const ce = exhEnExh(f.conductor, exhTelDeNombre(f.conductor), iso); if (ce) out.push(`Choque: ${f.conductor} ya tiene turno de exhibidor el ${DIAS_LARGOS[f.diaSemana]} ${f.diaMes} (${ce.f.hora}, ${ce.f.lugar || 'lugar por definir'})`); }
         return out;
     }
     async function generarNuevaAgenda() {
@@ -2736,7 +3008,7 @@ async function instalarPWA() {
 
     // --- Tabla ---
     function refrescarTabla() { const R = agendasMaestras[agendaKey()]; if (R) renderAgenda(R, nombreMesSel()); }
-    function refrescarDerivados() { renderEstadisticas(); renderContactos(); renderListaTerritorios(); renderHoy(); actualizarBadge(); updateUndoUI(); actualizarEstadoHistorial(); }
+    function refrescarDerivados() { exhRefrescarChoques(); renderEstadisticas(); renderContactos(); renderListaTerritorios(); renderHoy(); actualizarBadge(); updateUndoUI(); actualizarEstadoHistorial(); }
     function renderAgenda(datos, nombreMes) {
         document.getElementById('fechaActualDisplay').innerText = `${nombreMes} ${anioSel()}`;
         const cuerpo = document.getElementById('tablaCuerpoAgenda'); if (!cuerpo) return;
@@ -2758,7 +3030,7 @@ async function instalarPWA() {
             html += `<tr data-diames="${esc(f.diaMes)}" data-idx="${i}" style="--i:${Math.min(i, 40)}"${cls}>${cab}${cuerpoFila}${acc}</tr>`;
             ultimoDia = f.diaMes;
         });
-        cuerpo.innerHTML = html || `<tr><td colspan="8" class="hint" style="text-align:center;padding:18px">Ningún turno coincide con el filtro.</td></tr>`;
+        cuerpo.innerHTML = html || `<tr><td colspan="8" class="hint" style="text-align:center;padding:18px">Ningún turno coincide con la búsqueda o el filtro.</td></tr>`;
         validarTabla(); refrescarDerivados();
     }
     function validarTabla() {
@@ -2773,6 +3045,7 @@ async function instalarPWA() {
             const c = tr.querySelector('td[data-campo="conductor"]'), l = tr.querySelector('td[data-campo="lugar"]');
             if (c) {
                 c.classList.toggle('warn-cond', cc[kh(f) + norm(f.conductor)] > 1);
+                c.classList.toggle('choque-exh', !esVacio(f.conductor, 'Sin Asignar') && !!exhEnExh(f.conductor, exhTelDeNombre(f.conductor), isoFila(k, f)));
                 c.querySelectorAll(':scope > .warn-ico').forEach(e => e.remove());
                 const av = avisosFila(k, R, f);
                 if (av.length) {
@@ -2796,7 +3069,8 @@ async function instalarPWA() {
     const claveTerrFila = f => { const n = numTerr(f); return n != null ? n : 'T:' + f.territorio; };
     function textoFila(f) { return norm(`${DIAS_LARGOS[f.diaSemana] || ''} ${f.diaSemana} ${f.diaMes} ${f.hora} ${f.conductor} ${f.territorio} ${f.lugar} ${f.grupos}`); }
     function coincideFiltro(f) {
-        if (!filtroAg.c && !filtroAg.t) return true;
+        const hayQ = !!norm(filtroAg.q || '').trim();
+        if (!filtroAg.c && !filtroAg.t && !hayQ) return true;
         if (f.evento) return false;
         const ws = norm(filtroAg.q || '').trim().split(/\s+/).filter(Boolean);
         if (ws.length) { const tx = textoFila(f); if (!ws.every(w => tx.includes(w))) return false; }
@@ -2816,25 +3090,28 @@ async function instalarPWA() {
         sc.value = filtroAg.c; st.value = filtroAg.t;
         actualizarBusquedaAgendaUI(datos);
     }
-    // Barra de búsqueda: aparece solo mientras hay un filtro de conductor o territorio activo
+    // Barra de búsqueda: siempre visible en la Agenda. Filtra solo la vista; los datos guardados no se modifican.
     function actualizarBusquedaAgendaUI(datos) {
         const box = document.getElementById('filtroBusqBox'); if (!box) return;
-        const activo = !!(filtroAg.c || filtroAg.t);
-        box.classList.toggle('hidden', !activo);
+        box.classList.remove('hidden');
         const inp = document.getElementById('filtroBusqueda');
-        if (!activo) { filtroAg.q = ''; if (inp) inp.value = ''; return; }
         if (inp && inp.value !== (filtroAg.q || '')) inp.value = filtroAg.q || '';
+        const q = (filtroAg.q || '').trim(), hayFiltro = !!(filtroAg.c || filtroAg.t);
+        const total = (datos || []).filter(f => !f.evento).length;
         const n = (datos || []).filter(f => !f.evento && coincideFiltro(f)).length;
         const partes = [];
         if (filtroAg.c) partes.push(filtroAg.c === '__sin' ? 'turnos sin conductor' : 'conductor: ' + filtroAg.c);
         if (filtroAg.t) { const o = document.getElementById('filtroTerritorio'); partes.push(filtroAg.t === '__sin' ? 'turnos sin territorio' : 'territorio: ' + (o && o.selectedOptions[0] ? o.selectedOptions[0].text : filtroAg.t)); }
-        document.getElementById('filtroBusqInfo').textContent = `${n} asignación(es) · ${partes.join(' · ')}${(filtroAg.q || '').trim() ? ' · búsqueda: "' + filtroAg.q.trim() + '"' : ''}`;
+        if (q) partes.push('búsqueda: "' + q + '"');
+        document.getElementById('filtroBusqInfo').textContent = (hayFiltro || q) ? `${n} de ${total} asignación(es) · ${partes.join(' · ')}` : `${total} asignación(es) en la agenda`;
+        const cl = document.getElementById('filtroBusqClear'); if (cl) cl.classList.toggle('hidden', !q);
+        const lt = document.getElementById('filtroBusqLimpiarTodo'); if (lt) lt.classList.toggle('hidden', !(hayFiltro || q));
     }
+    function limpiarBusquedaAgenda() { filtroAg.q = ''; const i = document.getElementById('filtroBusqueda'); if (i) { i.value = ''; i.focus(); } refrescarTabla(); }
     function aplicarBusquedaAgenda(v) { filtroAg.q = v; refrescarTabla(); }
     function aplicarFiltrosAgenda() {
         const c = document.getElementById('filtroConductor').value, t = document.getElementById('filtroTerritorio').value;
-        filtroAg = { c, t, q: (c || t) ? (filtroAg.q || '') : '' }; refrescarTabla();
-        if (c || t) { const i = document.getElementById('filtroBusqueda'); if (i && !/Mobi|Android|iPhone/i.test(navigator.userAgent)) setTimeout(() => i.focus(), 30); }
+        filtroAg = { c, t, q: filtroAg.q || '' }; refrescarTabla();
     }
     function limpiarFiltrosAgenda() { if (!filtroAg.c && !filtroAg.t && !filtroAg.q) return; filtroAg = { c: '', t: '', q: '' }; refrescarTabla(); }
     // === Parte 2: estado del borrador frente al historial ===
@@ -3049,16 +3326,16 @@ async function instalarPWA() {
     const proximos2 = () => { const h = new Date(), m = new Date(); m.setDate(h.getDate() + 1); return [h, m]; };
     function renderHoy() {
         const el = document.getElementById('cardHoy'); if (!el) return;
-        const [h, m] = proximos2(), hoy = filasDeFecha(h), man = filasDeFecha(m);
+        const [h, m] = proximos2(), now = h.getHours() * 60 + h.getMinutes(), hoy = filasDeFecha(h).filter(x => estadoTurno(x.f, now) !== 'fin'), man = filasDeFecha(m);
         if (!hoy.length && !man.length) { el.classList.add('hidden'); return; }
         el.classList.remove('hidden');
-        const now = h.getHours() * 60 + h.getMinutes(); let prox = -1; hoy.forEach((x, j) => { if (prox < 0 && estadoTurno(x.f, now) === 'prox') prox = j; });
+        let prox = -1; hoy.forEach((x, j) => { if (prox < 0 && estadoTurno(x.f, now) === 'prox') prox = j; });
         const fila = (x, tag) => `<div class="hoy-row">${pillHora(x.f.hora)}<div><strong>${esc(x.f.conductor)}</strong>${tag}<br><small>${esc(x.f.territorio)} · ${esc(x.f.lugar)}${x.f.grupos ? ' · ' + esc(x.f.grupos) : ''}</small></div></div>`;
         const col = (t, L, esHoy) => `<div><div class="hoy-dia">${t}</div>${L.map((x, j) => fila(x, esHoy ? (estadoTurno(x.f, now) === 'en' ? ' <span class="tag en">Turno en curso</span>' : estadoTurno(x.f, now) === 'fin' ? ' <span class="tag">Finalizado</span>' : j === prox ? ' <span class="tag prox">Próxima salida</span>' : '') : '')).join('') || '<small class="hint">Sin salidas</small>'}</div>`;
         el.innerHTML = `<div class="module-title" style="margin-bottom:14px">Hoy y mañana</div><div class="hoy-grid">${col('Hoy · ' + DIAS_LARGOS[DIAS[h.getDay()]] + ' ' + h.getDate(), hoy, true)}${col('Mañana · ' + DIAS_LARGOS[DIAS[m.getDay()]] + ' ' + m.getDate(), man, false)}</div>`;
     }
     function actualizarBadge() {
-        const n = proximos2().flatMap(filasDeFecha).filter(x => !esVacio(x.f.conductor, 'Sin Asignar') && !x.f.avisado && !x.f.confirmado).length;
+        const n = itemsContactos().filter(x => asignado(x.f) && x.f.confirmado !== true).length;   // pendiente = asignado y sin ✓✓
         const b = document.getElementById('badgeAgenda'); if (b) { b.textContent = n; b.classList.toggle('hidden', !n); }
     }
     // === Contactar Pro: estados, filtros, alertas por cercanía, cola rápida y validación de teléfono ===
@@ -3069,7 +3346,11 @@ async function instalarPWA() {
     const conductorDe = f => conductores.find(c => norm(nomC(c)) === norm(f.conductor)) || null;
     function telefonoValido(c) { if (!c) return false; const d = limpiarTelefono(c.telefono).replace(/\D/g, ''); return d.length >= 10 && d.length <= 15; }
     const inicioMs = x => new Date(x.d.getFullYear(), x.d.getMonth(), x.d.getDate(), 0, ventanaTurno(x.f.diaSemana, x.f.hora).ini).getTime();
-    const itemsContactos = () => proximos2().flatMap(filasDeFecha);
+    // Hoy: solo turnos en curso o por empezar (se excluyen los finalizados). Mañana: todos.
+    function itemsContactos() {
+        const [h, m] = proximos2(), ahoraMin = h.getHours() * 60 + h.getMinutes();
+        return filasDeFecha(h).filter(x => estadoTurno(x.f, ahoraMin) !== 'fin').concat(filasDeFecha(m));
+    }
     function fmtMin(m) { if (m < 60) return `${Math.max(1, m)} min`; const h = Math.floor(m / 60), r = m % 60; return `${h} h${r ? ' ' + r + ' min' : ''}`; }
     // Alerta de un turno sin confirmar: 'urgente' (empieza en 3 h o menos), 'curso' (ya empezó), 'cercano' (empieza en 14 h o menos)
     function alertaTurno(x) {
@@ -3084,24 +3365,26 @@ async function instalarPWA() {
     function setFiltroContacto(f) { filtroContacto = f; renderContactos(); }
     function renderContactos(silencioso) {
         const cont = document.getElementById('listaContactos'); if (!cont) return;
-        const lista = itemsContactos(), cuenta = { todos: lista.length, avisar: 0, confirmar: 0, confirmados: 0 };
+        const lista = itemsContactos(), cuenta = { todos: lista.length, pend: 0, avisar: 0, confirmar: 0, confirmados: 0 };
         lista.forEach(x => { const e = estadoAviso(x.f); if (e === 'avisar') cuenta.avisar++; else if (e === 'confirmar') cuenta.confirmar++; else if (e === 'confirmado') cuenta.confirmados++; });
+        cuenta.pend = cuenta.avisar + cuenta.confirmar;
         const chips = document.getElementById('chipsContactos');
-        if (chips) chips.innerHTML = [['todos', 'Todos'], ['avisar', 'Por avisar'], ['confirmar', 'Por confirmar'], ['confirmados', 'Confirmados']]
+        if (chips) chips.innerHTML = [['todos', 'Todos'], ['pend', 'Pendientes'], ['avisar', 'Por avisar'], ['confirmar', 'Por confirmar'], ['confirmados', 'Confirmados']]
             .map(([v, t]) => `<button type="button" class="chip-button${filtroContacto === v ? ' active' : ''}" onclick="setFiltroContacto('${v}')">${t} (${cuenta[v]})</button>`).join('');
         const btnCola = document.getElementById('btnColaAvisos'), pend = cuenta.avisar + cuenta.confirmar;
         if (btnCola) { btnCola.disabled = !pend && !colaAbierta; btnCola.innerHTML = `${IC.play}<span>Cola de avisos (${pend})</span>`; btnCola.title = pend ? 'Avanza uno a uno por los avisos y confirmaciones pendientes' : 'No hay avisos ni confirmaciones pendientes'; }
         cont.classList.toggle('quiet', !!silencioso);
-        if (!lista.length) { cont.innerHTML = '<p class="hint">No hay asignaciones para hoy ni mañana.</p>'; renderCola(); return; }
-        const vis = lista.filter(x => filtroContacto === 'todos' || (filtroContacto === 'avisar' && estadoAviso(x.f) === 'avisar') || (filtroContacto === 'confirmar' && estadoAviso(x.f) === 'confirmar') || (filtroContacto === 'confirmados' && estadoAviso(x.f) === 'confirmado'));
+        if (!lista.length) { cont.innerHTML = '<p class="hint">No hay turnos en curso ni próximos para hoy y mañana.</p>'; renderCola(); return; }
+        const vis = lista.filter(x => filtroContacto === 'todos' || (filtroContacto === 'pend' && ['avisar', 'confirmar'].includes(estadoAviso(x.f))) || (filtroContacto === 'avisar' && estadoAviso(x.f) === 'avisar') || (filtroContacto === 'confirmar' && estadoAviso(x.f) === 'confirmar') || (filtroContacto === 'confirmados' && estadoAviso(x.f) === 'confirmado'));
         if (!vis.length) { cont.innerHTML = '<p class="hint">No hay asignaciones con este estado.</p>'; renderCola(); return; }
         cont.innerHTML = vis.map((x, n) => {
             const f = x.f, c = conductorDe(f), al = alertaTurno(x), telOk = telefonoValido(c);
             const chk = f.confirmado ? `<span class="chk ok" title="Confirmado">${IC.checkAll}</span>` : (f.avisado ? `<span class="chk" title="Avisado">${IC.check}</span>` : '');
             const tag = al ? ` <span class="tag alerta ${al.cls}">${esc(al.txt)}</span>` : '';
+            const estA = estadoAviso(f), pendTag = estA === 'avisar' ? ' <span class="tag">Por avisar</span>' : estA === 'confirmar' ? ' <span class="tag">Por confirmar</span>' : '';
             const sinTel = asignado(f) && !telOk ? ` <span class="tag sin-tel" title="Edita al conductor para agregar un teléfono válido">${c ? 'Sin teléfono válido' : 'No registrado'}</span>` : '';
             return `<div class="contact-item pase${al ? ' ' + al.cls : ''}" style="--i:${n}"><div class="pase-l"><div class="pase-dia">${DIAS_LARGOS[f.diaSemana]} ${f.diaMes}</div><div class="pase-hora">${esc(f.hora)}</div><div class="pase-terr">${esc(f.territorio)}</div></div>
-                <div class="pase-r"><strong>${esc(f.conductor)}</strong> ${chk}${tag}${sinTel}<br><small>${f.grupos ? esc(f.grupos) + ' · ' : ''}${esc(f.lugar)}</small>
+                <div class="pase-r"><strong>${esc(f.conductor)}</strong> ${chk}${pendTag}${tag}${sinTel}<br><small>${f.grupos ? esc(f.grupos) + ' · ' : ''}${esc(f.lugar)}</small>
                 <div class="contact-actions" style="margin-top:10px;flex-wrap:wrap">
                     <button type="button" class="btn-outline mini" onclick="copiarAvisoTurno('${x.k}',${x.i})">Copiar</button>
                     <button type="button" class="btn-whatsapp" onclick="abrirWhatsAppTurno('${x.k}',${x.i})">WhatsApp</button>
@@ -3164,7 +3447,7 @@ async function instalarPWA() {
     }
     // Actualización periódica para que las alertas de cercanía sigan al reloj (sin repetir animaciones)
     if (!window.__vdmTickContactos) {
-        window.__vdmTickContactos = setInterval(() => { if (_sesionActiva && _appIniciada && !document.hidden) { renderContactos(true); renderHoy(); } }, 60000);
+        window.__vdmTickContactos = setInterval(() => { if (_sesionActiva && _appIniciada && !document.hidden) { renderContactos(true); renderHoy(); if (modoApp === 'exhibidores') { exhRenderHoy(); exhRenderContactos(); } } }, 60000);
     }
     async function copiarTextoNotificacion(m) {
         if (await copiar(decodeURIComponent(m))) mostrarToast('Mensaje copiado al portapapeles'); else mostrarToast('No se pudo copiar el texto', 'error');
@@ -3255,7 +3538,7 @@ async function instalarPWA() {
         conductores = local.conductores || [];
         territorios = local.territorios || [];
         agendasMaestras = migrarClaves(local.borradores); historialAgendas = migrarClaves(local.historial); excepciones = migrarClaves(local.excepciones); poblarAnios();
-        historialActividad = local.actividad || [];
+        historialActividad = local.actividad || []; exh = exhNormalizar(local.exhibidores);
         config = Object.assign(defConfig(), local.config || {}); config.reuniones = migrarReuniones(config.reuniones); lectura = localStorage.getItem('vdm_lock') === '1';
         conductores.forEach(c => { const t = limpiarTelefono(c.telefono); if (t) c.telefono = t; });
         if (migrarGruposLegacy(local.grupos)) guardarLocal();
@@ -3270,6 +3553,7 @@ async function instalarPWA() {
         if (!document.getElementById(lastTab)) lastTab = 'tab-agenda';
         aplicarConfigUI();
         switchTab(lastTab);
+        exhIniciar();
         actualizarDatalists();
         updateUndoUI(); actualizarSyncUI();
     }
@@ -3362,8 +3646,9 @@ async function instalarPWA() {
         
         if (selectedBtn) selectedBtn.classList.add('active');
         document.getElementById(tabId).classList.add('active');
-        localStorage.setItem('vdm_active_tab', tabId);
+        try { localStorage.setItem(EXH_TABS.includes(tabId) ? 'vdm_active_tab_exh' : 'vdm_active_tab', tabId); } catch (e) {}
         if (tabId === 'tab-resumen') { poblarResumenSelectores(!resumenListo); renderResumen(); }
+        exhOnTab(tabId);
     }
 
     function toggleVisibility(id) {
@@ -3379,7 +3664,7 @@ async function instalarPWA() {
         document.getElementById('formConductor').reset(); 
         document.getElementById('editIndexConductor').value = ""; 
         document.getElementById('grupoSugerido').classList.add('hidden'); 
-        ausTmp = []; extraTmp = []; renderAusTmp();
+        ausTmp = []; extraTmp = []; renderAusTmp(); vincReset('C');
         openModal('modalConductor'); 
     }
     // === Parte 2: ausencias múltiples y fechas extra en el modal de Conductor ===
@@ -3406,7 +3691,7 @@ async function instalarPWA() {
     }
     function quitarExtraTmp(i) { extraTmp.splice(i, 1); renderAusTmp(); }
     
-    document.getElementById('formConductor').addEventListener('submit', (e) => {
+    document.getElementById('formConductor').addEventListener('submit', async (e) => {
         e.preventDefault(); if (!antiDoble(e)) return;
         const index = document.getElementById('editIndexConductor').value;
         if (document.getElementById('cAusDesde').value) agregarAusenciaTmp(true);      // lo que quedó escrito sin pulsar "Agregar" no se pierde
@@ -3442,6 +3727,7 @@ async function instalarPWA() {
         if (!c.fechaDisponible && extraTmp.length === 1) c.fechaDisponible = extraTmp[0];
 
         if (!validarDatosConductor(c, index)) return;
+        const vinc = await vincAlGuardar('C', c, index === "" ? null : conductores[index]);
         if (index === "") {
             conductores.push(c);
             registrarActividad('Agregar', `Conductor: ${c.nombre} ${c.apellido}`);
@@ -3450,6 +3736,7 @@ async function instalarPWA() {
             conductores[index] = c;
             registrarActividad('Editar', `Conductor: ${anterior} → ${c.nombre} ${c.apellido}`);
         }
+        if (vinc.otro) { vincSincronizar('C', c, vinc.otro); exhReg('Editar', `Sincronizado desde Grupos: ${exhNom(vinc.otro)}`); exhRenderPart(); exhRefrescarChoques(); }
         guardarLocal(); renderListaConductores(); actualizarDatalists(); closeModal('modalConductor');
     });
 
@@ -3478,7 +3765,7 @@ async function instalarPWA() {
         document.getElementById('cFechaDisponible').value = extraTmp.includes(fd) ? '' : fd;
         document.getElementById('cFechaNoDisponible').value = ausTmp.some(a => a.desde === fnd && a.hasta === fnd) ? '' : fnd;
         ['cAusDesde', 'cAusHasta', 'cAusMotivo', 'cExtraFecha'].forEach(id => { document.getElementById(id).value = ''; });
-        renderAusTmp();
+        renderAusTmp(); vincReset('C');
         openModal('modalConductor');
     }
 
@@ -3513,14 +3800,16 @@ async function instalarPWA() {
         };
         const dup = territorios.some((x, i) => String(i) !== String(index) && (t.numero !== '' ? String(x.numero).toLowerCase() === t.numero.toLowerCase() : (x.numero === '' && norm(x.nombre) === norm(t.nombre))));
         if (dup) { avisar(t.numero !== '' ? `Ya existe el territorio o subterritorio número ${t.numero}.` : `Ya existe un subterritorio llamado "${t.nombre}".`); return; }
-        if(index === "") {
-            territorios.push(t);
-            registrarActividad('Agregar', `Territorio: ${t.numero}. ${t.nombre}`);
-        } else {
-            const anterior = `${territorios[index].numero}. ${territorios[index].nombre}`;
-            territorios[index] = t;
-            registrarActividad('Editar', `Territorio: ${anterior} → ${t.numero}. ${t.nombre}`);
-        }
+        aislarLugares('grupos', () => {
+            if(index === "") {
+                territorios.push(t);
+                registrarActividad('Agregar', `Territorio: ${t.numero}. ${t.nombre}`);
+            } else {
+                const anterior = `${territorios[index].numero}. ${territorios[index].nombre}`;
+                territorios[index] = t;
+                registrarActividad('Editar', `Territorio: ${anterior} → ${t.numero}. ${t.nombre}`);
+            }
+        });
         guardarLocal(); renderListaTerritorios(); actualizarDatalists(); closeModal('modalTerritorio');
     });
 
@@ -3538,7 +3827,7 @@ async function instalarPWA() {
     async function eliminarTerritorio(i) { 
         if(await confirmar("¿Eliminar este registro?", 'Eliminar')) { 
             const nombre = `${territorios[i].numero}. ${territorios[i].nombre}`;
-            territorios.splice(i,1); 
+            aislarLugares('grupos', () => { territorios.splice(i,1); });
             guardarLocal(); renderListaTerritorios();
             registrarActividad('Eliminar', `Territorio: ${nombre}`);
         } 
@@ -3745,6 +4034,712 @@ async function instalarPWA() {
         const link = document.createElement('a'); link.download = r.nombre; link.href = r.canvas.toDataURL('image/png'); link.click();
         registrarActividad('Descargar', `Imagen de agenda (${r.etiqueta})`);
     }
+
+    // =====================================================================
+    // PARTE 4: MODO "PREDICACIÓN CON EXHIBIDORES" (sincronizado anti-choques)
+    // =====================================================================
+    const EXH_DIAS = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
+    const EXH_TABS = ['tab-exh-agenda', 'tab-exh-part', 'tab-exh-lug', 'tab-exh-res', 'tab-exh-act'];
+    const GRP_TABS = ['tab-agenda', 'tab-personal', 'tab-territorios', 'tab-resumen', 'tab-historial'];
+    const EXH_PAUTAS = ['Pautas para la predicación pública: Ver el formulario s-148', '( en cada exhibidor estará colocado )', 'DEBE ESTAR 10 MINUTOS ANTES DE LA HORA PAUTADA EN EL LUGAR DE SALIDA'];
+    const EXH_LUGARES_DEF = ['La Recta', 'Calazán', 'La Plana', 'Ent. La Colonia'];
+
+    function exhConfigDef() {
+        return { turnos: [
+            { id: 'AM', nombre: 'Mañana', hora: '9:00 AM a 11:00 AM', puntos: { LUN: 1, MAR: 1, JUE: 1, VIE: 1, 'SÁB': 2 } },
+            { id: 'PM', nombre: 'Tarde', hora: '4:00 PM a 5:30 PM', puntos: { LUN: 1, MAR: 1, JUE: 1 } }
+        ] };
+    }
+    function exhDef() { return { participantes: [], lugares: [], agendas: {}, historial: {}, actividad: [], config: exhConfigDef(), sembrado: false }; }
+    function exhNormalizar(x) {
+        const o = Object.assign(exhDef(), (x && typeof x === 'object' && !Array.isArray(x)) ? x : {});
+        if (!Array.isArray(o.participantes)) o.participantes = [];
+        if (!Array.isArray(o.lugares)) o.lugares = [];
+        if (!Array.isArray(o.actividad)) o.actividad = [];
+        if (!o.agendas || typeof o.agendas !== 'object' || Array.isArray(o.agendas)) o.agendas = {};
+        if (!o.historial || typeof o.historial !== 'object' || Array.isArray(o.historial)) o.historial = {};
+        if (!o.config || !Array.isArray(o.config.turnos) || !o.config.turnos.length) o.config = exhConfigDef();
+        o.config.turnos.forEach(t => { if (!t.puntos || typeof t.puntos !== 'object') t.puntos = {}; });
+        if (!o.sembrado && !o.lugares.length) {
+            const slots = []; o.config.turnos.forEach(t => EXH_DIAS.forEach(d => { if ((t.puntos[d] | 0) > 0) slots.push(d + '-' + t.id); }));
+            o.lugares = EXH_LUGARES_DEF.map(n => ({ nombre: n, dias: slots.slice(), simult: 1 }));
+        }
+        // Lugares de Exhibidores: ámbito propio (nunca comparte datos con Territorios) y siempre 1 exhibidor por punto
+        o.lugares = o.lugares.filter(l => l && String(l.nombre || '').trim()).map(l => ({ nombre: String(l.nombre).trim(), dias: Array.isArray(l.dias) ? l.dias.slice() : [], simult: 1 }));
+        o.sembrado = true;
+        return o;
+    }
+    let exh = exhDef(), modoApp = 'grupos';
+    try { modoApp = localStorage.getItem('vdm_modo') === 'exhibidores' ? 'exhibidores' : 'grupos'; } catch (e) {}
+
+    // ---------- Utilidades ----------
+    const exhNom = p => `${p.nombre || ''} ${p.apellido || ''}`.replace(/\s+/g, ' ').trim();
+    const exhNk = s => norm(s).replace(/\s+/g, ' ').trim();
+    const exhTel = t => { const d = String(t || '').replace(/\D/g, ''); return d.length >= 10 ? d.slice(-10) : ''; };
+    const exhIso = (a, m, d) => `${a}-${pad(m)}-${pad(d)}`;
+    const exhGenero = p => (p && (p.genero === 'M' || p.genero === 'F')) ? p.genero : generoDe(p);
+    const exhBloqueHora = h => { const m = /\d{1,2}:\d{2}\s*(AM|PM)/i.exec(String(h || '')); return m ? m[1].toUpperCase() : 'AM'; };
+    const exhBloque = t => exhBloqueHora(t.hora);
+    function exhMes() { return parseInt(document.getElementById('exhMes').value, 10); }
+    function exhAnio() { const e = document.getElementById('exhAnio'); return e && e.value ? parseInt(e.value, 10) : new Date().getFullYear(); }
+    function exhKey() { return `${exhAnio()}-${exhMes()}`; }
+    function exhIsoFila(key, f) { const [a, m] = key.split('-').map(Number); return exhIso(a, m, f.diaMes); }
+    function exhLunes(a, m, d) { const dt = new Date(a, m - 1, d); dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7)); return exhIso(dt.getFullYear(), dt.getMonth() + 1, dt.getDate()); }
+    function exhSlots(dia) { return exh.config.turnos.filter(t => (t.puntos[dia] | 0) > 0); }
+    function exhPartPorNombre(n) { const k = exhNk(n); return exh.participantes.find(p => exhNk(exhNom(p)) === k) || null; }
+    function exhReg(accion, detalle) {
+        const f = new Date().toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        exh.actividad.unshift({ accion, detalle, fecha: f }); if (exh.actividad.length > 100) exh.actividad.pop();
+        guardarLocal(); exhRenderAct();
+    }
+    function exhDispo(p, dia, bloque, iso) {
+        if (p.estado === 'pausa') return false;
+        if ((p.noDisp || []).includes(iso)) return false;
+        if ((p.extraDisp || []).includes(iso)) return true;
+        return (p.disp || []).includes(`${dia}-${bloque}`);
+    }
+
+    // ---------- Cruce con Predicación de Grupos / Territorios ----------
+    function exhTelDeNombre(nombre) {
+        const k = exhNk(nombre); if (!k) return '';
+        const c = conductores.find(x => exhNk(nomC(x)) === k); if (c && exhTel(c.telefono)) return exhTel(c.telefono);
+        const p = exh.participantes.find(x => exhNk(exhNom(x)) === k); return p ? exhTel(p.telefono) : '';
+    }
+    function exhMismo(nA, tA, nB, tB) { const a = exhNk(nA); return (!!a && a === exhNk(nB)) || (!!tA && tA === tB); }
+    // Turno de grupos de esa persona en esa fecha (o null)
+    function exhEnGrupos(nombre, tel, iso) {
+        const [a, m, d] = iso.split('-').map(Number), R = agendasMaestras[`${a}-${m}`] || [];
+        return R.find(f => !f.evento && f.diaMes === d && !esVacio(f.conductor, 'Sin Asignar') && exhMismo(nombre, tel, f.conductor, exhTelDeNombre(f.conductor))) || null;
+    }
+    // Turno de exhibidor de esa persona en esa fecha (o null); "excepto" = fila que no cuenta
+    function exhEnExh(nombre, tel, iso, excepto) {
+        const [a, m, d] = iso.split('-').map(Number), R = exh.agendas[`${a}-${m}`] || [];
+        for (const f of R) {
+            if (f === excepto || f.bloqueado || f.diaMes !== d) continue;
+            const i = (f.parts || []).findIndex(n => n && exhMismo(nombre, tel, n, exhTelDeNombre(n)));
+            if (i >= 0) return { f, i };
+        }
+        return null;
+    }
+    function exhChoques(key, f, pos) {
+        const n = f.parts[pos], out = []; if (!n || f.bloqueado) return out;
+        const tel = exhTelDeNombre(n), iso = exhIsoFila(key, f), dl = `${DIAS_LARGOS[f.diaSemana]} ${f.diaMes}`;
+        const g = exhEnGrupos(n, tel, iso);
+        if (g) out.push({ t: 'choque', msg: `${n} ya tiene turno en Predicación de Grupos el ${dl} (${g.hora}${!esVacio(g.territorio, 'Sin Territorio') ? ', ' + g.territorio : ''})` });
+        const e = exhEnExh(n, tel, iso, f);
+        if (e) out.push({ t: 'choque', msg: `${n} ya está en otro exhibidor el ${dl} (${e.f.hora}, ${e.f.lugar || 'lugar por definir'})` });
+        if (f.parts.some((x, j) => j !== pos && x && exhNk(x) === exhNk(n))) out.push({ t: 'choque', msg: `${n} está repetido en este mismo exhibidor` });
+        const p = exhPartPorNombre(n);
+        if (p && !exhDispo(p, f.diaSemana, exhBloqueHora(f.hora), iso)) out.push({ t: 'aviso', msg: `${n} no tiene marcada disponibilidad para ese horario` });
+        return out;
+    }
+    // Usado por el modo Grupos: ¿este conductor ya tiene exhibidor ese día?
+    function exhChoqueConductor(c, iso) { return exhEnExh(nomC(c), exhTel(c.telefono), iso); }
+
+
+    // ---------- Aislamiento de Lugares (Exhibidores ↔ Grupos) ----------
+    // Lugares de Exhibidores = exh.lugares · Lugares de Grupos = territorios[].lugar. Cada operación solo puede tocar su propio ámbito.
+    function aislarLugares(ambito, fn) {
+        const antes = ambito === 'exh' ? JSON.stringify(territorios) : JSON.stringify(exh.lugares);
+        const r = fn();
+        if (ambito === 'exh' && JSON.stringify(territorios) !== antes) territorios = JSON.parse(antes);
+        if (ambito === 'grupos' && JSON.stringify(exh.lugares) !== antes) exh.lugares = JSON.parse(antes);
+        return r;
+    }
+
+    // ---------- Hoy y mañana (Exhibidores) ----------
+    function exhVentana(hora) {
+        const ts = [...String(hora || '').matchAll(/\d{1,2}:\d{2}\s*(?:AM|PM)/gi)].map(m => hMin(m[0]));
+        const ini = ts.length ? ts[0] : 0; let fin = ts.length > 1 ? ts[1] : ini + 120; if (fin <= ini) fin = ini + 120;
+        return { ini, fin };
+    }
+    function exhEstadoTurno(f, ahoraMin) { const v = exhVentana(f.hora); return ahoraMin >= v.fin ? 'fin' : (ahoraMin >= v.ini ? 'en' : 'prox'); }
+    function exhRenderHoy() {
+        const el = document.getElementById('cardHoyExh'); if (!el) return;
+        const h = new Date(), ahora = h.getHours() * 60 + h.getMinutes(), m = new Date(h.getFullYear(), h.getMonth(), h.getDate() + 1);
+        const delDia = d => (exh.agendas[`${d.getFullYear()}-${d.getMonth() + 1}`] || []).filter(f => !f.bloqueado && f.diaMes === d.getDate() && (f.parts || []).some(Boolean)).sort((a, b) => exhVentana(a.hora).ini - exhVentana(b.hora).ini);
+        const hoy = delDia(h).filter(f => exhEstadoTurno(f, ahora) !== 'fin'), man = delDia(m);
+        if (!hoy.length && !man.length) { el.classList.add('hidden'); el.innerHTML = ''; return; }
+        el.classList.remove('hidden');
+        let prox = -1; hoy.forEach((f, j) => { if (prox < 0 && exhEstadoTurno(f, ahora) === 'prox') prox = j; });
+        const fila = (f, tag) => `<div class="hoy-row">${pillHora(f.hora)}<div><strong>${esc(f.lugar || 'Lugar por definir')}</strong>${tag}<br><small>${esc((f.parts || []).filter(Boolean).join(' · '))}</small></div></div>`;
+        const col = (t, L, esHoy) => `<div><div class="hoy-dia">${t}</div>${L.map((f, j) => fila(f, esHoy ? (exhEstadoTurno(f, ahora) === 'en' ? ' <span class="tag en">En curso</span>' : j === prox ? ' <span class="tag prox">Próxima salida</span>' : '') : '')).join('') || '<small class="hint">Sin salidas</small>'}</div>`;
+        el.innerHTML = `<div class="module-title" style="margin-bottom:14px">Hoy y mañana</div><div class="hoy-grid">${col('Hoy · ' + DIAS_LARGOS[DIAS[h.getDay()]] + ' ' + h.getDate(), hoy, true)}${col('Mañana · ' + DIAS_LARGOS[DIAS[m.getDay()]] + ' ' + m.getDate(), man, false)}</div>`;
+    }
+    // Pendiente = participante asignado que aún no tiene el doble check (✓✓) de confirmado
+    function exhActualizarBadge(L) {
+        const b = document.getElementById('badgeExhAgenda'); if (!b) return;
+        const n = (L || exhItemsContacto()).reduce((t, x) => t + (x.f.parts || []).reduce((u, nom, pos) => u + (nom && !(x.f.conf || [])[pos] ? 1 : 0), 0), 0);
+        b.textContent = n; b.classList.toggle('hidden', !n);
+    }
+
+    // ---------- Resumen de Exhibidores ----------
+    function exhPoblarResSel() {
+        const ms = document.getElementById('exhResMes'), as = document.getElementById('exhResAnio'); if (!ms || !as) return;
+        const y = new Date().getFullYear(), set = new Set([y - 1, y, y + 1]);
+        Object.keys(exh.agendas).forEach(k => set.add(parseInt(k, 10)));
+        const prev = as.value; as.innerHTML = [...set].filter(Boolean).sort().map(v => `<option value="${v}">${v}</option>`).join('');
+        const ea = exhAnio(); as.value = prev && set.has(+prev) ? prev : String(set.has(ea) ? ea : y);
+        if (!ms.dataset.init) { ms.value = String(exhMes() || new Date().getMonth() + 1); ms.dataset.init = '1'; }
+    }
+    function exhRenderRes() {
+        const cPart = document.getElementById('exhResPart'); if (!cPart) return;
+        exhPoblarResSel();
+        const mes = +document.getElementById('exhResMes').value, anio = +document.getElementById('exhResAnio').value;
+        const pm = {}, pa = {}, lm = {}, la = {}, nombres = {}; let totM = 0, totA = 0, turnosM = 0;
+        Object.keys(exh.agendas).forEach(k => {
+            const [ka, km] = k.split('-').map(Number); if (ka !== anio) return;
+            (exh.agendas[k] || []).forEach(f => {
+                if (f.bloqueado) return;
+                if (km === mes) turnosM++;
+                if (f.lugar && norm(f.lugar) !== 'por definir') { la[f.lugar] = (la[f.lugar] || 0) + 1; if (km === mes) lm[f.lugar] = (lm[f.lugar] || 0) + 1; }
+                (f.parts || []).forEach(n => { if (!n) return; const nk = exhNk(n); nombres[nk] = nombres[nk] || n; pa[nk] = (pa[nk] || 0) + 1; totA++; if (km === mes) { pm[nk] = (pm[nk] || 0) + 1; totM++; } });
+            });
+        });
+        exh.participantes.forEach(p => { nombres[exhNk(exhNom(p))] = exhNom(p); });
+        const activos = new Set(exh.participantes.filter(p => p.estado !== 'pausa').map(p => exhNk(exhNom(p))));
+        const filas = Object.keys(nombres).map(nk => ({ n: nombres[nk], m: pm[nk] || 0, a: pa[nk] || 0, act: activos.has(nk) })).sort((x, y) => y.m - x.m || y.a - x.a || x.n.localeCompare(y.n, 'es'));
+        const base = filas.filter(x => x.act), cm = base.map(x => x.m);
+        const max = cm.length ? Math.max(...cm) : 0, min = cm.length ? Math.min(...cm) : 0, prom = cm.length ? cm.reduce((a, b) => a + b, 0) / cm.length : 0, dif = max - min;
+        const nivel = !totM ? ['mid', 'Sin datos'] : dif <= 1 ? ['ok', 'Equilibrado'] : dif <= 2 ? ['mid', 'Aceptable'] : ['bad', 'Desbalanceado'];
+        const mm = MESES[mes - 1], mc = mm.slice(0, 3);
+        document.getElementById('exhResEstado').textContent = turnosM ? `${mm} ${anio}: ${turnosM} exhibidor(es) programado(s) · ${totM} participación(es).` : `No hay agenda de exhibidores generada para ${mm} ${anio}.`;
+        const kpi = (v, l) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
+        document.getElementById('exhResKpis').innerHTML = `<div class="res-kpis">${kpi(totM, 'Participaciones en ' + mm)}${kpi(totA, 'Participaciones en ' + anio)}${kpi(max + ' / ' + min, 'Máximo / mínimo por persona (mes)')}<div class="kpi kpi-eq"><span>Reparto del mes</span><span class="eq ${nivel[0]}">${nivel[1]}</span><small>diferencia máx–mín: ${dif}</small></div></div>`;
+        const barra = (v, mx) => `<span class="stat-bar"><i style="width:${mx ? Math.round(v / mx * 100) : 0}%"></i></span>`;
+        const cab = t => `<div class="rot-row rot-head"><span>${t}</span><b>${mc}</b><b>Año</b><span>Mes</span></div>`;
+        cPart.innerHTML = filas.length ? `<div class="rot-tabla rot-scroll">${cab('Hermano/a')}${filas.map(x => {
+            const sat = x.act && x.m >= 2 && x.m - prom >= 2 && x.m > prom * 1.4;
+            return `<div class="rot-row"><span class="rot-n">${esc(x.n)}${x.act ? '' : ' <span class="tag pausa">En pausa</span>'}${sat ? '<span class="tag sat">Saturado</span>' : ''}</span><b>${x.m}</b><b>${x.a}</b>${barra(x.m, max)}</div>`;
+        }).join('')}</div>` : '<p class="hint">Aún no hay participantes registrados.</p>';
+        const nl = {}; exh.lugares.forEach(l => { nl[l.nombre] = 1; }); Object.keys(la).forEach(n => { nl[n] = 1; });
+        const lf = Object.keys(nl).map(n => ({ n, m: lm[n] || 0, a: la[n] || 0 })).sort((x, y) => y.m - x.m || y.a - x.a || x.n.localeCompare(y.n, 'es')), lmax = lf.length ? Math.max(...lf.map(x => x.m)) : 0;
+        document.getElementById('exhResLug').innerHTML = lf.length ? `<div class="rot-tabla rot-scroll">${cab('Lugar')}${lf.map(x => `<div class="rot-row"><span class="rot-n">${esc(x.n)}</span><b>${x.m}</b><b>${x.a}</b>${barra(x.m, lmax)}</div>`).join('')}</div>` : '<p class="hint">Aún no hay lugares registrados.</p>';
+    }
+
+    // ---------- Vinculación de personas entre Grupos y Exhibidores ----------
+    // Una persona puede estar en ambos modos (Conductores y Participantes). Se detecta por nombre o teléfono normalizados;
+    // al vincular comparten teléfono, género y disponibilidad, de modo que los cruces anti-choques sean coherentes.
+    const vincEstado = { C: null, P: null }, vincIdTmp = { C: '', P: '' };
+    const vincUid = () => 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const vincValor = id => (document.getElementById(id) || {}).value || '';
+    const VINC_ICO = '<svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+    function vincBuscarP(nk, tel, id) {
+        let j = id ? exh.participantes.findIndex(p => p.vinc === id) : -1;
+        if (j < 0) j = exh.participantes.findIndex(p => (nk && exhNk(exhNom(p)) === nk) || (tel && exhTel(p.telefono) === tel));
+        return j;
+    }
+    function vincBuscarC(nk, tel, id) {
+        let j = id ? conductores.findIndex(c => c.vinc === id) : -1;
+        if (j < 0) j = conductores.findIndex(c => (nk && exhNk(nomC(c)) === nk) || (tel && exhTel(c.telefono) === tel));
+        return j;
+    }
+    const vincDispC2P = c => (c.disponibilidadDias || []).filter(v => /^[^-]{3}-(AM|PM)$/.test(v) && EXH_DIAS.includes(v.slice(0, 3)));
+    function vincDispP2C(p) { const out = []; EXH_DIAS.forEach(d => { const b = ['AM', 'PM'].filter(x => (p.disp || []).includes(d + '-' + x)); if (b.length) { out.push(d); b.forEach(x => out.push(d + '-' + x)); } }); return out; }
+    const vincExtraC = c => [...new Set([...(c.fechasExtraDisp || []), c.fechaDisponible].filter(d => ISO_RE.test(d || '')))].sort();
+    function vincNoDispC(c) {
+        const out = new Set();
+        ausenciasDe(c).forEach(a => { const d = new Date(a.desde + 'T00:00:00'), h = new Date(a.hasta + 'T00:00:00'); let n = 0; while (d <= h && n < 366) { out.add(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`); d.setDate(d.getDate() + 1); n++; } });
+        return [...out].sort();
+    }
+    function vincLeerForm(lado) {
+        if (lado === 'C') {
+            const idx = vincValor('editIndexConductor'), ant = idx !== '' ? conductores[idx] : null, n = vincValor('cNombre').trim(), a = vincValor('cApellido').trim();
+            return { nk: n && a ? exhNk(n + ' ' + a) : '', tel: exhTel(limpiarTelefono(vincValor('cTelefono'))), id: vincIdTmp.C || (ant && ant.vinc) || '' };
+        }
+        const idx = parseInt(vincValor('epIdx'), 10), ant = idx >= 0 ? exh.participantes[idx] : null, n = vincValor('epNombre').trim(), a = vincValor('epApellido').trim();
+        return { nk: n && a ? exhNk(n + ' ' + a) : '', tel: exhTel(limpiarTelefono(vincValor('epTel'))), id: vincIdTmp.P || (ant && ant.vinc) || '' };
+    }
+    function vincReset(lado) { vincEstado[lado] = null; vincIdTmp[lado] = ''; setTimeout(() => vincRefrescarBanner(lado), 0); }
+    function vincRefrescarBanner(lado) {
+        const box = document.getElementById(lado === 'C' ? 'vincBannerC' : 'vincBannerP'); if (!box) return;
+        const f = vincLeerForm(lado), j = lado === 'C' ? vincBuscarP(f.nk, f.tel, f.id) : vincBuscarC(f.nk, f.tel, f.id);
+        if (j < 0) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+        const otro = lado === 'C' ? exh.participantes[j] : conductores[j], nom = lado === 'C' ? exhNom(otro) : nomC(otro), modo = lado === 'C' ? 'Predicación con Exhibidores' : 'Predicación por grupos';
+        const vinculado = vincEstado[lado] !== 'desvinc' && (vincEstado[lado] === 'importado' || vincEstado[lado] === 'vincular' || (!!f.id && otro.vinc === f.id));
+        const btn = (t, a, p) => `<button type="button" class="${p ? 'btn-primary' : 'btn-outline'} mini" onclick="vincAccion('${lado}','${a}')">${t}</button>`;
+        let txt, bts;
+        if (vincEstado[lado] === 'desvinc') { txt = `No se vinculará con «${esc(nom)}» (${modo}).`; bts = btn('Vincular', 'vincular'); }
+        else if (vinculado) { txt = `Vinculado con «${esc(nom)}» en ${modo}. Teléfono, género y disponibilidad se mantienen sincronizados al guardar.`; bts = btn('Desvincular', 'desvincular'); }
+        else { txt = `«${esc(nom)}» ya está registrado en ${modo} (mismo nombre o teléfono). Vincúlalo para evitar duplicados y mantener coherente su disponibilidad.`; bts = btn('Importar sus datos y vincular', 'importar', true) + btn('Vincular al guardar', 'vincular'); }
+        box.innerHTML = `${VINC_ICO}<span class="vt">${txt}</span><span class="vb">${bts}</span>`; box.classList.remove('hidden');
+    }
+    function vincImportarEnC(p) {
+        if (p.telefono) document.getElementById('cTelefono').value = limpiarTelefono(p.telefono) || p.telefono;
+        document.getElementById('cGenero').value = (p.genero === 'M' || p.genero === 'F') ? p.genero : '';
+        const disp = vincDispP2C(p);
+        document.querySelectorAll('#disponibilidadSemanal input[type="checkbox"]').forEach(cb => { cb.checked = disp.includes(cb.value); });
+        extraTmp = (p.extraDisp || []).filter(d => ISO_RE.test(d)).slice();
+        ausTmp = ausTmp.filter(a => a.motivo !== 'Exhibidores').concat((p.noDisp || []).filter(d => ISO_RE.test(d)).map(d => ({ desde: d, hasta: d, motivo: 'Exhibidores' })));
+        renderAusTmp();
+    }
+    function vincImportarEnP(c) {
+        if (c.telefono) document.getElementById('epTel').value = limpiarTelefono(c.telefono) || c.telefono;
+        document.getElementById('epGenero').value = generoDe(c) === 'F' ? 'F' : 'M';
+        const disp = vincDispC2P(c);
+        document.querySelectorAll('#epDisp input').forEach(cb => { cb.checked = disp.includes(cb.value); });
+        exhTmp = { extra: vincExtraC(c), no: vincNoDispC(c) }; exhChips();
+    }
+    function vincAccion(lado, accion) {
+        const f = vincLeerForm(lado), j = lado === 'C' ? vincBuscarP(f.nk, f.tel, f.id) : vincBuscarC(f.nk, f.tel, f.id); if (j < 0) return;
+        const otro = lado === 'C' ? exh.participantes[j] : conductores[j];
+        if (accion === 'importar') { if (lado === 'C') vincImportarEnC(otro); else vincImportarEnP(otro); vincEstado[lado] = 'importado'; vincIdTmp[lado] = otro.vinc || vincUid(); mostrarToast('Datos importados. Se vincularán al guardar.'); }
+        else if (accion === 'vincular') { vincEstado[lado] = 'vincular'; vincIdTmp[lado] = otro.vinc || vincUid(); }
+        else { vincEstado[lado] = 'desvinc'; vincIdTmp[lado] = ''; }
+        vincRefrescarBanner(lado);
+    }
+    // Decide (y pregunta si hace falta) si el registro que se guarda queda vinculado con su equivalente del otro modo.
+    async function vincAlGuardar(lado, nuevo, anterior) {
+        const nk = lado === 'C' ? exhNk(nomC(nuevo)) : exhNk(exhNom(nuevo)), tel = exhTel(nuevo.telefono);
+        const id = (anterior && anterior.vinc) || vincIdTmp[lado] || '', estado = vincEstado[lado];
+        if (anterior && anterior.sinVinc && estado !== 'importado' && estado !== 'vincular') nuevo.sinVinc = true;
+        const j = lado === 'C' ? vincBuscarP(nk, tel, id) : vincBuscarC(nk, tel, id);
+        const otro = j < 0 ? null : (lado === 'C' ? exh.participantes[j] : conductores[j]);
+        if (estado === 'desvinc') { if (otro && otro.vinc && otro.vinc === id) delete otro.vinc; nuevo.sinVinc = true; delete nuevo.vinc; return { otro: null }; }
+        if (!otro) { delete nuevo.vinc; return { otro: null }; }
+        let vincular = (!!id && otro.vinc === id) || estado === 'importado' || estado === 'vincular';
+        if (!vincular && !nuevo.sinVinc) {
+            const modo = lado === 'C' ? 'Predicación con Exhibidores' : 'Predicación por grupos', nom = lado === 'C' ? exhNom(otro) : nomC(otro);
+            vincular = (await dialogo('Persona ya registrada en el otro modo', `«${nom}» ya existe en ${modo} (coincide por nombre o teléfono).\n\n¿Vincular ambos registros? Compartirán teléfono, género y disponibilidad, evitando duplicados y manteniendo coherentes los cruces anti-choques.`, [{ t: 'Guardar sin vincular', v: false }, { t: 'Vincular y sincronizar', v: true, primario: true }])) === true;
+            if (!vincular) nuevo.sinVinc = true;
+        }
+        if (!vincular) { delete nuevo.vinc; return { otro: null }; }
+        const uid = id || otro.vinc || vincIdTmp[lado] || vincUid();
+        nuevo.vinc = uid; otro.vinc = uid; delete nuevo.sinVinc; delete otro.sinVinc;
+        return { otro };
+    }
+    function vincSincronizar(lado, src, dst) {
+        if (src.telefono) dst.telefono = src.telefono;
+        if (lado === 'C') {   // conductor → participante
+            dst.genero = generoDe(src) === 'F' ? 'F' : 'M';
+            dst.disp = vincDispC2P(src); dst.extraDisp = vincExtraC(src); dst.noDisp = vincNoDispC(src);
+        } else {              // participante → conductor
+            if (src.genero === 'M' || src.genero === 'F') dst.genero = src.genero;
+            dst.disponibilidadDias = vincDispP2C(src);
+            dst.fechasExtraDisp = (src.extraDisp || []).filter(d => ISO_RE.test(d));
+            if (dst.fechaDisponible && !dst.fechasExtraDisp.includes(dst.fechaDisponible)) dst.fechaDisponible = '';
+            const noD = (src.noDisp || []).filter(d => ISO_RE.test(d));
+            if (dst.fechaNoDisponible && !noD.includes(dst.fechaNoDisponible)) dst.fechaNoDisponible = '';
+            const manual = (dst.ausencias || []).filter(a => a.motivo !== 'Exhibidores'), cubiertas = new Set(vincNoDispC({ ausencias: manual, fechaNoDisponible: dst.fechaNoDisponible }));
+            dst.ausencias = manual.concat(noD.filter(d => !cubiertas.has(d)).map(d => ({ desde: d, hasta: d, motivo: 'Exhibidores' })));
+        }
+    }
+
+    // ---------- Cambio de modo ----------
+    function alternarModo() {
+        cerrarMenu();
+        modoApp = modoApp === 'grupos' ? 'exhibidores' : 'grupos';
+        try { localStorage.setItem('vdm_modo', modoApp); } catch (e) {}
+        aplicarModoUI(true);
+        mostrarToast(modoApp === 'exhibidores' ? 'Predicación con Exhibidores' : 'Predicación por grupos');
+    }
+    function aplicarModoUI(cambiar) {
+        const ex = modoApp === 'exhibidores';
+        document.body.setAttribute('data-modo', modoApp);
+        document.getElementById('tabBarGrupos').classList.toggle('hidden', ex);
+        document.getElementById('tabBarExh').classList.toggle('hidden', !ex);
+        document.getElementById('btnCambiarModoTxt').textContent = ex ? 'Predicación por grupos' : 'Predicación con Exhibidores';
+        if (ex) exhRenderHoy();
+        const validas = ex ? EXH_TABS : GRP_TABS, clave = ex ? 'vdm_active_tab_exh' : 'vdm_active_tab';
+        let t = null; try { t = localStorage.getItem(clave); } catch (e) {}
+        if (!validas.includes(t)) t = validas[0];
+        const act = document.querySelector('.tab-content.active');
+        if (cambiar || !act || !validas.includes(act.id)) switchTab(t);
+    }
+    function exhPoblarAnios() {
+        const e = document.getElementById('exhAnio'); if (!e) return;
+        const y = new Date().getFullYear(), set = new Set([y - 1, y, y + 1, y + 2]);
+        Object.keys(exh.agendas).forEach(k => set.add(parseInt(k, 10)));
+        const prev = e.value; e.innerHTML = [...set].filter(Boolean).sort().map(v => `<option value="${v}">${v}</option>`).join('');
+        e.value = prev && set.has(+prev) ? prev : String(y);
+        const m = document.getElementById('exhMes'); if (m && !m.dataset.init) { m.value = String(new Date().getMonth() + 1); m.dataset.init = '1'; }
+    }
+    function exhIniciar() { exhPoblarAnios(); aplicarModoUI(false); exhRenderTodo(); }
+    function exhOnTab(id) {
+        if (id === 'tab-exh-agenda') exhRenderAgenda(), exhRenderContactos();
+        else if (id === 'tab-exh-part') exhRenderPart();
+        else if (id === 'tab-exh-lug') exhRenderLug();
+        else if (id === 'tab-exh-res') exhRenderRes();
+        else if (id === 'tab-exh-act') exhRenderAct();
+    }
+    function exhRenderTodo() { exhRenderAgenda(); exhRenderContactos(); exhRenderHoy(); exhRenderPart(); exhRenderLug(); exhRenderRes(); exhRenderAct(); }
+    function exhRefrescarChoques() {
+        if (modoApp !== 'exhibidores') return;
+        const t = document.getElementById('tab-exh-agenda'); if (t && t.classList.contains('active')) { exhRenderAgenda(); exhRenderContactos(); exhRenderHoy(); }
+    }
+
+    // ---------- Generación equitativa del mes ----------
+    async function exhGenerar() {
+        const key = exhKey(), a = exhAnio(), m = exhMes();
+        if (!exh.participantes.some(p => p.estado !== 'pausa')) return mostrarToast('Primero registra participantes activos en la pestaña Participantes.', 'error');
+        if ((exh.agendas[key] || []).length && !(await confirmar(`Ya existe una agenda de exhibidores para ${MESES[m - 1]} ${a}. Si continúas se regenerará y se perderán las ediciones manuales.`, 'Regenerar'))) return;
+        const dias = new Date(a, m, 0).getDate(), ex = excepciones[key] || [], filas = [];
+        const act = exh.participantes.filter(p => p.estado !== 'pausa').map(p => ({ p, n: exhNom(p), nk: exhNk(exhNom(p)), tel: exhTel(p.telefono), g: exhGenero(p) }));
+        const semCnt = {}, mesCnt = {}, ult = {}, usadoDia = {}, usoLug = {}, ultLug = {};
+        // Participaciones de semanas que cruzan con meses vecinos
+        Object.keys(exh.agendas).forEach(k => { if (k === key) return; const [ka, km] = k.split('-').map(Number); (exh.agendas[k] || []).forEach(f => { if (f.bloqueado) return; const sw = exhLunes(ka, km, f.diaMes); (f.parts || []).forEach(n => { if (n) { const q = sw + '|' + exhNk(n); semCnt[q] = (semCnt[q] || 0) + 1; } }); }); });
+        let slotN = 0, faltas = 0;
+        for (let d = 1; d <= dias; d++) {
+            const iso = exhIso(a, m, d), dia = DIAS[new Date(a, m - 1, d).getDay()], slots = exhSlots(dia); if (!slots.length) continue;
+            const evt = ex.find(e => d >= e.desde && d <= e.hasta), ultSab = esUltimoSabado(a, m, d), sw = exhLunes(a, m, d);
+            usadoDia[d] = usadoDia[d] || new Set();
+            for (const t of slots) {
+                const base = { diaSemana: dia, diaMes: d, turno: t.id, hora: t.hora };
+                if (evt || ultSab) { filas.push(Object.assign(base, { punto: 1, lugar: '', parts: ['', '', ''], avis: [false, false, false], conf: [false, false, false], bloqueado: true, motivo: evt ? evt.motivo : 'Predicación de grupos' })); continue; }
+                const bloque = exhBloque(t), puntos = Math.max(1, t.puntos[dia] | 0);
+                // Excluye: sin disponibilidad, ya usado ese día y quienes ya dirigen grupo ese día (anti-choque)
+                const pool = act.filter(x => exhDispo(x.p, dia, bloque, iso) && !usadoDia[d].has(x.nk) && !exhEnGrupos(x.n, x.tel, iso));
+                const ordenar = arr => arr.sort((x, y) => ((semCnt[sw + '|' + x.nk] || 0) - (semCnt[sw + '|' + y.nk] || 0)) || ((mesCnt[x.nk] || 0) - (mesCnt[y.nk] || 0)) || ((ult[x.nk] ?? -9) - (ult[y.nk] ?? -9)) || x.nk.localeCompare(y.nk));
+                const lugs = exh.lugares.filter(l => (l.dias || []).includes(dia + '-' + t.id)), usoSlot = {}, usados = new Set();
+                for (let pn = 1; pn <= puntos; pn++) {
+                    const cand = lugs.filter(l => (usoSlot[l.nombre] || 0) < 1).sort((x, y) => ((usoLug[x.nombre] || 0) - (usoLug[y.nombre] || 0)) || ((ultLug[x.nombre] ?? -9) - (ultLug[y.nombre] ?? -9)) || x.nombre.localeCompare(y.nombre, 'es'));
+                    const lug = cand[0]; if (lug) { usoSlot[lug.nombre] = (usoSlot[lug.nombre] || 0) + 1; usoLug[lug.nombre] = (usoLug[lug.nombre] || 0) + 1; ultLug[lug.nombre] = slotN; }
+                    const libres = pool.filter(x => !usados.has(x.nk));
+                    let sel = ordenar(libres.filter(x => ult[x.nk] !== slotN - 1)).slice(0, 3);          // 1.º: no repetir turno consecutivo
+                    if (sel.length < 3) sel = sel.concat(ordenar(libres.filter(x => ult[x.nk] === slotN - 1)).slice(0, 3 - sel.length));
+                    if (sel.length === 2 && sel[0].g !== sel[1].g) sel = [];                               // nunca un hermano y una hermana solos
+                    if (sel.length < 3) faltas++;
+                    sel.forEach(x => { usados.add(x.nk); usadoDia[d].add(x.nk); semCnt[sw + '|' + x.nk] = (semCnt[sw + '|' + x.nk] || 0) + 1; mesCnt[x.nk] = (mesCnt[x.nk] || 0) + 1; ult[x.nk] = slotN; });
+                    const parts = sel.map(x => x.n); while (parts.length < 3) parts.push('');
+                    filas.push(Object.assign({}, base, { punto: pn, lugar: lug ? lug.nombre : 'Por definir', parts, avis: [false, false, false], conf: [false, false, false] }));
+                }
+                slotN++;
+            }
+        }
+        exh.agendas[key] = filas; exhPoblarAnios();
+        exhReg('Generar', `Agenda de exhibidores de ${MESES[m - 1]} ${a}`);
+        exhRenderTodo();
+        mostrarToast(faltas ? `Agenda generada. ${faltas} exhibidor(es) quedaron incompletos por falta de participantes disponibles.` : 'Agenda de exhibidores generada', faltas ? 'error' : undefined);
+    }
+
+    // ---------- Render de la agenda (por semanas) ----------
+    function exhSemanasDe(key) { const [a, m] = key.split('-').map(Number), F = exh.agendas[key] || [], mp = new Map(); F.forEach((f, i) => { const k = exhLunes(a, m, f.diaMes); if (!mp.has(k)) mp.set(k, []); mp.get(k).push(i); }); return [...mp.entries()].sort((x, y) => x[0].localeCompare(y[0])).map(([lun, idxs]) => ({ lun, idxs })); }
+    function exhEtiqueta(key, lun) {
+        const [a, m] = key.split('-').map(Number), [la, lm, ld] = lun.split('-').map(Number), mon = new Date(la, lm - 1, ld), sab = new Date(la, lm - 1, ld + 5), dias = new Date(a, m, 0).getDate();
+        const d1 = (mon.getMonth() + 1 === m && mon.getFullYear() === a) ? mon.getDate() : 1, d2 = (sab.getMonth() + 1 === m && sab.getFullYear() === a) ? sab.getDate() : dias;
+        return d1 === d2 ? `SEMANA DEL ${d1} DE ${MESES[m - 1].toUpperCase()} DE ${a}` : `SEMANA DEL ${d1} AL ${d2} DE ${MESES[m - 1].toUpperCase()} DE ${a}`;
+    }
+    function exhHtmlSemanas(key, o) {
+        o = o || {}; const F = exh.agendas[key] || [], ws = exhSemanasDe(key), edit = !!o.edit && !lectura, q = norm(o.q || '').trim().split(/\s+/).filter(Boolean);
+        const npuntos = {}; F.forEach(f => { const k = f.diaMes + '|' + f.turno; npuntos[k] = (npuntos[k] || 0) + 1; });
+        let out = '';
+        ws.forEach((w, wi) => {
+            if (o.solo != null && o.solo !== wi) return;
+            const idxs = w.idxs.filter(i => { if (!q.length) return true; const f = F[i], tx = norm(`${DIAS_LARGOS[f.diaSemana]} ${f.diaSemana} ${f.diaMes} ${f.hora} ${f.lugar} ${(f.parts || []).join(' ')} ${f.motivo || ''}`); return q.every(x => tx.includes(x)); });
+            if (!idxs.length) return;
+            let filasHtml = '', j = 0;
+            while (j < idxs.length) {
+                const dm = F[idxs[j]].diaMes; let n = 0; while (j + n < idxs.length && F[idxs[j + n]].diaMes === dm) n++;
+                for (let r = 0; r < n; r++) {
+                    const i = idxs[j + r], f = F[i];
+                    const dayCell = r === 0 ? `<td class="exh-dia" rowspan="${n}"><b>${esc(DIAS_LARGOS[f.diaSemana])}</b><span>${f.diaMes}</span></td>` : '';
+                    if (f.bloqueado) { filasHtml += `<tr>${dayCell}<td class="exh-hora">${esc(f.hora)}</td><td colspan="4" class="exh-bloq">${esc(f.motivo || 'Predicación de grupos')}</td></tr>`; continue; }
+                    const multi = npuntos[f.diaMes + '|' + f.turno] > 1;
+                    let cel = '';
+                    for (let pos = 0; pos < 3; pos++) {
+                        const nom = f.parts[pos] || '', ch = edit ? exhChoques(key, f, pos) : [], rojo = ch.filter(x => x.t === 'choque'), av = ch.filter(x => x.t === 'aviso');
+                        const ico = ch.length ? `<span class="exh-ico no-export" title="${esc(ch.map(x => x.msg).join(' · '))}" role="img" aria-label="${esc(ch.map(x => x.msg).join(' · '))}">${IC.aviso}</span>` : '';
+                        cel += `<td class="exh-p${edit ? ' edit' : ''}${rojo.length ? ' choque' : av.length ? ' aviso' : ''}${nom ? '' : ' vacio'}"${edit ? ` onclick="exhAbrirSel('${key}',${i},${pos},'todos')"` : ''}>${nom ? esc(nom) : 'Sin asignar'}${ico}</td>`;
+                    }
+                    filasHtml += `<tr>${dayCell}<td class="exh-hora">${esc(f.hora)}</td><td class="exh-lug${edit ? ' edit' : ''}"${edit ? ` onclick="exhAbrirLugar('${key}',${i})"` : ''}>${esc(f.lugar || 'Por definir')}${multi ? `<small>Punto ${f.punto}</small>` : ''}</td>${cel}</tr>`;
+                }
+                j += n;
+            }
+            out += `<section class="exh-semana"><div class="exh-sem-head">${esc(exhEtiqueta(key, w.lun))}</div><table class="exh-table"><thead><tr><th>Día</th><th>Horario</th><th>Lugar</th><th>Participante 1</th><th>Participante 2</th><th>Participante 3</th></tr></thead><tbody>${filasHtml}</tbody></table><div class="exh-pautas">${EXH_PAUTAS.map(x => `<div>${esc(x)}</div>`).join('')}</div></section>`;
+        });
+        return out;
+    }
+    function exhLimpiarBusca() { const e = document.getElementById('exhBusca'); if (e) e.value = ''; exhRenderAgenda(); }
+    function exhRenderAgenda() {
+        const cont = document.getElementById('exhSemanas'); if (!cont) return;
+        const key = exhKey(), F = exh.agendas[key] || [], q = (document.getElementById('exhBusca') || {}).value || '';
+        document.getElementById('exhResultado').classList.toggle('hidden', !F.length);
+        document.getElementById('exhVacio').classList.toggle('hidden', !!F.length);
+        const html = exhHtmlSemanas(key, { edit: true, q });
+        cont.innerHTML = html || '<p class="hint" style="padding:12px">Ningún turno coincide con la búsqueda.</p>';
+        const info = document.getElementById('exhBuscaInfo'); if (info) info.textContent = q.trim() ? `Filtrando por: "${q.trim()}"` : `${F.filter(f => !f.bloqueado).length} exhibidor(es) en el mes`;
+    }
+
+    // ---------- Selector de participante / lugar ----------
+    let exhSel = null;
+    function exhAbrirSel(key, idx, pos, modo) {
+        const f = (exh.agendas[key] || [])[idx]; if (!f || f.bloqueado) return;
+        if (modo === 'todos' && lectura) return;
+        exhSel = { tipo: 'part', key, idx, pos, modo };
+        document.getElementById('exhSelTitulo').textContent = modo === 'libres' ? 'Sustituir participante (sin choques)' : 'Cambiar participante';
+        document.getElementById('exhSelSub').textContent = `${DIAS_LARGOS[f.diaSemana]} ${f.diaMes} · ${f.hora} · ${f.lugar || 'Por definir'}`;
+        document.getElementById('exhSelBusca').value = ''; exhRenderSel(); openModal('modalExhSel');
+    }
+    function exhAbrirLugar(key, idx) {
+        const f = (exh.agendas[key] || [])[idx]; if (!f || f.bloqueado || lectura) return;
+        exhSel = { tipo: 'lugar', key, idx };
+        document.getElementById('exhSelTitulo').textContent = 'Cambiar lugar';
+        document.getElementById('exhSelSub').textContent = `${DIAS_LARGOS[f.diaSemana]} ${f.diaMes} · ${f.hora}`;
+        document.getElementById('exhSelBusca').value = ''; exhRenderSel(); openModal('modalExhSel');
+    }
+    function exhEvaluar(p, key, f) {
+        const n = exhNom(p), tel = exhTel(p.telefono), iso = exhIsoFila(key, f), motivos = [];
+        if (p.estado === 'pausa') motivos.push('En pausa');
+        else if (!exhDispo(p, f.diaSemana, exhBloqueHora(f.hora), iso)) motivos.push('Sin disponibilidad en ese horario');
+        if (exhEnGrupos(n, tel, iso)) motivos.push('Choque: ya tiene turno en Predicación de Grupos ese día');
+        const e = exhEnExh(n, tel, iso, f); if (e) motivos.push('Choque: ya está en otro exhibidor ese día');
+        if (f.parts.some(x => x && exhNk(x) === exhNk(n))) motivos.push('Ya está en este exhibidor');
+        return motivos;
+    }
+    function exhRenderSel() {
+        if (!exhSel) return; const { key, idx } = exhSel, f = (exh.agendas[key] || [])[idx]; if (!f) return;
+        const q = norm(document.getElementById('exhSelBusca').value).trim(), lista = document.getElementById('exhSelLista');
+        if (exhSel.tipo === 'lugar') {
+            const slot = f.diaSemana + '-' + f.turno, L = exh.lugares.map((l, i) => ({ l, i, ok: (l.dias || []).includes(slot) })).filter(x => !q || norm(x.l.nombre).includes(q)).sort((a, b) => (b.ok - a.ok) || a.l.nombre.localeCompare(b.l.nombre, 'es'));
+            lista.innerHTML = L.map(x => `<div class="group-card"><div><strong>${esc(x.l.nombre)}</strong>${x.l.nombre === f.lugar ? ' <span class="tag">Actual</span>' : ''}<br><small>${x.ok ? 'Permitido en este día y turno' : 'No está habilitado para este día y turno'}</small></div><div><button type="button" class="btn-edit-outline" onclick="exhElegirLugar(${x.i})">Elegir</button></div></div>`).join('') || '<p class="hint">Sin lugares registrados.</p>';
+            return;
+        }
+        const { mes, sem } = exhConteos(), lunF = exhLunes(...key.split('-').map(Number), f.diaMes);
+        let L = exh.participantes.map((p, i) => ({ p, i, mot: exhEvaluar(p, key, f) })).filter(x => !q || norm(exhNom(x.p)).includes(q));
+        if (exhSel.modo === 'libres') L = L.filter(x => !x.mot.length);
+        L.sort((a, b) => (a.mot.length - b.mot.length) || ((mes[exhNk(exhNom(a.p))] || 0) - (mes[exhNk(exhNom(b.p))] || 0)) || exhNom(a.p).localeCompare(exhNom(b.p), 'es'));
+        const quitar = exhSel.modo === 'todos' && !q ? `<div class="group-card"><div><strong>Sin asignar</strong></div><button type="button" class="btn-edit-outline" onclick="exhElegirPart(-1)">Quitar</button></div>` : '';
+        lista.innerHTML = quitar + (L.map(x => { const nk = exhNk(exhNom(x.p)); return `<div class="group-card"><div><strong>${esc(exhNom(x.p))}</strong>${x.p.estado === 'pausa' ? ' <span class="tag pausa">En pausa</span>' : ''}<br><small>${x.mot.length ? esc(x.mot.join(' · ')) : 'Libre en este horario'} · ${mes[nk] || 0} turno(s) en el mes</small></div><div><button type="button" class="btn-edit-outline" onclick="exhElegirPart(${x.i})">Asignar</button></div></div>`; }).join('') || '<p class="hint">Sin participantes que cumplan las condiciones (sin choques).</p>');
+    }
+    function exhElegirLugar(li) {
+        const { key, idx } = exhSel, F = exh.agendas[key], f = F[idx], l = exh.lugares[li]; if (!f || !l) return;
+        const ant = f.lugar; f.lugar = l.nombre;
+        const rep = F.filter(x => x !== f && !x.bloqueado && x.diaMes === f.diaMes && x.turno === f.turno && x.lugar === l.nombre).length;
+        closeModal('modalExhSel'); exhReg('Editar', `Lugar: "${ant}" → "${f.lugar}" (día ${f.diaMes})`); exhRenderAgenda();
+        if (rep >= 1) mostrarToast(`Aviso: ${l.nombre} ya tiene un exhibidor ese día y turno (cada punto funciona con 1 exhibidor).`, 'error');
+    }
+    function exhElegirPart(pi) {
+        const { key, idx, pos } = exhSel, f = exh.agendas[key][idx], p = pi >= 0 ? exh.participantes[pi] : null; if (!f) return;
+        const ant = f.parts[pos]; f.parts[pos] = p ? exhNom(p) : ''; f.avis[pos] = false; f.conf[pos] = false;
+        closeModal('modalExhSel');
+        exhReg('Editar', `Participante: "${ant || 'Sin asignar'}" → "${f.parts[pos] || 'Sin asignar'}" (${DIAS_LARGOS[f.diaSemana]} ${f.diaMes}, ${f.hora})`);
+        exhRenderTodo();
+        const ch = p ? exhChoques(key, f, pos).filter(x => x.t === 'choque') : [];
+        if (ch.length) mostrarToast('Choque: ' + ch.map(x => x.msg).join(' · '), 'error');
+    }
+
+    // ---------- Contactar (2 días, agrupado por turno) ----------
+    function exhItemsContacto() {
+        const hoy = new Date(), items = [], ahoraMin = hoy.getHours() * 60 + hoy.getMinutes();
+        [0, 1].forEach(off => {
+            const dt = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + off), key = `${dt.getFullYear()}-${dt.getMonth() + 1}`;
+            (exh.agendas[key] || []).forEach((f, i) => { if (!f.bloqueado && f.diaMes === dt.getDate() && (f.parts || []).some(Boolean) && (off === 1 || exhEstadoTurno(f, ahoraMin) !== 'fin')) items.push({ key, i, f, dt }); });
+        });
+        return items.sort((x, y) => (x.dt - y.dt) || (hMin(exhIniHora(x.f.hora)) - hMin(exhIniHora(y.f.hora))));
+    }
+    const exhIniHora = h => { const m = /\d{1,2}:\d{2}\s*(AM|PM)/i.exec(String(h || '')); return m ? m[0] : '12:00 AM'; };
+    function exhMensaje(p, f, key) {
+        const m = +key.split('-')[1], comp = f.parts.filter(x => x && exhNk(x) !== exhNk(exhNom(p)));
+        return `¡Hola ${exhGenero(p) === 'F' ? 'hermana' : 'hermano'} ${p.nombre}! ¿Cómo estás? Este mensaje es para notificarte que tienes el privilegio de participar en la predicación con exhibidor el ${DIAS_LARGOS[f.diaSemana].toLowerCase()} ${f.diaMes} de ${MESES[m - 1].toLowerCase()}, en el horario de ${f.hora}. El lugar de encuentro será en ${f.lugar || 'por definir'}.${comp.length ? ' Te acompañarán: ' + comp.join(', ') + '.' : ''} Recuerda llegar 10 minutos antes de la hora pautada. ¿Podrías confirmarme si vas a asistir? Estaré atento a tu respuesta. ¡Muchas gracias!`;
+    }
+    function exhRenderContactos() {
+        const cont = document.getElementById('exhContactos'); if (!cont) return;
+        const L = exhItemsContacto();
+        exhActualizarBadge(L);
+        if (!L.length) { cont.innerHTML = '<p class="hint">No hay exhibidores en curso ni próximos para hoy y mañana.</p>'; return; }
+        cont.innerHTML = L.map(x => {
+            const f = x.f, m = x.dt.getMonth();
+            const filas = f.parts.map((n, pos) => {
+                if (!n) return `<div class="exh-card-p"><span class="hint">Participante ${pos + 1}: sin asignar</span> <button type="button" class="btn-outline mini" onclick="exhAbrirSel('${x.key}',${x.i},${pos},'libres')">Asignar</button></div>`;
+                const p = exhPartPorNombre(n), ch = exhChoques(x.key, f, pos).filter(c => c.t === 'choque');
+                const chk = f.conf[pos] ? `<span class="chk ok" title="Confirmado">${IC.checkAll}</span>` : (f.avis[pos] ? `<span class="chk" title="Avisado">${IC.check}</span>` : '');
+                const pendTag = !f.conf[pos] ? ` <span class="tag">${f.avis[pos] ? 'Por confirmar' : 'Por avisar'}</span>` : '';
+                const tag = ch.length ? ` <span class="tag alerta" title="${esc(ch.map(c => c.msg).join(' · '))}" style="background:var(--red-container);color:var(--red)">Choque</span>` : '';
+                const sinTel = !p || !telefonoValido(p) ? ' <span class="tag sin-tel">Sin teléfono válido</span>' : '';
+                return `<div class="exh-card-p"><strong>${esc(n)}</strong> ${chk}${pendTag}${tag}${sinTel}
+                    <div class="contact-actions">
+                        <button type="button" class="btn-whatsapp" onclick="exhWhatsApp('${x.key}',${x.i},${pos})">WhatsApp</button>
+                        <button type="button" class="btn-outline mini" onclick="exhCopiarMsg('${x.key}',${x.i},${pos})">Copiar</button>
+                        <button type="button" class="btn-outline mini conf${f.conf[pos] ? ' on' : ''}" onclick="exhConfirmar('${x.key}',${x.i},${pos})">${f.conf[pos] ? IC.checkAll : IC.check}<span>Confirmado</span></button>
+                        <button type="button" class="btn-outline mini" onclick="exhAbrirSel('${x.key}',${x.i},${pos},'libres')">Sustituir</button>
+                    </div></div>`;
+            }).join('');
+            return `<div class="exh-card"><div class="exh-card-head"><b>${esc(DIAS_LARGOS[f.diaSemana])} ${f.diaMes} de ${MESES[m].toLowerCase()}</b><small>${esc(f.hora)}</small><small>Lugar: ${esc(f.lugar || 'Por definir')}</small></div>${filas}</div>`;
+        }).join('');
+    }
+    function exhWhatsApp(key, i, pos) {
+        const f = exh.agendas[key][i], p = exhPartPorNombre(f.parts[pos]);
+        if (!p) return mostrarToast(`${f.parts[pos]} no está registrado en Participantes; no se puede abrir WhatsApp.`, 'error');
+        if (!telefonoValido(p)) return mostrarToast(`${exhNom(p)} no tiene un teléfono válido guardado. Edítalo en Participantes.`, 'error');
+        window.open(waUrl(limpiarTelefono(p.telefono).replace('+', ''), exhMensaje(p, f, key)), '_blank', 'noopener');
+        f.avis[pos] = true; guardarLocal(); exhRenderContactos();
+    }
+    async function exhCopiarMsg(key, i, pos) {
+        const f = exh.agendas[key][i], p = exhPartPorNombre(f.parts[pos]); if (!p) return mostrarToast('Participante no registrado.', 'error');
+        if (await copiar(exhMensaje(p, f, key))) { mostrarToast('Mensaje copiado al portapapeles'); f.avis[pos] = true; guardarLocal(); exhRenderContactos(); } else mostrarToast('No se pudo copiar el texto', 'error');
+    }
+    function exhConfirmar(key, i, pos) { const f = exh.agendas[key][i]; f.conf[pos] = !f.conf[pos]; if (f.conf[pos]) f.avis[pos] = true; guardarLocal(); exhRenderContactos(); }
+
+    // ---------- Participantes ----------
+    function exhConteos() {
+        const key = exhKey(), h = new Date(), lunHoy = exhLunes(h.getFullYear(), h.getMonth() + 1, h.getDate()), mes = {}, sem = {};
+        Object.keys(exh.agendas).forEach(k => { const [ka, km] = k.split('-').map(Number); (exh.agendas[k] || []).forEach(f => { if (f.bloqueado) return; const w = exhLunes(ka, km, f.diaMes); (f.parts || []).forEach(n => { if (!n) return; const nk = exhNk(n); if (k === key) mes[nk] = (mes[nk] || 0) + 1; if (w === lunHoy) sem[nk] = (sem[nk] || 0) + 1; }); }); });
+        return { mes, sem };
+    }
+    function exhRenderPart() {
+        const cont = document.getElementById('exhListaPart'); if (!cont) return;
+        const q = norm((document.getElementById('exhBuscaPart') || {}).value), { mes, sem } = exhConteos();
+        const L = exh.participantes.map((p, i) => ({ p, i })).filter(x => !q || norm(`${exhNom(x.p)} ${x.p.telefono}`).includes(q)).sort((a, b) => exhNom(a.p).localeCompare(exhNom(b.p), 'es'));
+        cont.innerHTML = L.map(({ p, i }) => {
+            const d = p.disp || [], on = x => d.some(y => y.startsWith(x + '-')), nk = exhNk(exhNom(p));
+            const circ = EXH_DIAS.map((x, j) => `<i class="${on(x) ? 'on' : ''}" title="${DIAS_LARGOS[x]}">${'LMMJVSD'[j]}</i>`).join('');
+            return `<div class="group-card"><div><strong>${esc(exhNom(p))}</strong> <span class="tag">${exhGenero(p) === 'F' ? 'Hermana' : 'Hermano'}</span>${p.vinc ? ' <span class="tag prox" title="Vinculado con un conductor de Predicación por grupos">Vinculado</span>' : ''}${p.estado === 'pausa' ? ' <span class="tag pausa">En pausa</span>' : ''}<br><small>${esc(p.telefono || '')}</small><div class="dias-mini">${circ}</div><small>Esta semana: <b>${sem[nk] || 0}</b> · ${MESES[exhMes() - 1]}: <b>${mes[nk] || 0}</b> participación(es)</small></div>
+                <div class="row-actions"><button type="button" class="btn-edit-outline icon-btn" title="${p.estado === 'pausa' ? 'Activar' : 'Pausar'}" aria-label="${p.estado === 'pausa' ? 'Activar' : 'Pausar'}" onclick="exhAlternarPart(${i})">${p.estado === 'pausa' ? IC.play : IC.pausa}</button><button type="button" class="btn-edit-outline icon-btn" title="Editar" aria-label="Editar" onclick="exhAbrirPart(${i})">${IC.edit}</button><button type="button" class="btn-edit-outline icon-btn" title="Eliminar" aria-label="Eliminar" onclick="exhEliminarPart(${i})">${IC.trash}</button></div></div>`;
+        }).join('') || '<p class="hint">Aún no hay participantes. Pulsa «Añadir participante».</p>';
+    }
+    let exhTmp = { extra: [], no: [] };
+    function exhAbrirPart(i) {
+        const p = i >= 0 ? exh.participantes[i] : null;
+        document.getElementById('epIdx').value = i; document.getElementById('epTitulo').textContent = p ? 'Editar participante' : 'Nuevo participante';
+        document.getElementById('epNombre').value = p ? p.nombre : ''; document.getElementById('epApellido').value = p ? p.apellido : '';
+        document.getElementById('epTel').value = p ? (p.telefono || '+58 ') : '+58 '; document.getElementById('epGenero').value = p ? exhGenero(p) : 'M'; document.getElementById('epEstado').value = p ? (p.estado || 'activo') : 'activo';
+        document.getElementById('epDisp').innerHTML = EXH_DIAS.map(d => `<div class="day-row"><span class="chip-button" style="pointer-events:none">${DIAS_LARGOS[d]}</span><div class="time-options">${['AM', 'PM'].map(b => `<label class="chip-button"><input type="checkbox" value="${d}-${b}"${p && (p.disp || []).includes(d + '-' + b) ? ' checked' : ''}> ${b}</label>`).join('')}</div></div>`).join('');
+        exhTmp = { extra: p ? (p.extraDisp || []).slice() : [], no: p ? (p.noDisp || []).slice() : [] }; exhChips(); vincReset('P'); openModal('modalExhPart');
+    }
+    function exhChips() {
+        const mk = (arr, t) => arr.map((f, i) => `<span class="tag" title="Quitar" onclick="exhQuitarFecha('${t}',${i})">${esc(fCorta(f))} &times;</span>`).join('');
+        document.getElementById('epChipsDisp').innerHTML = mk(exhTmp.extra, 'extra'); document.getElementById('epChipsNo').innerHTML = mk(exhTmp.no, 'no');
+    }
+    function exhAddFecha(t) {
+        const e = document.getElementById(t === 'extra' ? 'epFechaDisp' : 'epFechaNo'), v = e.value; if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return mostrarToast('Elige una fecha válida', 'error');
+        if (!exhTmp[t].includes(v)) exhTmp[t].push(v); exhTmp[t].sort(); e.value = ''; exhChips();
+    }
+    function exhQuitarFecha(t, i) { exhTmp[t].splice(i, 1); exhChips(); }
+    async function exhGuardarPart(e) {
+        e.preventDefault(); if (!antiDoble(e)) return;
+        const i = parseInt(document.getElementById('epIdx').value, 10), nombre = sanearTexto(document.getElementById('epNombre').value), apellido = sanearTexto(document.getElementById('epApellido').value), tel = limpiarTelefono(document.getElementById('epTel').value);
+        if (!nombre || !apellido) return mostrarToast('Escribe nombre y apellido', 'error');
+        const p = { nombre, apellido, telefono: tel || '', genero: document.getElementById('epGenero').value, estado: document.getElementById('epEstado').value, disp: [...document.querySelectorAll('#epDisp input:checked')].map(x => x.value), extraDisp: exhTmp.extra.slice(), noDisp: exhTmp.no.slice() };
+        const dup = exh.participantes.findIndex((x, j) => j !== i && exhNk(exhNom(x)) === exhNk(exhNom(p))); if (dup >= 0) return mostrarToast('Ya existe un participante con ese nombre', 'error');
+        const vinc = await vincAlGuardar('P', p, i >= 0 ? exh.participantes[i] : null);
+        if (i >= 0) { const ant = exhNom(exh.participantes[i]); exh.participantes[i] = p; if (ant !== exhNom(p)) Object.values(exh.agendas).forEach(R => R.forEach(f => { f.parts = (f.parts || []).map(n => n === ant ? exhNom(p) : n); })); exhReg('Editar', `Participante ${exhNom(p)}`); }
+        else { exh.participantes.push(p); exhReg('Añadir', `Participante ${exhNom(p)}`); }
+        if (vinc.otro) { vincSincronizar('P', p, vinc.otro); registrarActividad('Sincronizar', `Conductor ${nomC(vinc.otro)} actualizado desde Exhibidores`); guardarLocal(); renderListaConductores(); }
+        closeModal('modalExhPart'); exhRenderTodo();
+    }
+    function exhAlternarPart(i) { const p = exh.participantes[i]; p.estado = p.estado === 'pausa' ? 'activo' : 'pausa'; exhReg('Editar', `${exhNom(p)}: ${p.estado === 'pausa' ? 'En pausa' : 'Activo'}`); exhRenderPart(); }
+    async function exhEliminarPart(i) {
+        const p = exh.participantes[i]; if (!(await confirmar(`¿Eliminar a ${exhNom(p)}? Las agendas ya generadas conservarán su nombre.`, 'Eliminar'))) return;
+        exh.participantes.splice(i, 1); exhReg('Eliminar', `Participante ${exhNom(p)}`); exhRenderTodo();
+    }
+
+    // ---------- Lugares ----------
+    function exhRenderLug() {
+        const cont = document.getElementById('exhListaLug'); if (!cont) return;
+        cont.innerHTML = exh.lugares.map((l, i) => {
+            const dias = EXH_DIAS.map(d => { const ts = exh.config.turnos.filter(t => (l.dias || []).includes(d + '-' + t.id)).map(t => t.nombre); return ts.length ? `${DIAS_LARGOS[d].slice(0, 3)} (${ts.join('/')})` : ''; }).filter(Boolean).join(' · ') || 'Sin días asignados';
+            return `<div class="group-card"><div><strong>${esc(l.nombre)}</strong> <span class="tag">1 exhibidor por turno</span><br><small>${esc(dias)}</small></div><div class="row-actions"><button type="button" class="btn-edit-outline icon-btn" title="Editar" aria-label="Editar" onclick="exhAbrirLug(${i})">${IC.edit}</button><button type="button" class="btn-edit-outline icon-btn" title="Eliminar" aria-label="Eliminar" onclick="exhEliminarLug(${i})">${IC.trash}</button></div></div>`;
+        }).join('') || '<p class="hint">Aún no hay lugares. Pulsa «Añadir lugar».</p>';
+    }
+    function exhAbrirLug(i) {
+        const l = i >= 0 ? exh.lugares[i] : null;
+        document.getElementById('elIdx').value = i; document.getElementById('elTitulo').textContent = l ? 'Editar lugar' : 'Nuevo lugar';
+        document.getElementById('elNombre').value = l ? l.nombre : '';
+        document.getElementById('elDias').innerHTML = EXH_DIAS.map(d => `<div class="day-row"><span class="chip-button" style="pointer-events:none">${DIAS_LARGOS[d]}</span><div class="time-options">${exh.config.turnos.map(t => { const v = d + '-' + t.id, chk = l ? (l.dias || []).includes(v) : (t.puntos[d] | 0) > 0; return `<label class="chip-button"><input type="checkbox" value="${v}"${chk ? ' checked' : ''}> ${esc(t.nombre)}</label>`; }).join('')}</div></div>`).join('');
+        openModal('modalExhLug');
+    }
+    function exhGuardarLug(e) {
+        e.preventDefault(); if (!antiDoble(e)) return;
+        const i = parseInt(document.getElementById('elIdx').value, 10), nombre = sanearTexto(document.getElementById('elNombre').value); if (!nombre) return mostrarToast('Escribe el nombre del lugar', 'error');
+        if (exh.lugares.some((x, j) => j !== i && norm(x.nombre) === norm(nombre))) return mostrarToast('Ya existe un lugar con ese nombre', 'error');
+        const l = { nombre, simult: 1, dias: [...document.querySelectorAll('#elDias input:checked')].map(x => x.value) };
+        aislarLugares('exh', () => {
+            if (i >= 0) { const ant = exh.lugares[i].nombre; exh.lugares[i] = l; if (ant !== nombre) Object.values(exh.agendas).forEach(R => R.forEach(f => { if (f.lugar === ant) f.lugar = nombre; })); exhReg('Editar', `Lugar ${nombre}`); } else { exh.lugares.push(l); exhReg('Añadir', `Lugar ${nombre}`); }
+        });
+        closeModal('modalExhLug'); exhRenderTodo();
+    }
+    async function exhEliminarLug(i) { const l = exh.lugares[i]; if (!(await confirmar(`¿Eliminar el lugar «${l.nombre}»?`, 'Eliminar'))) return; aislarLugares('exh', () => { exh.lugares.splice(i, 1); }); exhReg('Eliminar', `Lugar ${l.nombre}`); exhRenderLug(); }
+
+    // ---------- Actividad ----------
+    function exhRenderAct() {
+        const cont = document.getElementById('exhListaAct'); if (!cont) return; cont.innerHTML = '';
+        if (!exh.actividad.length) { cont.innerHTML = '<p style="color:var(--text-sub);font-size:.9rem;font-weight:500">No hay actividad registrada aún.</p>'; return; }
+        exh.actividad.forEach(a => { const it = document.createElement('div'); it.className = 'historial-item'; const s = document.createElement('strong'); s.textContent = String(a.accion ?? ''); const c = document.createElement('small'); c.textContent = String(a.fecha ?? ''); it.append(s, document.createTextNode(': ' + String(a.detalle ?? '') + ' '), c); cont.appendChild(it); });
+    }
+    async function exhBorrarAct() { if (!exh.actividad.length || !(await confirmar('¿Borrar todo el historial de actividad de Exhibidores?', 'Borrar'))) return; exh.actividad = []; guardarLocal(); exhRenderAct(); }
+
+    // ---------- Copia de seguridad (historial) del mes ----------
+    function exhGuardarHist() { const k = exhKey(); if (!(exh.agendas[k] || []).length) return mostrarToast('Primero genera la agenda del mes.', 'error'); exh.historial[k] = { fecha: new Date().toLocaleString('es-VE'), filas: clonar(exh.agendas[k]) }; exhReg('Guardar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); mostrarToast('Copia guardada'); }
+    async function exhCargarHist() { const k = exhKey(), h = exh.historial[k]; if (!h) return mostrarToast('No hay una copia guardada para este mes.', 'error'); if (!(await confirmar(`Restaurar la copia guardada el ${h.fecha}? Se reemplazará la agenda actual del mes.`, 'Restaurar'))) return; exh.agendas[k] = clonar(h.filas); exhReg('Restaurar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); exhRenderTodo(); }
+
+    // ---------- Configuración de horarios ----------
+    function exhPoblarCfg() {
+        const box = document.getElementById('cfgExhBox'); if (!box) return;
+        box.innerHTML = exh.config.turnos.map((t, ti) => `<div class="exh-cfg-t"><b>Turno ${esc(t.nombre.toLowerCase())}</b><input type="text" value="${esc(t.hora)}" placeholder="9:00 AM a 11:00 AM" onchange="exhCfgHora(${ti},this.value)" style="margin-top:8px"><div class="exh-cfg-dias">${EXH_DIAS.map(d => `<label>${d}<select onchange="exhCfgPuntos(${ti},'${d}',this.value)">${[0, 1, 2, 3].map(n => `<option value="${n}"${(t.puntos[d] | 0) === n ? ' selected' : ''}>${n}</option>`).join('')}</select></label>`).join('')}</div></div>`).join('')
+            + `<div style="margin-top:12px"><button type="button" class="btn-outline" onclick="exhCfgRestablecer()">Restablecer horarios de exhibidores</button></div>`;
+    }
+    function exhCfgHora(ti, v) { v = sanearTexto(v); if (!/\d{1,2}:\d{2}\s*(AM|PM)/i.test(v)) { mostrarToast('Usa un formato como 9:00 AM a 11:00 AM', 'error'); return exhPoblarCfg(); } exh.config.turnos[ti].hora = v; guardarLocal(); mostrarToast('Horario guardado'); }
+    function exhCfgPuntos(ti, d, v) { exh.config.turnos[ti].puntos[d] = parseInt(v, 10) || 0; guardarLocal(); }
+    function exhCfgRestablecer() { exh.config = exhConfigDef(); guardarLocal(); exhPoblarCfg(); mostrarToast('Horarios de exhibidores restablecidos'); }
+
+    // ---------- Exportación: PNG, PDF, CSV, resumen WhatsApp ----------
+    function exhTituloApp() { return (config.titulo || '').trim() || defConfig().titulo; }
+    function exhConstruirExport(key, solo) {
+        const [a, m] = key.split('-').map(Number), w = document.createElement('div');
+        w.id = 'exhExportar'; w.className = 'exh-export'; w.style.cssText = 'position:fixed;left:-12000px;top:0;width:900px;background:#fff;padding:24px';
+        w.innerHTML = `<div class="exh-exp-head"><div class="export-app">${esc(exhTituloApp())}</div><h2>Predicación con Exhibidores</h2><p>${MESES[m - 1]} ${a}</p><div class="export-bar"></div></div>${exhHtmlSemanas(key, { edit: false, solo })}`;
+        document.body.appendChild(w); return w;
+    }
+    function exhAbrirDescarga() {
+        const key = exhKey(), ws = exhSemanasDe(key); if (!ws.length) return mostrarToast('Primero genera la agenda del mes.', 'error');
+        const c = document.getElementById('exhOpcDescarga'); c.innerHTML = '';
+        ws.forEach((w, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'download-option'; b.innerHTML = `<span>Semana ${i + 1}</span><small>${esc(exhEtiqueta(key, w.lun).replace('SEMANA DEL ', 'Del '))}</small>`; b.onclick = () => exhPNG(i); c.appendChild(b); });
+        const f = document.createElement('button'); f.type = 'button'; f.className = 'download-option full'; f.innerHTML = '<span>Mes completo</span><small>Todas las semanas</small>'; f.onclick = () => exhPNG(null); c.appendChild(f);
+        openModal('modalExhDescarga');
+    }
+    async function exhPNG(solo) {
+        closeModal('modalExhDescarga'); const key = exhKey(), [a, m] = key.split('-').map(Number); mostrarToast('Generando imagen...');
+        const el = exhConstruirExport(key, solo);
+        try {
+            await document.fonts.ready;
+            const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', logging: false, windowWidth: 1000, onclone: doc => {
+                doc.documentElement.setAttribute('data-theme', 'light'); doc.documentElement.style.setProperty('--zoom', '1');
+                const e = doc.getElementById('exhExportar'); e.style.left = '0'; e.style.position = 'absolute';
+                e.querySelectorAll('.no-export').forEach(x => x.remove());
+                const st = doc.createElement('style'); st.textContent = '*,*::before,*::after{animation:none!important;transition:none!important}'; doc.head.appendChild(st);
+            } });
+            const l = document.createElement('a'); l.download = `Exhibidores-${pad(m)}-${a}-${solo == null ? 'mes-completo' : 'semana-' + (solo + 1)}.png`; l.href = canvas.toDataURL('image/png'); l.click();
+            exhReg('Descargar', `Imagen de exhibidores (${solo == null ? 'mes completo' : 'semana ' + (solo + 1)})`);
+        } catch (err) { mostrarToast('No se pudo generar la imagen. Inténtalo de nuevo.', 'error'); }
+        el.remove();
+    }
+    function exhPDF() {
+        const key = exhKey(); if (!(exh.agendas[key] || []).length) return mostrarToast('Primero genera la agenda del mes.', 'error');
+        const [a, m] = key.split('-').map(Number), w = window.open('', '_blank'); if (!w) return mostrarToast('Permite las ventanas emergentes para exportar el PDF', 'error');
+        const css = [...document.querySelectorAll('style')].map(x => x.textContent).join('\n');
+        w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Exhibidores ${esc(MESES[m - 1])} ${a}</title><style>${css}
+            @page{size:letter;margin:12mm}html,body{background:#fff!important;margin:0;color:#1f1f1f}body{zoom:1;padding:0}*{animation:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+            .exh-table{min-width:0!important;font-size:.78rem}.exh-table td{padding:7px 9px}.exh-semana{margin-bottom:14px}</style></head><body data-modo="exhibidores"><div class="exh-exp-head"><div class="export-app">${esc(exhTituloApp())}</div><h2>Predicación con Exhibidores</h2><p>${MESES[m - 1]} ${a}</p><div class="export-bar"></div></div>${exhHtmlSemanas(key, { edit: false })}</body></html>`);
+        w.document.documentElement.setAttribute('data-theme', 'light');
+        w.document.close(); setTimeout(() => { w.focus(); w.print(); }, 500);
+        exhReg('Exportar', 'Exhibidores en PDF');
+    }
+    function exhCSV() {
+        const key = exhKey(), F = exh.agendas[key] || []; if (!F.length) return mostrarToast('Primero genera la agenda del mes.', 'error');
+        const [a, m] = key.split('-').map(Number), q = v => `"${String(v ?? '').replace(/"/g, '""')}"`, rows = [['Semana', 'Día', 'Fecha', 'Horario', 'Lugar', 'Participante 1', 'Participante 2', 'Participante 3']];
+        exhSemanasDe(key).forEach(w => w.idxs.forEach(i => { const f = F[i]; rows.push([exhEtiqueta(key, w.lun), DIAS_LARGOS[f.diaSemana], f.diaMes, f.hora, f.bloqueado ? (f.motivo || 'Predicación de grupos') : f.lugar, ...(f.bloqueado ? ['', '', ''] : f.parts)]); }));
+        const csv = '\ufeff' + rows.map(r => r.map(q).join(';')).join('\r\n'), l = document.createElement('a');
+        l.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); l.download = `Exhibidores-${pad(m)}-${a}.csv`; l.click();
+        exhReg('Exportar', 'Exhibidores en CSV (Excel)');
+    }
+    function exhAbrirResumen() {
+        const key = exhKey(), ws = exhSemanasDe(key); if (!ws.length) return mostrarToast('Primero genera la agenda del mes.', 'error');
+        const c = document.getElementById('exhOpcResumen'); c.innerHTML = '';
+        ws.forEach((w, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'download-option'; b.innerHTML = `<span>Semana ${i + 1}</span><small>${esc(exhEtiqueta(key, w.lun).replace('SEMANA DEL ', 'Del '))}</small>`; b.onclick = () => exhCopiarResumen(i); c.appendChild(b); });
+        openModal('modalExhResumen');
+    }
+    async function exhCopiarResumen(wi) {
+        const key = exhKey(), F = exh.agendas[key] || [], w = exhSemanasDe(key)[wi]; if (!w) return;
+        let t = `*PREDICACIÓN CON EXHIBIDORES*\n*${exhEtiqueta(key, w.lun)}*\n`, dia = null;
+        w.idxs.forEach(i => {
+            const f = F[i]; if (f.diaMes !== dia) { dia = f.diaMes; t += `\n*${DIAS_LARGOS[f.diaSemana]} ${f.diaMes}*\n`; }
+            t += f.bloqueado ? `- ${f.hora}: ${f.motivo || 'Predicación de grupos'}\n` : `- ${f.hora} · ${f.lugar || 'Por definir'}: ${f.parts.filter(Boolean).join(', ') || 'Sin asignar'}\n`;
+        });
+        t += `\n*${EXH_PAUTAS[0]}*\n*${EXH_PAUTAS[1]}*\n*${EXH_PAUTAS[2]}*`;
+        closeModal('modalExhResumen');
+        if (await copiar(t)) { mostrarToast('Resumen copiado al portapapeles'); exhReg('Copiar', `Resumen semanal de exhibidores (semana ${wi + 1})`); } else mostrarToast('No se pudo copiar el texto', 'error');
+    }
+
 </script>
 
 </body>
