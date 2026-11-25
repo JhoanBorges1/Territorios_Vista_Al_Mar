@@ -984,7 +984,12 @@
     .sync-status[data-estado="offline"] { color: var(--red); }
     .sync-status[data-estado="pending"] .sync-ico .ico { animation: syncPulse 1.4s ease-in-out infinite; }
     @keyframes syncPulse { 0%, 100% { opacity: 1; transform: translateY(0); } 50% { opacity: .45; transform: translateY(-1px); } }
-    @media (max-width: 480px) { .sync-txt { display: none; } .sync-status { padding: 0 7px; } }
+    /* Bloque 3: estado de sincronización siempre legible (3 estados) */
+    .sync-status { height: auto; min-height: 32px; max-width: 58vw; padding-top: 3px; padding-bottom: 3px; }
+    .sync-txt { white-space: normal; line-height: 1.15; }
+    .sync-sub { font-weight: 500; opacity: .9; }
+    .sync-retry { border: 0; cursor: pointer; border-radius: 100px; background: var(--red-container); color: var(--red); font: 700 .72rem/1 var(--font-display); padding: 0 12px; min-height: 44px; margin: -8px -4px -8px 4px; }
+    @media (max-width: 480px) { .sync-status { padding: 3px 4px 3px 7px; font-size: .66rem; gap: 4px; } .sync-sub { display: block; } .sync-retry { padding: 0 8px; font-size: .68rem; } }
 
     /* Móvil: áreas táctiles mínimas de 36 px */
     @media (max-width: 600px) {
@@ -995,6 +1000,28 @@
         .agenda-table td.acc .mini { margin: 2px; }
         .filter-chips .chip-button { min-height: 36px; }
     }
+    /* Bloque 3: áreas táctiles mínimas de 44x44 px en pantallas táctiles y móviles */
+    @media (pointer: coarse), (max-width: 600px) {
+        .mini, .chip-button, .btn-edit-outline, .btn-danger-outline, .toolbar button, .segmented button, .btn-whatsapp,
+        .menu-item, .tab-btn, .filter-chips .chip-button, .btn-outline.mini, .mini.lock, .cell-select, .sync-retry, .onb-cerrar {
+            min-height: 44px; min-width: 44px;
+        }
+        .btn-whatsapp { display: inline-flex; align-items: center; justify-content: center; }
+        .icon-btn.btn-edit-outline, .icon-btn.btn-danger-outline { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+    }
+    /* Bloque 3: diálogos con varias líneas, avisos urgentes y guía de inicio */
+    .dlg-msg { white-space: pre-line; text-align: left; }
+    .aviso-urg { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 14px; margin-bottom: 12px; border-radius: var(--radius-md); background: var(--red-container); color: var(--red); border: 1px solid var(--red); font-size: .88rem; }
+    .aviso-urg.ok { background: var(--blue-soft); color: var(--text-main); border-color: var(--border-light); }
+    .aviso-urg .mini { margin-left: auto; }
+    .contact-item.pase.sinconf { border-left: 5px solid var(--red); }
+    .onb { position: relative; }
+    .onb-ind { display: flex; gap: 6px; margin-bottom: 12px; }
+    .onb-ind i { flex: 1; height: 5px; border-radius: 4px; background: var(--surface-3); }
+    .onb-ind i.on { background: var(--blue); }
+    .onb-txt { font-size: 1rem; line-height: 1.5; margin: 6px 0 18px; }
+    .onb-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
+    .onb-cerrar { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--text-sub); font-size: 1.1rem; cursor: pointer; }
     .icon-btn.btn-edit-outline, .icon-btn.btn-danger-outline {
         width: 38px; height: 38px; min-width: 38px; min-height: 38px; padding: 0; margin: 0; border-radius: 50%;
     }
@@ -1310,7 +1337,7 @@ async function instalarPWA() {
     <header>
         <div class="hdr-title"><h1 id="tituloApp">Gestión de Territorios Vista Al Mar</h1><div class="app-sub hidden" id="subtituloApp"></div></div>
         <div style="display:flex;align-items:center;gap:4px">
-        <div id="syncStatus" class="sync-status hidden" data-estado="ok" role="status" aria-live="polite" title="Sincronizado"><span class="sync-ico" aria-hidden="true"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M9.5 15l2 2 4-4"/></svg></span><span class="sync-txt">Sincronizado</span></div>
+        <div id="syncStatus" class="sync-status hidden" data-estado="ok" role="status" aria-live="polite" title="Sincronizado"><span class="sync-ico" aria-hidden="true"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M9.5 15l2 2 4-4"/></svg></span><span class="sync-txt">Sincronizado</span><button type="button" class="sync-retry hidden" onclick="reintentarSync()" aria-label="Reintentar sincronización ahora">Reintentar</button></div>
         <button type="button" class="menu-btn" aria-label="Buscar" onclick="abrirBuscador()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></button>
         <div class="menu-wrap">
             <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu(event)">
@@ -1370,7 +1397,7 @@ async function instalarPWA() {
                     <button class="btn-primary" onclick="openModalConductor()">Agregar Conductor</button>
                     <button class="btn-outline" onclick="toggleVisibility('listaConductores')">Ver Lista y Editar</button>
                 </div>
-                <div id="listaConductores" class="hidden" style="margin-top:16px;"><input type="search" id="buscaConductores" placeholder="Buscar conductor..." oninput="renderListaConductores()"><div class="filter-chips" id="chipsConductores"></div><div id="listaConductoresItems"></div></div>
+                <div id="listaConductores" class="hidden" style="margin-top:16px;"><input type="search" id="buscaConductores" placeholder="Buscar conductor..." oninput="dbn('bc',renderListaConductores)"><div class="filter-chips" id="chipsConductores"></div><div id="listaConductoresItems"></div></div>
             </section>
         </div>
 
@@ -1382,7 +1409,7 @@ async function instalarPWA() {
                     <button class="btn-primary" onclick="openModalTerritorio()">Agregar Territorio</button>
                     <button class="btn-outline" onclick="toggleVisibility('listaTerritorios')">Ver Lista y Editar</button>
                 </div>
-                <div id="listaTerritorios" class="hidden" style="margin-top:16px;"><input type="search" id="buscaTerritorios" placeholder="Buscar por número, nombre o lugar..." oninput="renderListaTerritorios()" style="margin-bottom:12px"><div id="listaTerritoriosItems"></div></div>
+                <div id="listaTerritorios" class="hidden" style="margin-top:16px;"><input type="search" id="buscaTerritorios" placeholder="Buscar por número, nombre o lugar..." oninput="dbn('bt',renderListaTerritorios)" style="margin-bottom:12px"><div id="listaTerritoriosItems"></div></div>
             </section>
         </div>
 
@@ -1413,7 +1440,7 @@ async function instalarPWA() {
                     <div class="filtro-busq" id="filtroBusqBox">
                         <div class="filtro-busq-campo">
                             <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-                            <input type="search" id="filtroBusqueda" placeholder="Buscar en la agenda: conductor, territorio, lugar, día o grupo..." oninput="aplicarBusquedaAgenda(this.value)" autocomplete="off" aria-label="Buscar en la agenda">
+                            <input type="search" id="filtroBusqueda" placeholder="Buscar en la agenda: conductor, territorio, lugar, día o grupo..." oninput="dbn('ba',aplicarBusquedaAgenda,this.value)" autocomplete="off" aria-label="Buscar en la agenda">
                             <button type="button" class="busq-clear hidden" id="filtroBusqClear" onclick="limpiarBusquedaAgenda()" title="Limpiar búsqueda" aria-label="Limpiar búsqueda"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
                         </div>
                         <div class="filtro-busq-info"><span id="filtroBusqInfo"></span><button type="button" class="btn-outline mini hidden" id="filtroBusqLimpiarTodo" onclick="limpiarFiltrosAgenda(true)">Limpiar filtros</button></div>
@@ -1513,7 +1540,7 @@ async function instalarPWA() {
                     <div class="filtro-busq">
                         <div class="filtro-busq-campo">
                             <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-                            <input type="search" id="exhBusca" placeholder="Buscar participante, lugar, día..." oninput="exhRenderAgenda()" autocomplete="off" aria-label="Buscar en la agenda de exhibidores">
+                            <input type="search" id="exhBusca" placeholder="Buscar participante, lugar, día..." oninput="dbn('bea',exhRenderAgenda)" autocomplete="off" aria-label="Buscar en la agenda de exhibidores">
                         </div>
                         <div class="filtro-busq-info"><span id="exhBuscaInfo"></span><button type="button" class="btn-outline mini" onclick="exhLimpiarBusca()">Limpiar</button></div>
                     </div>
@@ -1540,7 +1567,7 @@ async function instalarPWA() {
                 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">
                     <button type="button" class="btn-primary" onclick="exhAbrirPart(-1)" style="width:auto">Añadir participante</button>
                 </div>
-                <input type="search" id="exhBuscaPart" placeholder="Buscar participante..." oninput="exhRenderPart()" style="margin-bottom:12px">
+                <input type="search" id="exhBuscaPart" placeholder="Buscar participante..." oninput="dbn('bep',exhRenderPart)" style="margin-bottom:12px">
                 <div id="exhListaPart"></div>
             </section>
         </div>
@@ -1753,10 +1780,26 @@ async function instalarPWA() {
     </div>
 </div>
 
+<div id="modalOnboarding" class="modal" style="z-index:2500">
+    <div class="modal-content no-zoom onb" role="dialog" aria-modal="true" aria-labelledby="onbTitulo" style="max-width:460px">
+        <button type="button" class="onb-cerrar" aria-label="Cerrar guía" onclick="onbCerrar()">✕</button>
+        <div class="onb-ind" id="onbInd" aria-hidden="true"></div>
+        <h2 class="module-title" id="onbTitulo"></h2>
+        <p class="onb-txt" id="onbTxt"></p>
+        <div class="modal-footer onb-foot">
+            <button type="button" class="btn-outline" onclick="onbNoMostrar()">No volver a mostrar</button>
+            <button type="button" class="btn-outline" id="onbAtras" onclick="onbIr(-1)">Atrás</button>
+            <button type="button" class="btn-primary" id="onbSig" onclick="onbIr(1)">Siguiente</button>
+        </div>
+    </div>
+</div>
+
 <div id="modalAyuda" class="modal">
     <div class="modal-content no-zoom" style="max-width:720px">
         <h2 class="module-title">¿Cómo usar la aplicación?</h2>
         <p class="ayuda-intro">Esta guía te explica paso a paso cómo preparar y organizar las salidas de predicación del mes. Toca cada título para abrir o cerrar su explicación. Si es tu primera vez, sigue el orden de las secciones 1 a 5.</p>
+
+        <button type="button" class="btn-outline" style="margin:0 0 14px" onclick="closeModal('modalAyuda');abrirOnboarding()">▶ Ver guía rápida de 3 pasos</button>
 
         <div class="ayuda-h">Manual</div>
 
@@ -1959,7 +2002,7 @@ async function instalarPWA() {
     <div class="modal-content no-zoom">
         <h2 class="module-title">Configuración</h2>
         <div class="cfg-top">
-            <input type="search" id="cfgBuscar" placeholder="Buscar un ajuste…" aria-label="Buscar en configuración" oninput="filtrarConfig(this.value)" autocomplete="off">
+            <input type="search" id="cfgBuscar" placeholder="Buscar un ajuste…" aria-label="Buscar en configuración" oninput="dbn('bcf',filtrarConfig,this.value)" autocomplete="off">
         </div>
         <div id="cfgAvisoRegla" class="cfg-aviso hidden" role="status"></div>
 
@@ -1983,8 +2026,8 @@ async function instalarPWA() {
                         <button type="button" data-v="activas" onclick="setAnim('activas')">Activas</button>
                         <button type="button" data-v="reducidas" onclick="setAnim('reducidas')">Reducidas</button>
                     </div></div>
-                <div class="input-group"><label>Título principal</label><input type="text" id="cfgTitulo" oninput="guardarConfig(1)"></div>
-                <div class="input-group"><label>Subtítulo o nota fija (también va en PNG y PDF)</label><input type="text" id="cfgSub" oninput="guardarConfig(1)"></div>
+                <div class="input-group"><label>Título principal</label><input type="text" id="cfgTitulo" oninput="dbn('save-cfg',guardarConfig,1)"></div>
+                <div class="input-group"><label>Subtítulo o nota fija (también va en PNG y PDF)</label><input type="text" id="cfgSub" oninput="dbn('save-cfg',guardarConfig,1)"></div>
             </div>
         </details>
 
@@ -2008,7 +2051,7 @@ async function instalarPWA() {
         <details class="cfg-sec" id="cfgSec-horarios">
             <summary><span aria-hidden="true">🕒</span> Horarios y turnos <span class="cfg-badge" id="cfgBadge-horarios"></span></summary>
             <div class="cfg-body">
-                <div class="input-group"><label>Máximo de turnos al mes por conductor</label><input type="number" id="cfgMax" min="1" max="31" oninput="guardarConfig()"></div>
+                <div class="input-group"><label>Máximo de turnos al mes por conductor</label><input type="number" id="cfgMax" min="1" max="31" oninput="dbn('save-cfg',guardarConfig)"></div>
                 <div class="input-group"><label>Horarios base por día (mañana y tarde)</label><div id="cfgHorarios" onchange="guardarConfig()"></div>
                     <span class="hint">Se usan al generar el mes.</span>
                     <div><button type="button" class="btn-outline" onclick="restablecerHorariosBase()">Restablecer horarios base</button></div></div>
@@ -2082,14 +2125,14 @@ async function instalarPWA() {
 
 <div id="modalSelector" class="modal"><div class="modal-content">
         <h2 class="module-title" id="selTitulo">Cambiar conductor</h2>
-        <input type="search" id="selBusca" placeholder="Buscar conductor (tolera errores de escritura)..." oninput="renderSelector()" style="margin-bottom:12px">
+        <input type="search" id="selBusca" placeholder="Buscar conductor (tolera errores de escritura)..." oninput="dbn('bs',renderSelector)" style="margin-bottom:12px">
         <div id="selLista"></div>
         <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalSelector')">Cerrar</button></div>
     </div></div>
 
 <div id="modalBuscar" class="modal"><div class="modal-content">
         <h2 class="module-title">Búsqueda global</h2>
-        <input type="search" id="gsInput" placeholder="Conductores, territorios, asignaciones..." oninput="buscarGlobal()">
+        <input type="search" id="gsInput" placeholder="Conductores, territorios, asignaciones..." oninput="dbn('bg',buscarGlobal)">
         <div id="gsRes" style="margin-top:8px"></div>
         <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalBuscar')">Cerrar</button></div>
     </div></div>
@@ -2134,7 +2177,7 @@ async function instalarPWA() {
 <div id="modalExhSel" class="modal"><div class="modal-content">
     <h2 class="module-title" id="exhSelTitulo">Seleccionar</h2>
     <p class="hint" id="exhSelSub" style="margin:-8px 0 12px"></p>
-    <input type="search" id="exhSelBusca" placeholder="Buscar..." oninput="exhRenderSel()" style="margin-bottom:12px">
+    <input type="search" id="exhSelBusca" placeholder="Buscar..." oninput="dbn('bes',exhRenderSel)" style="margin-bottom:12px">
     <div id="exhSelLista"></div>
     <div class="modal-footer"><button type="button" class="btn-outline" onclick="closeModal('modalExhSel')">Cerrar</button></div>
 </div></div>
@@ -3180,7 +3223,10 @@ async function instalarPWA() {
     }
     // === MÓDULO 5: MOTOR DE GENERACIÓN (GRUPOS Y EXHIBIDORES) ===
     async function generarNuevaAgenda() { if (_bloqueadoLector()) return;
-        if (agendasMaestras[agendaKey()] && !(await confirmar(`Ya existe una agenda para ${nombreMesSel()} ${anioSel()}. Si continúas se regenerará y se perderán las ediciones manuales (puedes usar Deshacer).${(() => { const n = (agendasMaestras[agendaKey()] || []).filter(f => f.fijado && !f.evento).length; return n ? ` Se conservarán ${n} turno(s) fijado(s) con candado.` : ''; })()}`, 'Regenerar'))) return;
+        if (agendasMaestras[agendaKey()]) {
+            const i = impactoAgenda(agendasMaestras[agendaKey()]);
+            if (!(await confirmar(`Ya existe una agenda para ${nombreMesSel()} ${anioSel()}.\n\n✔ Se conservarán: ${i.fij ? i.fij + ' turno(s) fijado(s) con candado' : 'ningún turno (no hay turnos fijados con candado)'}.\n✖ Se reemplazarán: ${i.rest} turno(s) sin candado y tus ediciones manuales en ellos${i.marcas ? ` (${i.marcas} con aviso o confirmación, que se perderán)` : ''}.\n\nPodrás usar Deshacer después.`, 'Regenerar'))) return;
+        }
         _generarNuevaAgenda();
     }
     function _generarNuevaAgenda() {
@@ -3590,7 +3636,8 @@ async function instalarPWA() {
     // 'avisar' = aún no avisado · 'confirmar' = avisado, falta confirmación · 'confirmado' · 'sin' = turno sin conductor
     const estadoAviso = f => !asignado(f) ? 'sin' : f.confirmado ? 'confirmado' : f.avisado ? 'confirmar' : 'avisar';
     const conductorDe = f => conductores.find(c => norm(nomC(c)) === norm(f.conductor)) || null;
-    function telefonoValido(c) { if (!c) return false; const d = limpiarTelefono(c.telefono).replace(/\D/g, ''); return d.length >= 10 && d.length <= 15; }
+    const RX_E164 = /^\+[1-9]\d{9,14}$/;   // formato internacional: + código de país + número (10 a 15 dígitos)
+    function telefonoValido(c) { if (!c) return false; const t = limpiarTelefono(c.telefono).replace(/\s/g, ''); return RX_E164.test(t) && (!t.startsWith('+58') || t.length === 13); }
     const inicioMs = x => new Date(x.d.getFullYear(), x.d.getMonth(), x.d.getDate(), 0, ventanaTurno(x.f.diaSemana, x.f.hora).ini).getTime();
     // Hoy: solo turnos en curso o por empezar (se excluyen los finalizados). Mañana: todos.
     function itemsContactos() {
@@ -3623,13 +3670,13 @@ async function instalarPWA() {
         if (!lista.length) { cont.innerHTML = '<p class="hint">No hay turnos en curso ni próximos para hoy y mañana.</p>'; renderCola(); return; }
         const vis = lista.filter(x => filtroContacto === 'todos' || (filtroContacto === 'pend' && ['avisar', 'confirmar'].includes(estadoAviso(x.f))) || (filtroContacto === 'avisar' && estadoAviso(x.f) === 'avisar') || (filtroContacto === 'confirmar' && estadoAviso(x.f) === 'confirmar') || (filtroContacto === 'confirmados' && estadoAviso(x.f) === 'confirmado'));
         if (!vis.length) { cont.innerHTML = '<p class="hint">No hay asignaciones con este estado.</p>'; renderCola(); return; }
-        cont.innerHTML = vis.map((x, n) => {
+        cont.innerHTML = bannerUrgentes(lista) + ordenarUrgentes(vis).map((x, n) => {
             const f = x.f, c = conductorDe(f), al = alertaTurno(x), telOk = telefonoValido(c);
             const chk = f.confirmado ? `<span class="chk ok" title="Confirmado">${IC.checkAll}</span>` : (f.avisado ? `<span class="chk" title="Avisado">${IC.check}</span>` : '');
             const tag = al ? ` <span class="tag alerta ${al.cls}">${esc(al.txt)}</span>` : '';
             const estA = estadoAviso(f), pendTag = estA === 'avisar' ? ' <span class="tag">Por avisar</span>' : estA === 'confirmar' ? ' <span class="tag">Por confirmar</span>' : '';
             const sinTel = asignado(f) && !telOk ? ` <span class="tag sin-tel" title="Edita al conductor para agregar un teléfono válido">${c ? 'Sin teléfono válido' : 'No registrado'}</span>` : '';
-            return `<div class="contact-item pase${al ? ' ' + al.cls : ''}" style="--i:${n}"><div class="pase-l"><div class="pase-dia">${DIAS_LARGOS[f.diaSemana]} ${f.diaMes}</div><div class="pase-hora">${esc(f.hora)}</div><div class="pase-terr">${esc(f.territorio)}</div></div>
+            return `<div class="contact-item pase${al ? ' ' + al.cls : ''}${asignado(f) && !f.confirmado ? ' sinconf' : ''}" style="--i:${n}"><div class="pase-l"><div class="pase-dia">${DIAS_LARGOS[f.diaSemana]} ${f.diaMes}</div><div class="pase-hora">${esc(f.hora)}</div><div class="pase-terr">${esc(f.territorio)}</div></div>
                 <div class="pase-r"><strong>${esc(f.conductor)}</strong> ${chk}${pendTag}${tag}${sinTel}<br><small>${f.grupos ? esc(f.grupos) + ' · ' : ''}${esc(f.lugar)}</small>
                 <div class="contact-actions" style="margin-top:10px;flex-wrap:wrap">
                     <button type="button" class="btn-outline mini" onclick="copiarAvisoTurno('${x.k}',${x.i})">Copiar</button>
@@ -3645,7 +3692,7 @@ async function instalarPWA() {
         const R = agendasMaestras[k], f = R && R[idx]; if (!f) return false;
         const c = conductorDe(f);
         if (!c) { mostrarToast(`${asignado(f) ? f.conductor : 'Este turno'} no tiene un conductor registrado; no se puede abrir WhatsApp.`, 'error'); return false; }
-        if (!telefonoValido(c)) { mostrarToast(`${nomC(c)} no tiene un teléfono válido guardado. Edítalo en Conductores para poder abrir WhatsApp.`, 'error'); return false; }
+        if (!telefonoValido(c)) { mostrarToast(`${nomC(c)} no tiene un teléfono válido guardado. Edítalo en Conductores con formato internacional (ej. +58 414 1234567) para poder abrir WhatsApp.`, 'error'); return false; }
         window.open(waUrl(limpiarTelefono(c.telefono).replace('+', ''), mensajeWA(c, f)), '_blank', 'noopener');
         marcarComoAvisado(k, idx); return true;
     }
@@ -3729,7 +3776,8 @@ async function instalarPWA() {
         agendasMaestras[k] = clonar(historialAgendas[k]); guardarLocal(); cargarAgendaDelMes(); closeModal('modalHistorial');
     }
     async function borrarDeHistorial(k) { if (_bloqueadoLector()) return;
-        if (await confirmar("¿Borrar historial? Se perderá permanentemente del teléfono.", 'Borrar')) { delete historialAgendas[k]; guardarLocal(); renderHistorial(); cargarAgendaDelMes(); }
+        const hi = impactoAgenda(historialAgendas[k]), abierta = !!agendasMaestras[k];
+        if (await confirmar(`¿Borrar la copia del historial (${k})?\n\n✖ Se eliminará la instantánea guardada: ${hi.total} turno(s), ${hi.fij} con candado.\n✔ ${abierta ? 'Se conservará la agenda de trabajo de ese mes (' + impactoAgenda(agendasMaestras[k]).fij + ' turno(s) con candado).' : 'Ese mes no tiene agenda de trabajo abierta: dejará de verse en la Agenda.'}\n\nNo se puede deshacer.`, 'Borrar')) { delete historialAgendas[k]; guardarLocal(); renderHistorial(); cargarAgendaDelMes(); }
     }
     function cargarAgendaDelMes() {
         filtroAg = { c: '', t: '', q: '' };
@@ -3805,6 +3853,7 @@ async function instalarPWA() {
         exhIniciar();
         actualizarDatalists();
         updateUndoUI(); actualizarSyncUI(); aplicarRolUI(); _rolListo = true;
+        if (!window._onbMostrado) { window._onbMostrado = true; setTimeout(mostrarOnboardingSiCorresponde, 400); }
     }
 
     function guardarLocal() {
@@ -3813,12 +3862,12 @@ async function instalarPWA() {
         const payload = payloadCompleto(), v = validarEstadoApp(payload);
         if (!v.ok) { alertaEstadoInvalido(v.errores); return false; }
         try { localStorage.setItem('vdm_data', JSON.stringify(payload)); } catch (e) { mostrarToast('No se pudo guardar en este dispositivo (almacenamiento lleno).', 'error'); return false; }
-        sincronizarNube();
+        programarSync();   // la subida a la nube se agrupa (debounce) para evitar tirones al editar rápido
         return true;
     }
 
     // Subida a Supabase en segundo plano (en cola, para que lleguen en orden) con control de versión
-    let _colaSync = Promise.resolve(), _verSync = 0, _ultAvisoSync = 0, _syncPend = 0, _syncFallo = false, _syncRetryT = null, _syncReintentos = 0, _conflictoAbierto = false;
+    let _colaSync = Promise.resolve(), _verSync = 0, _ultAvisoSync = 0, _syncPend = 0, _syncFallo = false, _syncRetryT = null, _syncReintentos = 0, _conflictoAbierto = false, _syncDebT = null;
     async function subirConVersion(forzar) {
         const p = payloadCompleto(); p.version = _verBase + 1; p.updated_at = new Date().toISOString();
         const v = validarEstadoApp(p); if (!v.ok) { alertaEstadoInvalido(v.errores); return 'invalido'; }
@@ -3843,7 +3892,7 @@ async function instalarPWA() {
         if (_conflictoAbierto) return; _conflictoAbierto = true;
         try {
             const op = await dialogo('Cambios en la nube', 'Hay cambios más recientes en la nube. ¿Deseas recargar la versión actual o sobrescribir con tus cambios?', [{ t: 'Recargar versión de la nube', v: 'recargar' }, { t: 'Sobrescribir con mis cambios', v: 'sobrescribir', primario: true }]);
-            if (!op) { mostrarToast('Sin sincronizar: hay cambios más recientes en la nube.', 'error'); return; }
+            if (!op) { mostrarToast('Sin sincronizar: hay cambios más recientes en la nube.', 'error'); _syncFallo = true; actualizarSyncUI(); return; }
             const nube = await leerNube();
             if (!nube) { _syncFallo = true; mostrarToast('No se pudo leer la nube. Inténtalo de nuevo.', 'error'); return; }
             _verBase = Number(nube.version) || 0;
@@ -3860,7 +3909,7 @@ async function instalarPWA() {
             if (!_sesionActiva) return;
             const r = await subirConVersion(false);
             if (r === 'conflicto') { await resolverConflicto(); return; }
-            if (r !== 'ok') return;
+            if (r !== 'ok') { _syncFallo = true; return; }   // inválido u otro fallo: el indicador lo muestra y permite reintentar
             _syncFallo = false; _syncReintentos = 0;
             if (miVer === _verSync) { try { localStorage.removeItem('vdm_sync_pendiente'); } catch (e) {} }
         }).catch(e => {
@@ -3870,6 +3919,7 @@ async function instalarPWA() {
     }
     async function esperarSincronizacion() {
         if (!supabaseClient || navigator.onLine === false) return false;
+        flushSync();
         await Promise.race([_colaSync, new Promise(r => setTimeout(r, 12000))]);
         let pend = false; try { pend = localStorage.getItem('vdm_sync_pendiente') === '1'; } catch (e) {}
         return !pend && !_syncFallo && _syncPend === 0;
@@ -3892,7 +3942,8 @@ async function instalarPWA() {
         let obj; try { obj = JSON.parse(await f.text()); } catch (e) { return avisar('El archivo no es un JSON válido. No se restauró nada.'); }
         const datos = (obj && obj.app === 'territorios-vdm' && obj.datos) ? obj.datos : obj, v = validarEstadoApp(datos);
         if (!v.ok) return avisar('El respaldo está incompleto o dañado y no se restauró nada. Detalle: ' + v.errores.slice(0, 4).join(' · '));
-        if (!(await confirmar('Se reemplazarán todos los datos actuales, también en la nube, por los del respaldo. ¿Continuar?', 'Restaurar'))) return;
+        const fijAct = contarFijados(agendasMaestras), fijRes = contarFijados(datos.borradores);
+        if (!(await confirmar(`Restaurar este respaldo reemplazará TODOS los datos actuales, también en la nube.\n\n✔ Se conservarán (los del respaldo): ${fijRes} turno(s) fijado(s) con candado en ${Object.keys(datos.borradores || {}).length} agenda(s).\n✖ Se reemplazarán: ${Object.keys(agendasMaestras).length} agenda(s) actuales con ${fijAct} turno(s) fijado(s), ${conductores.length} conductor(es), ${territorios.length} territorio(s) y el historial.\n\nTe recomendamos descargar un respaldo actual antes de continuar.`, 'Restaurar'))) return;
         const nube = await leerNube(); if (nube) _verBase = Number(nube.version) || 0;
         aplicarPayload(datos); mostrarToast('Respaldo restaurado');
     }
@@ -3923,7 +3974,7 @@ async function instalarPWA() {
         if (!supabaseClient) return null;
         let pend = false; try { pend = localStorage.getItem('vdm_sync_pendiente') === '1'; } catch (e) {}
         if (navigator.onLine === false || _syncFallo) return 'offline';
-        if (_syncPend > 0 || pend) return 'pending';
+        if (_syncPend > 0 || _syncDebT || pend) return 'pending';
         return 'ok';
     }
     function actualizarSyncUI() {
@@ -3931,14 +3982,29 @@ async function instalarPWA() {
         const est = estadoSync();
         if (!est) { el.classList.add('hidden'); return; }
         el.classList.remove('hidden');
+        // Tres estados reales: Sincronizado · Guardando... · Sin conexión (guardado localmente)
         const M = {
-            ok: ['Sincronizado', IC.nubeOk, 'Todos los cambios están guardados en la nube'],
-            pending: [_syncPend > 0 ? 'Guardando…' : 'Pendiente', IC.nubeSube, 'Hay cambios por subir a la nube'],
-            offline: ['Sin conexión', IC.nubeOff, 'Sin conexión: los cambios se guardan en este dispositivo y se subirán al reconectar']
+            ok: ['Sincronizado', '', IC.nubeOk, 'Todos los cambios están guardados en la nube'],
+            pending: ['Guardando...', '', IC.nubeSube, 'Subiendo los cambios a la nube'],
+            offline: ['Sin conexión', ' (guardado localmente)', IC.nubeOff, 'Sin conexión: tus cambios están guardados en este dispositivo y se subirán al reconectar']
         }[est];
-        if (el.dataset.estado !== est || !el.querySelector('.sync-ico .ico')) { el.dataset.estado = est; el.querySelector('.sync-ico').innerHTML = M[1]; }
-        const t = el.querySelector('.sync-txt'); if (t.textContent !== M[0]) t.textContent = M[0];
-        el.title = M[2];
+        if (el.dataset.estado !== est || !el.querySelector('.sync-ico .ico')) { el.dataset.estado = est; el.querySelector('.sync-ico').innerHTML = M[2]; }
+        const t = el.querySelector('.sync-txt'), html = M[0] + (M[1] ? `<span class="sync-sub">${M[1]}</span>` : '');
+        if (t.innerHTML !== html) t.innerHTML = html;
+        const b = el.querySelector('.sync-retry'); if (b) b.classList.toggle('hidden', est !== 'offline');
+        el.title = M[3];
+    }
+    function programarSync() {
+        if (!supabaseClient || !_sesionActiva || !puedeEditar()) return;
+        try { localStorage.setItem('vdm_sync_pendiente', '1'); } catch (e) {}
+        clearTimeout(_syncDebT); _syncDebT = setTimeout(() => { _syncDebT = null; sincronizarNube(); }, 700);
+        actualizarSyncUI();
+    }
+    function flushSync() { if (_syncDebT) { clearTimeout(_syncDebT); _syncDebT = null; sincronizarNube(); } }
+    function reintentarSync() {
+        if (navigator.onLine === false) return mostrarToast('Sigues sin conexión: tus cambios están guardados en este dispositivo y se subirán al reconectar.', 'error');
+        _syncFallo = false; _syncReintentos = 0; clearTimeout(_syncRetryT); _syncRetryT = null; clearTimeout(_syncDebT); _syncDebT = null;
+        actualizarSyncUI(); sincronizarNube();
     }
     // Se registran una sola vez, aunque la interfaz se vuelva a dibujar
     if (!window.__vdmSyncListeners) {
@@ -3984,7 +4050,7 @@ async function instalarPWA() {
     }
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function closeModal(id) { flushDeb(); document.getElementById(id).style.display = 'none'; }
 
     // === CRUD CONDUCTORES ===
     function openModalConductor() { 
@@ -4217,7 +4283,7 @@ async function instalarPWA() {
     }
 
     async function borrarHistorialActividad() { if (_bloqueadoLector()) return;
-        if(await confirmar("¿Borrar todo el historial de actividad?", 'Borrar')) {
+        if(await confirmar(`¿Borrar todo el historial de actividad?\n\n✖ Se eliminarán ${historialActividad.length} registro(s).\n✔ No se tocan las agendas ni los turnos fijados con candado (${contarFijados(agendasMaestras)} en total).`, 'Borrar')) {
             historialActividad = [];
             guardarLocal();
             renderActividad();
@@ -4363,7 +4429,7 @@ async function instalarPWA() {
     }
 
     // =====================================================================
-    // PARTE 4: MODO "PREDICACIÓN CON EXHIBIDORES" (sincronizado anti-choques)
+    // === MÓDULO 7: MODO "PREDICACIÓN CON EXHIBIDORES" (sincronizado anti-choques) ===
     // =====================================================================
     const EXH_DIAS = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
     const EXH_TABS = ['tab-exh-agenda', 'tab-exh-part', 'tab-exh-lug', 'tab-exh-res', 'tab-exh-act'];
@@ -4699,7 +4765,7 @@ async function instalarPWA() {
     async function exhGenerar() { if (_bloqueadoLector()) return;
         const key = exhKey(), a = exhAnio(), m = exhMes();
         if (!exh.participantes.some(p => p.estado !== 'pausa')) return mostrarToast('Primero registra participantes activos en la pestaña Participantes.', 'error');
-        if ((exh.agendas[key] || []).length && !(await confirmar(`Ya existe una agenda de exhibidores para ${MESES[m - 1]} ${a}. Si continúas se regenerará y se perderán las ediciones manuales.`, 'Regenerar'))) return;
+        if ((exh.agendas[key] || []).length && !(await confirmar(`Ya existe una agenda de exhibidores para ${MESES[m - 1]} ${a}.\n\n✔ Se conservarán: ningún turno (en exhibidores no hay candados).\n✖ Se reemplazarán: ${exhResumenImpacto(exh.agendas[key])}.\n\nSe perderán también las ediciones manuales.`, 'Regenerar'))) return;
         const dias = new Date(a, m, 0).getDate(), ex = excepciones[key] || [], filas = [];
         const act = exh.participantes.filter(p => p.estado !== 'pausa').map(p => ({ p, n: exhNom(p), nk: exhNk(exhNom(p)), tel: exhTel(p.telefono), g: exhGenero(p) }));
         const semCnt = {}, mesCnt = {}, ult = {}, usadoDia = {}, usoLug = {}, ultLug = {};
@@ -4864,7 +4930,7 @@ async function instalarPWA() {
         const L = exhItemsContacto();
         exhActualizarBadge(L);
         if (!L.length) { cont.innerHTML = '<p class="hint">No hay exhibidores en curso ni próximos para hoy y mañana.</p>'; return; }
-        cont.innerHTML = L.map(x => {
+        cont.innerHTML = exhBannerUrg(L) + L.map(x => {
             const f = x.f, m = x.dt.getMonth();
             const filas = f.parts.map((n, pos) => {
                 if (!n) return `<div class="exh-card-p"><span class="hint">Participante ${pos + 1}: sin asignar</span> <button type="button" class="btn-outline mini" onclick="exhAbrirSel('${x.key}',${x.i},${pos},'libres')">Asignar</button></div>`;
@@ -4887,7 +4953,7 @@ async function instalarPWA() {
     function exhWhatsApp(key, i, pos) {
         const f = exh.agendas[key][i], p = exhPartPorNombre(f.parts[pos]);
         if (!p) return mostrarToast(`${f.parts[pos]} no está registrado en Participantes; no se puede abrir WhatsApp.`, 'error');
-        if (!telefonoValido(p)) return mostrarToast(`${exhNom(p)} no tiene un teléfono válido guardado. Edítalo en Participantes.`, 'error');
+        if (!telefonoValido(p)) return mostrarToast(`${exhNom(p)} no tiene un teléfono válido guardado. Edítalo en Participantes con formato internacional (ej. +58 414 1234567).`, 'error');
         window.open(waUrl(limpiarTelefono(p.telefono).replace('+', ''), exhMensaje(p, f, key)), '_blank', 'noopener');
         f.avis[pos] = true; guardarLocal(); exhRenderContactos();
     }
@@ -4983,11 +5049,11 @@ async function instalarPWA() {
         if (!exh.actividad.length) { cont.innerHTML = '<p style="color:var(--text-sub);font-size:.9rem;font-weight:500">No hay actividad registrada aún.</p>'; return; }
         exh.actividad.forEach(a => { const it = document.createElement('div'); it.className = 'historial-item'; const s = document.createElement('strong'); s.textContent = String(a.accion ?? ''); const c = document.createElement('small'); c.textContent = String(a.fecha ?? ''); it.append(s, document.createTextNode(': ' + String(a.detalle ?? '') + ' '), c); cont.appendChild(it); });
     }
-    async function exhBorrarAct() { if (_bloqueadoLector()) return; if (!exh.actividad.length || !(await confirmar('¿Borrar todo el historial de actividad de Exhibidores?', 'Borrar'))) return; exh.actividad = []; guardarLocal(); exhRenderAct(); }
+    async function exhBorrarAct() { if (_bloqueadoLector()) return; if (!exh.actividad.length || !(await confirmar(`¿Borrar todo el historial de actividad de Exhibidores?\n\n✖ Se eliminarán ${exh.actividad.length} registro(s). Las agendas no se modifican.`, 'Borrar'))) return; exh.actividad = []; guardarLocal(); exhRenderAct(); }
 
     // ---------- Copia de seguridad (historial) del mes ----------
     function exhGuardarHist() { if (_bloqueadoLector()) return; const k = exhKey(); if (!(exh.agendas[k] || []).length) return mostrarToast('Primero genera la agenda del mes.', 'error'); exh.historial[k] = { fecha: new Date().toLocaleString('es-VE'), filas: clonar(exh.agendas[k]) }; exhReg('Guardar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); mostrarToast('Copia guardada'); }
-    async function exhCargarHist() { if (_bloqueadoLector()) return; const k = exhKey(), h = exh.historial[k]; if (!h) return mostrarToast('No hay una copia guardada para este mes.', 'error'); if (!(await confirmar(`Restaurar la copia guardada el ${h.fecha}? Se reemplazará la agenda actual del mes.`, 'Restaurar'))) return; exh.agendas[k] = clonar(h.filas); exhReg('Restaurar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); exhRenderTodo(); }
+    async function exhCargarHist() { if (_bloqueadoLector()) return; const k = exhKey(), h = exh.historial[k]; if (!h) return mostrarToast('No hay una copia guardada para este mes.', 'error'); if (!(await confirmar(`Restaurar la copia guardada el ${h.fecha}?\n\n✖ Se reemplazará: ${exhResumenImpacto(exh.agendas[k])}.\n✔ Se cargará la copia: ${exhResumenImpacto(h.filas)}. (En exhibidores no hay candados.)`, 'Restaurar'))) return; exh.agendas[k] = clonar(h.filas); exhReg('Restaurar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); exhRenderTodo(); }
 
     // ---------- Configuración de horarios ----------
     function exhPoblarCfg() {
@@ -5066,6 +5132,82 @@ async function instalarPWA() {
         closeModal('modalExhResumen');
         if (await copiar(sinDatosContacto(t))) { mostrarToast('Resumen copiado al portapapeles'); exhReg('Copiar', `Resumen semanal de exhibidores (semana ${wi + 1})`); } else mostrarToast('No se pudo copiar el texto', 'error');
     }
+
+
+    // =====================================================================
+    // === MÓDULO 8: ONBOARDING, RENDIMIENTO MÓVIL Y PREVENCIÓN DE ERRORES ===
+    // =====================================================================
+    // --- Debounce genérico por clave (búsquedas en vivo y guardado automático de ajustes) ---
+    var _dbnT = {}, _dbnP = {};
+    function dbn(k, fn, ...args) {
+        _dbnP[k] = { fn, args }; clearTimeout(_dbnT[k]);
+        _dbnT[k] = setTimeout(() => flushDeb(k), k.startsWith('save') ? 500 : 200);
+    }
+    function flushDeb(k) {   // ejecuta de inmediato lo pendiente (al cerrar un diálogo o salir de la página)
+        Object.keys(k ? { [k]: 1 } : _dbnP).forEach(x => { clearTimeout(_dbnT[x]); const p = _dbnP[x]; delete _dbnP[x]; if (p) p.fn(...p.args); });
+    }
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { flushDeb(); flushSync(); } });
+    window.addEventListener('pagehide', () => { flushDeb(); flushSync(); });
+
+    // --- Conteos para confirmaciones ---
+    function impactoAgenda(filas) {
+        const F = (Array.isArray(filas) ? filas : []).filter(f => f && !f.evento), fij = F.filter(f => f.fijado).length;
+        return { total: F.length, fij, rest: F.length - fij, marcas: F.filter(f => !f.fijado && (f.avisado || f.confirmado)).length };
+    }
+    function contarFijados(mapa) { return Object.values(mapa || {}).reduce((n, R) => n + impactoAgenda(R).fij, 0); }
+    function exhResumenImpacto(filas) {
+        const F = (Array.isArray(filas) ? filas : []).filter(f => f && !f.bloqueado);
+        const asig = F.reduce((n, f) => n + (f.parts || []).filter(Boolean).length, 0), conf = F.reduce((n, f) => n + (f.conf || []).filter(Boolean).length, 0);
+        return `${F.length} turno(s) con ${asig} participante(s) asignado(s)${conf ? `, ${conf} ya confirmado(s)` : ''}`;
+    }
+
+    // --- Contactar: resumen de avisos urgentes (hoy y mañana sin confirmar) ---
+    function bannerUrgentes(lista) {
+        const [h] = proximos2(); let hoy = 0, man = 0, urg = 0, sinTel = 0;
+        lista.forEach(x => {
+            if (!asignado(x.f) || x.f.confirmado) return;
+            if (x.d.getDate() === h.getDate() && x.d.getMonth() === h.getMonth()) hoy++; else man++;
+            const a = alertaTurno(x); if (a && a.cls !== 'cercano') urg++;
+            if (!telefonoValido(conductorDe(x.f))) sinTel++;
+        });
+        if (!hoy && !man) return '<div class="aviso-urg ok" role="status">✔ Todo confirmado para hoy y mañana.</div>';
+        return `<div class="aviso-urg" role="alert"><b>⚠ ${hoy + man} turno(s) sin confirmar</b><span>${hoy} hoy · ${man} mañana${urg ? ` · <u>${urg} urgente(s)</u>` : ''}${sinTel ? ` · ${sinTel} sin teléfono válido` : ''}</span><button type="button" class="btn-outline mini" onclick="setFiltroContacto('pend')">Ver pendientes</button></div>`;
+    }
+    function ordenarUrgentes(v) {
+        const p = x => { const a = alertaTurno(x); return a ? (a.cls === 'cercano' ? 1 : 0) : 2; };
+        return v.slice().sort((a, b) => p(a) - p(b) || inicioMs(a) - inicioMs(b));
+    }
+    function exhBannerUrg(L) {
+        const [h] = proximos2(); let hoy = 0, man = 0;
+        L.forEach(x => (x.f.parts || []).forEach((n, i) => { if (!n || (x.f.conf || [])[i]) return; if (x.dt.getDate() === h.getDate() && x.dt.getMonth() === h.getMonth()) hoy++; else man++; }));
+        if (!hoy && !man) return '<div class="aviso-urg ok" role="status">✔ Todo confirmado para hoy y mañana.</div>';
+        return `<div class="aviso-urg" role="alert"><b>⚠ ${hoy + man} participante(s) sin confirmar</b><span>${hoy} hoy · ${man} mañana</span></div>`;
+    }
+
+    // --- Guía de inicio de 3 pasos (primer acceso en el dispositivo; también desde ¿Cómo usar?) ---
+    const ONB_KEY = 'vdm_onboarding_visto';
+    const ONB_PASOS = [
+        ['1. Revisa Hoy y Mañana', 'Al abrir la Agenda verás arriba las salidas de hoy y mañana: quién conduce, dónde y a qué hora.'],
+        ['2. Filtra o contacta por WhatsApp en un toque', 'Usa el buscador y los filtros para hallar un turno. En Contactar, toca WhatsApp para avisar y Confirmado para marcarlo.'],
+        ['3. Genera o fija turnos con candado', 'Genera el mes con un toque. Toca el candado de un turno para fijarlo: se conserva cuando regeneres la agenda.']
+    ];
+    let _onbPaso = 0;
+    function mostrarOnboardingSiCorresponde() { let v = false; try { v = localStorage.getItem(ONB_KEY) === '1'; } catch (e) {} if (!v) abrirOnboarding(); }
+    function abrirOnboarding() { _onbPaso = 0; onbRender(); openModal('modalOnboarding'); }
+    function onbRender() {
+        const p = ONB_PASOS[_onbPaso];
+        document.getElementById('onbTitulo').textContent = p[0];
+        document.getElementById('onbTxt').textContent = (_onbPaso === 2 && !puedeEditar()) ? 'Tu cuenta es de solo lectura: verás los turnos fijados con candado, pero no podrás cambiarlos.' : p[1];
+        document.getElementById('onbInd').innerHTML = ONB_PASOS.map((_, i) => `<i class="${i <= _onbPaso ? 'on' : ''}"></i>`).join('');
+        document.getElementById('onbAtras').classList.toggle('hidden', _onbPaso === 0);
+        document.getElementById('onbSig').textContent = _onbPaso === ONB_PASOS.length - 1 ? 'Entendido' : 'Siguiente';
+    }
+    function onbIr(d) {
+        if (_onbPaso + d >= ONB_PASOS.length) { try { localStorage.setItem(ONB_KEY, '1'); } catch (e) {} return onbCerrar(); }
+        _onbPaso = Math.max(0, _onbPaso + d); onbRender();
+    }
+    function onbCerrar() { closeModal('modalOnboarding'); }
+    function onbNoMostrar() { try { localStorage.setItem(ONB_KEY, '1'); } catch (e) {} onbCerrar(); mostrarToast('Guía oculta. Siempre puedes verla en ¿Cómo usar?'); }
 
 </script>
 
