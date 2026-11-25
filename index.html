@@ -1194,6 +1194,13 @@
     .vinc-banner .vt { flex: 1 1 220px; min-width: 0; }
     .vinc-banner .vb { display: flex; gap: 8px; flex-wrap: wrap; }
     .exh-res-sec .rot-row { grid-template-columns: minmax(130px, 2.2fr) 44px 44px minmax(70px, 2fr); }
+    /* Fix: Resumen de Exhibidores — secciones apiladas en flujo normal, sin alturas fijas ni recortes */
+    #tab-exh-res.tab-content.active { display: flex; flex-direction: column; }
+    #tab-exh-res .exh-res-sec { position: relative; display: flow-root; flex: 0 0 auto; height: auto; max-height: none; overflow: visible; z-index: auto; }
+    #tab-exh-res .exh-res-sec .rot-tabla, #tab-exh-res .exh-res-sec .rot-scroll { position: static; display: block; height: auto; max-height: none; overflow: visible; }
+    #exhResPart, #exhResLug { position: static; height: auto; overflow: visible; }
+    #exhResPart + *, #exhResLug + * { clear: both; }
+    @media (max-width: 520px) { #tab-exh-res .exh-res-sec .rot-row { grid-template-columns: minmax(100px, 2fr) 34px 34px minmax(40px, 1fr); gap: 6px; padding: 7px 6px; } }
     .exh-res-sec .tag.sat { background: var(--red-container); color: var(--red); margin-left: 6px; }
     .rol-lector #bannerLector{display:block}
 
@@ -4601,13 +4608,13 @@ async function instalarPWA() {
         document.getElementById('exhResKpis').innerHTML = `<div class="res-kpis">${kpi(totM, 'Participaciones en ' + mm)}${kpi(totA, 'Participaciones en ' + anio)}${kpi(max + ' / ' + min, 'Máximo / mínimo por persona (mes)')}<div class="kpi kpi-eq"><span>Reparto del mes</span><span class="eq ${nivel[0]}">${nivel[1]}</span><small>diferencia máx–mín: ${dif}</small></div></div>`;
         const barra = (v, mx) => `<span class="stat-bar"><i style="width:${mx ? Math.round(v / mx * 100) : 0}%"></i></span>`;
         const cab = t => `<div class="rot-row rot-head"><span>${t}</span><b>${mc}</b><b>Año</b><span>Mes</span></div>`;
-        cPart.innerHTML = filas.length ? `<div class="rot-tabla rot-scroll">${cab('Hermano/a')}${filas.map(x => {
+        cPart.innerHTML = filas.length ? `<div class="rot-tabla">${cab('Hermano/a')}${filas.map(x => {
             const sat = x.act && x.m >= 2 && x.m - prom >= 2 && x.m > prom * 1.4;
             return `<div class="rot-row"><span class="rot-n">${esc(x.n)}${x.act ? '' : ' <span class="tag pausa">En pausa</span>'}${sat ? '<span class="tag sat">Saturado</span>' : ''}</span><b>${x.m}</b><b>${x.a}</b>${barra(x.m, max)}</div>`;
         }).join('')}</div>` : '<p class="hint">Aún no hay participantes registrados.</p>';
         const nl = {}; exh.lugares.forEach(l => { nl[l.nombre] = 1; }); Object.keys(la).forEach(n => { nl[n] = 1; });
         const lf = Object.keys(nl).map(n => ({ n, m: lm[n] || 0, a: la[n] || 0 })).sort((x, y) => y.m - x.m || y.a - x.a || x.n.localeCompare(y.n, 'es')), lmax = lf.length ? Math.max(...lf.map(x => x.m)) : 0;
-        document.getElementById('exhResLug').innerHTML = lf.length ? `<div class="rot-tabla rot-scroll">${cab('Lugar')}${lf.map(x => `<div class="rot-row"><span class="rot-n">${esc(x.n)}</span><b>${x.m}</b><b>${x.a}</b>${barra(x.m, lmax)}</div>`).join('')}</div>` : '<p class="hint">Aún no hay lugares registrados.</p>';
+        document.getElementById('exhResLug').innerHTML = lf.length ? `<div class="rot-tabla">${cab('Lugar')}${lf.map(x => `<div class="rot-row"><span class="rot-n">${esc(x.n)}</span><b>${x.m}</b><b>${x.a}</b>${barra(x.m, lmax)}</div>`).join('')}</div>` : '<p class="hint">Aún no hay lugares registrados.</p>';
     }
 
     // ---------- Vinculación de personas entre Grupos y Exhibidores ----------
