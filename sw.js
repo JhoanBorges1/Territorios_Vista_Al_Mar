@@ -3,7 +3,7 @@
  * - Recursos estáticos (mismo origen y CDNs conocidos): Cache-First.
  * - Supabase (auth, REST, realtime, storage) y cualquier petición con credenciales: NUNCA se interceptan ni se guardan.
  */
-const VERSION = 'vdm-v4';
+const VERSION = 'vdm-v5';
 const CACHE_SHELL = VERSION + '-shell';
 const CACHE_STATIC = VERSION + '-static';
 const MAX_STATIC = 80;
@@ -42,7 +42,8 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-    if (event.data === 'SKIP_WAITING') self.skipWaiting();
+    const d = event.data;
+    if (d === 'SKIP_WAITING' || (d && d.type === 'SKIP_WAITING')) self.skipWaiting();
 });
 
 function fetchConLimite(req, ms) {

@@ -17,6 +17,8 @@
             if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
             var z = parseFloat(localStorage.getItem('vdm_zoom'));
             if (z >= 0.7 && z <= 1.6) document.documentElement.style.setProperty('--zoom', z);
+            if (localStorage.getItem('vdm_densidad') === 'compacta') document.documentElement.setAttribute('data-densidad', 'compacta');
+            if (localStorage.getItem('vdm_anim') === 'reducidas') document.documentElement.setAttribute('data-anim', 'reducidas');
         } catch (e) {}
     })();
 </script>
@@ -1167,6 +1169,31 @@
     .exh-res-sec .rot-row { grid-template-columns: minmax(130px, 2.2fr) 44px 44px minmax(70px, 2fr); }
     .exh-res-sec .tag.sat { background: var(--red-container); color: var(--red); margin-left: 6px; }
     .rol-lector #bannerLector{display:block}
+
+    /* === Configuración: secciones colapsables, densidad y animaciones === */
+    html[data-densidad="compacta"] .agenda-table th, html[data-densidad="compacta"] .agenda-table td { padding: 5px 7px !important; font-size: .8rem !important; }
+    html[data-anim="reducidas"] *, html[data-anim="reducidas"] *::before, html[data-anim="reducidas"] *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    #modalConfig .modal-content { overflow-x: hidden; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+    #modalConfig input:not([type=checkbox]):not([type=radio]):not([type=range]), #modalConfig select { max-width: 100%; box-sizing: border-box; }
+    .cfg-top { position: sticky; top: -1px; z-index: 5; background: inherit; padding: 2px 0 10px; }
+    .cfg-top input[type=search] { width: 100%; box-sizing: border-box; }
+    .cfg-sec { border: 1px solid var(--border-light); border-radius: 20px; margin-bottom: 10px; overflow: hidden; }
+    .cfg-sec > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 10px 16px; cursor: pointer; font-weight: 700; font-family: var(--font-display); -webkit-tap-highlight-color: transparent; }
+    .cfg-sec > summary::-webkit-details-marker { display: none; }
+    .cfg-sec > summary::after { content: '›'; font-size: 1.4rem; line-height: 1; transform: rotate(90deg); transition: transform .2s; color: var(--text-sub); }
+    .cfg-sec[open] > summary::after { transform: rotate(-90deg); }
+    .cfg-sec > summary .cfg-badge { margin-left: auto; font-size: .72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--blue-container); color: var(--blue); white-space: nowrap; }
+    .cfg-sec > summary .cfg-badge:empty { display: none; }
+    .cfg-body { padding: 4px 16px 8px; }
+    .cfg-info { font-size: .85rem; color: var(--text-sub); background: var(--surface-2); border-radius: 14px; padding: 10px 12px; margin-bottom: 16px; line-height: 1.45; }
+    .cfg-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cfg-chips button { flex: 1 1 64px; min-height: 44px; }
+    .cfg-chips button.active, .btn-outline.active { background: var(--blue-container); color: var(--blue); }
+    .cfg-prev { border: 1px dashed var(--border-light); border-radius: 14px; padding: 12px; line-height: 1.4; overflow: hidden; }
+    .cfg-aviso { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: var(--blue-container); color: var(--text-main); border-radius: 16px; padding: 10px 14px; margin-bottom: 10px; font-size: .88rem; }
+    .cfg-aviso button { min-height: 44px; }
+    #cfgEstadoSistema { display: grid; gap: 4px; font-size: .9rem; }
+    #modalConfig .modal-footer button, #modalConfig .btn-outline, #modalConfig .btn-primary { min-height: 44px; }
     </style>
 <meta name="theme-color" content="#0b57d0">
 <link rel="icon" type="image/png" href="./icono.png">
@@ -1931,28 +1958,93 @@ async function instalarPWA() {
 <div id="modalConfig" class="modal">
     <div class="modal-content no-zoom">
         <h2 class="module-title">Configuración</h2>
-        <div class="input-group">
-            <label>Apariencia</label>
-            <div class="segmented" id="temaSegmentado">
-                <button type="button" data-theme-opt="auto" onclick="setTema('auto')">Automático</button>
-                <button type="button" data-theme-opt="light" onclick="setTema('light')">Claro</button>
-                <button type="button" data-theme-opt="dark" onclick="setTema('dark')">Oscuro</button>
-            </div>
+        <div class="cfg-top">
+            <input type="search" id="cfgBuscar" placeholder="Buscar un ajuste…" aria-label="Buscar en configuración" oninput="filtrarConfig(this.value)" autocomplete="off">
         </div>
-        <div class="input-group">
-            <label>Zoom de la página: <span id="zoomValor">100%</span></label>
-            <input type="range" id="zoomRange" min="70" max="160" step="5" value="100" oninput="setZoom(this.value)">
-            <span class="hint">Solo cambia cómo ves la app. La imagen descargada mantiene siempre su tamaño.</span></div><div class="input-group"><label>Título principal</label><input type="text" id="cfgTitulo" oninput="guardarConfig()"></div><div class="input-group"><label>Subtítulo o nota fija (también va en PNG y PDF)</label><input type="text" id="cfgSub" oninput="guardarConfig()"></div><div class="input-group"><label>Máximo de turnos al mes por conductor</label><input type="number" id="cfgMax" min="1" max="31" oninput="guardarConfig()"></div><div class="input-group"><label>Reuniones de congregación (en ese horario no se programa predicación)</label><div class="reu-list" id="cfgReuniones" onchange="guardarConfig()"></div><span class="hint">Elige el día y si la reunión es en la mañana o en la tarde. Por defecto: miércoles en la tarde y domingo en la mañana. El domingo la reunión es a las 9:00 AM y, aun así, siempre se programa el grupo de predicación de 11:00 AM a 12:00 PM.</span></div><div class="input-group"><label>Horarios base por día</label><div id="cfgHorarios" onchange="guardarConfig()"></div><span class="hint">Se usan al generar el mes. Reglas fijas: último sábado 09:00 AM, viernes 06:30 PM (Telegram) y domingo 11:00 AM siempre se programan.</span><div style="margin-top:8px"><button type="button" class="btn-outline" onclick="restablecerHorariosBase()">Restablecer horarios base</button></div></div><div class="input-group"><label>Enlace de WhatsApp</label><select id="cfgWaModo" onchange="guardarConfig()"><option value="auto">Automático (según dispositivo)</option><option value="web">WhatsApp Web (PC)</option><option value="app">App Móvil</option></select></div>
-        <div class="input-group"><label>Horarios de Exhibidores</label>
-            <span class="hint">Escribe el horario de cada turno y cuántos puntos de exhibidor salen cada día (cada punto = 1 exhibidor con 3 participantes). 0 = no se programa.</span>
-            <div id="cfgExhBox"></div></div>
-        <div style="display:none"></div>
-        <div class="input-group"><label>Respaldo completo</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn-outline" onclick="descargarRespaldo()">Descargar respaldo (.json)</button><button type="button" class="btn-outline" onclick="document.getElementById('inpRespaldo').click()">Restaurar respaldo</button></div>
-            <input type="file" id="inpRespaldo" accept="application/json,.json" class="hidden" onchange="restaurarRespaldo(this)">
-            <span class="hint">El respaldo incluye todos los datos, también teléfonos: guárdalo en un lugar privado.</span></div>
+        <div id="cfgAvisoRegla" class="cfg-aviso hidden" role="status"></div>
+
+        <details class="cfg-sec" id="cfgSec-tema" open>
+            <summary><span aria-hidden="true">🎨</span> Tema y apariencia <span class="cfg-badge" id="cfgBadge-tema"></span></summary>
+            <div class="cfg-body">
+                <div class="input-group"><label>Tema visual</label>
+                    <div class="segmented" id="temaSegmentado">
+                        <button type="button" data-theme-opt="auto" onclick="setTema('auto')">Automático</button>
+                        <button type="button" data-theme-opt="light" onclick="setTema('light')">Claro</button>
+                        <button type="button" data-theme-opt="dark" onclick="setTema('dark')">Oscuro</button>
+                    </div></div>
+                <div class="input-group"><label>Densidad de la agenda</label>
+                    <div class="segmented" id="densSegmentado">
+                        <button type="button" data-v="comoda" onclick="setDensidad('comoda')">Cómoda</button>
+                        <button type="button" data-v="compacta" onclick="setDensidad('compacta')">Compacta (móvil)</button>
+                    </div>
+                    <span class="hint">Solo cambia cómo ves la tabla; las imágenes y PDF descargados no cambian.</span></div>
+                <div class="input-group"><label>Animaciones y transiciones</label>
+                    <div class="segmented" id="animSegmentado">
+                        <button type="button" data-v="activas" onclick="setAnim('activas')">Activas</button>
+                        <button type="button" data-v="reducidas" onclick="setAnim('reducidas')">Reducidas</button>
+                    </div></div>
+                <div class="input-group"><label>Título principal</label><input type="text" id="cfgTitulo" oninput="guardarConfig(1)"></div>
+                <div class="input-group"><label>Subtítulo o nota fija (también va en PNG y PDF)</label><input type="text" id="cfgSub" oninput="guardarConfig(1)"></div>
+            </div>
+        </details>
+
+        <details class="cfg-sec" id="cfgSec-zoom">
+            <summary><span aria-hidden="true">🔎</span> Zoom y legibilidad <span class="cfg-badge" id="cfgBadge-zoom"></span></summary>
+            <div class="cfg-body">
+                <div class="input-group"><label>Zoom de la página: <span id="zoomValor">100%</span></label>
+                    <div class="cfg-chips" id="zoomChips">
+                        <button type="button" class="btn-outline" data-z="85" onclick="setZoom(85)">85%</button>
+                        <button type="button" class="btn-outline" data-z="100" onclick="setZoom(100)">100%</button>
+                        <button type="button" class="btn-outline" data-z="110" onclick="setZoom(110)">110%</button>
+                        <button type="button" class="btn-outline" data-z="125" onclick="setZoom(125)">125%</button>
+                    </div>
+                    <input type="range" id="zoomRange" min="70" max="160" step="5" value="100" oninput="setZoom(this.value)" aria-label="Zoom">
+                    <div class="cfg-prev" id="zoomPrev" style="zoom:var(--zoom,1)"><b>Martes 14 · 09:00 AM</b><br>Grupo 3 — Territorio 12<br><small>Así se verá el texto de la agenda.</small></div>
+                    <span class="hint">Solo cambia cómo ves la app. La imagen descargada mantiene siempre su tamaño.</span>
+                    <div><button type="button" class="btn-outline" onclick="setZoom(100)">Restablecer zoom</button></div></div>
+            </div>
+        </details>
+
+        <details class="cfg-sec" id="cfgSec-horarios">
+            <summary><span aria-hidden="true">🕒</span> Horarios y turnos <span class="cfg-badge" id="cfgBadge-horarios"></span></summary>
+            <div class="cfg-body">
+                <div class="input-group"><label>Máximo de turnos al mes por conductor</label><input type="number" id="cfgMax" min="1" max="31" oninput="guardarConfig()"></div>
+                <div class="input-group"><label>Horarios base por día (mañana y tarde)</label><div id="cfgHorarios" onchange="guardarConfig()"></div>
+                    <span class="hint">Se usan al generar el mes.</span>
+                    <div><button type="button" class="btn-outline" onclick="restablecerHorariosBase()">Restablecer horarios base</button></div></div>
+                <div class="cfg-info" data-k="viernes telegram 6:30 grupos regla fija">Regla fija de los viernes: el grupo de las 06:30 PM sale por Telegram y siempre se programa. El descanso entre turnos y la duración de cada bloque los aplica el generador y no son ajustables aquí.</div>
+                <div class="input-group"><label>Horarios de Exhibidores</label>
+                    <span class="hint">Escribe el horario de cada turno y cuántos puntos de exhibidor salen cada día (cada punto = 1 exhibidor con 3 participantes). 0 = no se programa. Sus lugares son propios y nunca se mezclan con los territorios.</span>
+                    <div id="cfgExhBox"></div></div>
+            </div>
+        </details>
+
+        <details class="cfg-sec" id="cfgSec-reuniones">
+            <summary><span aria-hidden="true">📅</span> Reuniones y excepciones <span class="cfg-badge" id="cfgBadge-reuniones"></span></summary>
+            <div class="cfg-body">
+                <div class="input-group"><label>Reuniones de congregación (en ese horario no se programa predicación)</label><div class="reu-list" id="cfgReuniones" onchange="guardarConfig()"></div>
+                    <span class="hint">Elige el día y si la reunión es en la mañana o en la tarde. Por defecto: miércoles en la tarde y domingo en la mañana.</span></div>
+                <div class="cfg-info" data-k="domingo 11:00 ultimo sabado 8 grupos regla fija">Reglas fijas: el domingo la reunión es a las 9:00 AM y siempre se programa el grupo de 11:00 AM a 12:00 PM. El último sábado del mes se programan los 8 grupos a las 9:00 AM.</div>
+                <div class="input-group"><label>Excepciones del calendario <small id="cfgExcCont"></small></label>
+                    <span class="hint">Asambleas, visitas o días sin salida: el generador los respeta.</span>
+                    <div><button type="button" class="btn-outline" onclick="abrirExcepcionesDesdeConfig()">Gestionar excepciones del mes</button></div></div>
+            </div>
+        </details>
+
+        <details class="cfg-sec" id="cfgSec-sistema">
+            <summary><span aria-hidden="true">💾</span> Respaldo y sistema <span class="cfg-badge" id="cfgBadge-sistema"></span></summary>
+            <div class="cfg-body">
+                <div class="input-group"><label>Respaldo completo</label>
+                    <div class="cfg-chips"><button type="button" class="btn-outline" onclick="descargarRespaldo()">Descargar respaldo (.json)</button><button type="button" class="btn-outline" onclick="document.getElementById('inpRespaldo').click()">Restaurar respaldo</button></div>
+                    <input type="file" id="inpRespaldo" accept="application/json,.json" class="hidden" onchange="restaurarRespaldo(this)">
+                    <span class="hint">El respaldo incluye todos los datos, también teléfonos: guárdalo en un lugar privado.</span></div>
+                <div class="input-group"><label>Estado del dispositivo</label><div id="cfgEstadoSistema"></div>
+                    <div class="cfg-chips"><button type="button" class="btn-outline" onclick="actualizarApp()">Buscar actualización de la app</button><button type="button" class="btn-outline" onclick="closeModal('modalConfig');abrirAyuda()">¿Cómo usar?</button></div></div>
+                <div class="input-group"><label>Enlace de WhatsApp</label><select id="cfgWaModo" onchange="guardarConfig(1)"><option value="auto">Automático (según dispositivo)</option><option value="web">WhatsApp Web (PC)</option><option value="app">App Móvil</option></select></div>
+            </div>
+        </details>
+
         <div class="modal-footer">
-            <button type="button" class="btn-outline" onclick="setZoom(100)">Restablecer zoom</button>
             <button type="button" class="btn-primary" onclick="closeModal('modalConfig')">Listo</button>
         </div>
     </div>
@@ -2361,7 +2453,107 @@ async function instalarPWA() {
     function abrirConfiguracion() {
         cerrarMenu();
         initPreferencias(); poblarConfigUI(); exhPoblarCfg();
+        document.getElementById('cfgBuscar').value = ''; filtrarConfig(''); document.getElementById('cfgAvisoRegla').classList.add('hidden');
+        actualizarContadores(); actualizarEstadoSistema();
         openModal('modalConfig');
+    }
+
+    // === CONFIGURACIÓN: PREFERENCIAS, SECCIONES, AVISOS Y SISTEMA ===
+    const PREF_DEF = { tema: 'auto', zoom: 100, densidad: 'comoda', anim: 'activas' };
+    function leerPref(k) {
+        try {
+            if (k === 'tema') return localStorage.getItem('vdm_theme') || 'auto';
+            if (k === 'zoom') return Math.round((parseFloat(localStorage.getItem('vdm_zoom')) || 1) * 100);
+            if (k === 'densidad') return localStorage.getItem('vdm_densidad') === 'compacta' ? 'compacta' : 'comoda';
+            if (k === 'anim') return localStorage.getItem('vdm_anim') === 'reducidas' ? 'reducidas' : 'activas';
+        } catch (e) {}
+        return PREF_DEF[k];
+    }
+    function marcarSeg(id, v) { document.querySelectorAll('#' + id + ' button').forEach(b => b.classList.toggle('active', b.dataset.v === v)); }
+    function aplicarDensidad(v) { if (v === 'compacta') document.documentElement.setAttribute('data-densidad', 'compacta'); else document.documentElement.removeAttribute('data-densidad'); marcarSeg('densSegmentado', v === 'compacta' ? 'compacta' : 'comoda'); }
+    function aplicarAnim(v) { if (v === 'reducidas') document.documentElement.setAttribute('data-anim', 'reducidas'); else document.documentElement.removeAttribute('data-anim'); marcarSeg('animSegmentado', v === 'reducidas' ? 'reducidas' : 'activas'); }
+    function marcarZoomUI(p) { document.querySelectorAll('#zoomChips button').forEach(b => b.classList.toggle('active', +b.dataset.z === p)); }
+    function marcarLocal() { try { localStorage.setItem('vdm_prefs_local', '1'); } catch (e) {} }
+    function setDensidad(v) { try { localStorage.setItem('vdm_densidad', v); } catch (e) {} aplicarDensidad(v); marcarLocal(); guardarPreferencias(); actualizarContadores(); }
+    function setAnim(v) { try { localStorage.setItem('vdm_anim', v); } catch (e) {} aplicarAnim(v); marcarLocal(); guardarPreferencias(); actualizarContadores(); }
+    // Las preferencias mandan en el dispositivo (localStorage, inmediato) y se copian al estado del usuario (config.preferencias) para nuevos dispositivos
+    let _prefT = null;
+    function guardarPreferencias() {
+        clearTimeout(_prefT);
+        _prefT = setTimeout(() => {
+            if (!puedeEditar() || !_rolListo) return;
+            const pr = { tema: leerPref('tema'), zoom: leerPref('zoom'), densidad: leerPref('densidad'), anim: leerPref('anim') };
+            if (JSON.stringify(config.preferencias || {}) === JSON.stringify(pr)) return;
+            config.preferencias = pr; guardarLocal();
+        }, 600);
+    }
+    function adoptarPreferenciasNube() {
+        const p = config && config.preferencias; if (!p) return;
+        try { if (localStorage.getItem('vdm_prefs_local') === '1') return; } catch (e) { return; }
+        try {
+            if (p.tema === 'light' || p.tema === 'dark') localStorage.setItem('vdm_theme', p.tema);
+            if (p.zoom >= 70 && p.zoom <= 160) { localStorage.setItem('vdm_zoom', p.zoom / 100); document.documentElement.style.setProperty('--zoom', p.zoom / 100); }
+            if (p.densidad === 'compacta') localStorage.setItem('vdm_densidad', 'compacta');
+            if (p.anim === 'reducidas') localStorage.setItem('vdm_anim', 'reducidas');
+        } catch (e) {}
+        initPreferencias();
+    }
+    function actualizarContadores() {
+        let exhMod = 0, nExc = 0, reuMod = 0;
+        try { exhMod = JSON.stringify(exh.config) !== JSON.stringify(exhConfigDef()) ? 1 : 0; nExc = (excepciones[agendaKey()] || []).length; reuMod = JSON.stringify([...reunionesCfg()].sort()) !== JSON.stringify([...defConfig().reuniones].sort()) ? 1 : 0; } catch (e) {}
+        const tit = (config.titulo || '').trim(), n = {
+            tema: (leerPref('tema') !== 'auto') + (leerPref('densidad') !== 'comoda') + (leerPref('anim') !== 'activas') + (!!tit && tit !== defConfig().titulo) + (!!(config.subtitulo || '').trim()),
+            zoom: leerPref('zoom') !== 100 ? 1 : 0,
+            horarios: (config.horariosDia ? 1 : 0) + ((config.maxTurnos || 4) !== 4 ? 1 : 0) + exhMod,
+            reuniones: reuMod + (nExc ? 1 : 0),
+            sistema: (config.waModo && config.waModo !== 'auto') ? 1 : 0
+        };
+        Object.keys(n).forEach(k => { const e = document.getElementById('cfgBadge-' + k); if (e) e.textContent = n[k] ? `${n[k]} activo${n[k] > 1 ? 's' : ''}` : ''; });
+        const c = document.getElementById('cfgExcCont'); if (c) c.textContent = nExc ? `(${nExc} en ${nombreMesSel()})` : '';
+    }
+    function filtrarConfig(q) {
+        q = norm(q || '').trim();
+        document.querySelectorAll('#modalConfig .cfg-sec').forEach(sec => {
+            let hit = 0;
+            sec.querySelectorAll('.cfg-body > .input-group, .cfg-body > .cfg-info').forEach(g => { const ok = !q || norm(g.textContent + ' ' + (g.dataset.k || '')).includes(q); g.classList.toggle('hidden', !ok); if (ok) hit++; });
+            sec.classList.toggle('hidden', !!q && !hit); if (q && hit) sec.open = true;
+        });
+    }
+    // Aviso al cambiar reglas: aplica a futuras generaciones; opción de regenerar el mes (los turnos fijados se conservan)
+    function avisarCambioReglas(tipo) {
+        const box = document.getElementById('cfgAvisoRegla'); if (!box) return;
+        const exhT = tipo === 'exh', mes = exhT ? `${MESES[exhMes() - 1]} ${exhAnio()}` : `${nombreMesSel()} ${anioSel()}`;
+        const hay = exhT ? (exh.agendas[exhKey()] || []).length : (agendasMaestras[agendaKey()] || []).length;
+        box.innerHTML = `<span>✔ Cambio guardado. Se aplicará a las <b>próximas generaciones</b>.${hay ? ` La agenda de ${esc(mes)} no cambia hasta que la regeneres${exhT ? '' : ' (los turnos fijados se conservan)'}.` : ''}</span>` + (hay && puedeEditar() ? `<button type="button" class="btn-primary" onclick="regenerarDesdeConfig('${exhT ? 'exh' : 'grupos'}')">Regenerar ${esc(mes)}</button>` : '');
+        box.classList.remove('hidden');
+    }
+    function regenerarDesdeConfig(tipo) { closeModal('modalConfig'); if (tipo === 'exh') exhGenerar(); else generarNuevaAgenda(); }
+    function abrirExcepcionesDesdeConfig() { closeModal('modalConfig'); abrirExcepciones(); }
+    function actualizarEstadoSistema() {
+        const el = document.getElementById('cfgEstadoSistema'); if (!el) return;
+        let kb = 0; try { kb = Math.round((localStorage.getItem('vdm_data') || '').length / 1024); } catch (e) {}
+        const txt = { ok: 'Sincronizado con la nube', pending: 'Cambios pendientes de subir', offline: 'Sin conexión' }[estadoSync()] || 'Sin nube';
+        el.innerHTML = `<div>Caché local: <b>${kb} KB</b></div><div>Estado: <b>${txt}</b></div><div>Versión de datos: <b>${_verBase}</b></div><div>Cuenta: <b>${puedeEditar() ? 'Editor' : 'Solo lectura'}</b></div>`;
+    }
+    async function actualizarApp() {
+        if (!('serviceWorker' in navigator)) return mostrarToast('Este navegador no admite la actualización automática.', 'error');
+        try {
+            const r = await navigator.serviceWorker.getRegistration();
+            if (!r) return mostrarToast('La app todavía no está instalada para usarse sin conexión.', 'error');
+            await r.update();
+            const recargar = () => location.reload();
+            if (r.installing || r.waiting) {
+                // El sw.js se activa solo (skipWaiting + claim): al tomar el control se recarga la página
+                navigator.serviceWorker.addEventListener('controllerchange', recargar, { once: true });
+                if (r.waiting) r.waiting.postMessage('SKIP_WAITING');
+                mostrarToast('Instalando la actualización…');
+                setTimeout(recargar, 6000);
+            } else {
+                // index.html se pide primero a la red: al recargar se trae la última versión publicada
+                mostrarToast('Recargando para traer la última versión…');
+                setTimeout(recargar, 700);
+            }
+        } catch (e) { mostrarToast('No se pudo comprobar la actualización.', 'error'); }
     }
 
     function aplicarTema(t) {
@@ -2373,14 +2565,14 @@ async function instalarPWA() {
     }
     function setTema(t) {
         try { if (t === 'auto') localStorage.removeItem('vdm_theme'); else localStorage.setItem('vdm_theme', t); } catch (e) {}
-        aplicarTema(t);
+        aplicarTema(t); marcarLocal(); guardarPreferencias(); actualizarContadores();
     }
     function setZoom(porcentaje) {
         const p = Math.min(160, Math.max(70, parseInt(porcentaje, 10) || 100));
         document.documentElement.style.setProperty('--zoom', p / 100);
         try { localStorage.setItem('vdm_zoom', p / 100); } catch (e) {}
         document.getElementById('zoomValor').textContent = p + '%';
-        document.getElementById('zoomRange').value = p;
+        document.getElementById('zoomRange').value = p; marcarZoomUI(p); marcarLocal(); guardarPreferencias(); actualizarContadores();
     }
     function initPreferencias() {
         let t = 'auto', z = 1;
@@ -2388,6 +2580,7 @@ async function instalarPWA() {
         aplicarTema(t);
         document.getElementById('zoomValor').textContent = Math.round(z * 100) + '%';
         document.getElementById('zoomRange').value = Math.round(z * 100);
+        aplicarDensidad(leerPref('densidad')); aplicarAnim(leerPref('anim')); marcarZoomUI(Math.round(z * 100));
     }
     initPreferencias();
 
@@ -2569,7 +2762,7 @@ async function instalarPWA() {
         const box = document.getElementById('cfgReuniones'), R = reunionesCfg();
         box.innerHTML = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'].map(d => `<div class="reu-row"><b>${DIAS_LARGOS[d]}</b><div class="chip-button-group">${['AM', 'PM'].map(b => `<label class="chip-button"><input type="checkbox" value="${d}-${b}"${R.includes(d + '-' + b) ? ' checked' : ''}> ${b === 'AM' ? IC.sol + ' Mañana' : 'Tarde'}${d === 'DOM' && b === 'AM' ? ' (9:00 AM)' : ''}</label>`).join('')}</div></div>`).join('');
     }
-    function guardarConfig() { if (_bloqueadoLector()) return;
+    function guardarConfig(sinAviso) { if (_bloqueadoLector()) return;
         config.titulo = document.getElementById('cfgTitulo').value; config.subtitulo = document.getElementById('cfgSub').value;
         config.waModo = document.getElementById('cfgWaModo').value; config.maxTurnos = Math.max(1, parseInt(document.getElementById('cfgMax').value, 10) || 4);
         config.reuniones = [...document.querySelectorAll('#cfgReuniones input:checked')].map(i => i.value); config.reunionesInit = true;
@@ -2580,7 +2773,7 @@ async function instalarPWA() {
             const igual = DIAS_SEM.every(d => { const base = new Set([...(MATRIZ_HORARIOS[d] || []), ...horasReglaFija(d)]); return base.size === hd[d].length && hd[d].every(h => base.has(h)); });
             config.horariosDia = igual ? null : hd;
         }
-        guardarLocal(); aplicarConfigUI();
+        guardarLocal(); aplicarConfigUI(); actualizarContadores(); if (!sinAviso) avisarCambioReglas('grupos');
     }
     function poblarHorariosUI() {
         const box = document.getElementById('cfgHorarios'); if (!box) return;
@@ -2596,7 +2789,7 @@ async function instalarPWA() {
         if (!hd[dia].includes(h)) hd[dia].push(h); hd[dia].sort((a, b) => hMin(a) - hMin(b));
         config.horariosDia = hd; guardarLocal(); poblarHorariosUI();
     }
-    function restablecerHorariosBase() { if (_bloqueadoLector()) return; config.horariosDia = null; guardarLocal(); poblarHorariosUI(); mostrarToast('Horarios base restablecidos'); }
+    function restablecerHorariosBase() { if (_bloqueadoLector()) return; config.horariosDia = null; guardarLocal(); poblarHorariosUI(); actualizarContadores(); avisarCambioReglas('grupos'); mostrarToast('Horarios base restablecidos'); }
 
     // === DESHACER / MODO LECTURA ===
     function pushUndo(k) { k = k || agendaKey(); if (!agendasMaestras[k]) return; undoStack.push({ k, j: JSON.stringify(agendasMaestras[k]) }); if (undoStack.length > 10) undoStack.shift(); redoStack.length = 0; updateUndoUI(); }
@@ -3607,7 +3800,7 @@ async function instalarPWA() {
         
         let lastTab = localStorage.getItem('vdm_active_tab') || 'tab-agenda';
         if (!document.getElementById(lastTab)) lastTab = 'tab-agenda';
-        aplicarConfigUI();
+        adoptarPreferenciasNube(); aplicarConfigUI();
         switchTab(lastTab);
         exhIniciar();
         actualizarDatalists();
@@ -4131,7 +4324,7 @@ async function instalarPWA() {
                 windowWidth: 1000,
                 onclone: (doc) => {
                     // Tamaño fijo: el zoom y el tamaño de pantalla no afectan la imagen
-                    doc.documentElement.style.setProperty('--zoom', '1');
+                    doc.documentElement.style.setProperty('--zoom', '1'); doc.documentElement.removeAttribute('data-densidad');
                     const a = doc.getElementById('areaExportar');
                     limpiarClon(a);
                     const st = doc.createElement('style'); const g = nFilas > 30;
@@ -4802,9 +4995,9 @@ async function instalarPWA() {
         box.innerHTML = exh.config.turnos.map((t, ti) => `<div class="exh-cfg-t"><b>Turno ${esc(t.nombre.toLowerCase())}</b><input type="text" value="${esc(t.hora)}" placeholder="9:00 AM a 11:00 AM" onchange="exhCfgHora(${ti},this.value)" style="margin-top:8px"><div class="exh-cfg-dias">${EXH_DIAS.map(d => `<label>${d}<select onchange="exhCfgPuntos(${ti},'${d}',this.value)">${[0, 1, 2, 3].map(n => `<option value="${n}"${(t.puntos[d] | 0) === n ? ' selected' : ''}>${n}</option>`).join('')}</select></label>`).join('')}</div></div>`).join('')
             + `<div style="margin-top:12px"><button type="button" class="btn-outline" onclick="exhCfgRestablecer()">Restablecer horarios de exhibidores</button></div>`;
     }
-    function exhCfgHora(ti, v) { v = sanearTexto(v); if (!/\d{1,2}:\d{2}\s*(AM|PM)/i.test(v)) { mostrarToast('Usa un formato como 9:00 AM a 11:00 AM', 'error'); return exhPoblarCfg(); } exh.config.turnos[ti].hora = v; guardarLocal(); mostrarToast('Horario guardado'); }
-    function exhCfgPuntos(ti, d, v) { exh.config.turnos[ti].puntos[d] = parseInt(v, 10) || 0; guardarLocal(); }
-    function exhCfgRestablecer() { exh.config = exhConfigDef(); guardarLocal(); exhPoblarCfg(); mostrarToast('Horarios de exhibidores restablecidos'); }
+    function exhCfgHora(ti, v) { v = sanearTexto(v); if (!/\d{1,2}:\d{2}\s*(AM|PM)/i.test(v)) { mostrarToast('Usa un formato como 9:00 AM a 11:00 AM', 'error'); return exhPoblarCfg(); } exh.config.turnos[ti].hora = v; guardarLocal(); actualizarContadores(); avisarCambioReglas('exh'); mostrarToast('Horario guardado'); }
+    function exhCfgPuntos(ti, d, v) { exh.config.turnos[ti].puntos[d] = parseInt(v, 10) || 0; guardarLocal(); actualizarContadores(); avisarCambioReglas('exh'); }
+    function exhCfgRestablecer() { exh.config = exhConfigDef(); guardarLocal(); exhPoblarCfg(); actualizarContadores(); avisarCambioReglas('exh'); mostrarToast('Horarios de exhibidores restablecidos'); }
 
     // ---------- Exportación: PNG, PDF, CSV, resumen WhatsApp ----------
     function exhTituloApp() { return (config.titulo || '').trim() || defConfig().titulo; }
@@ -4827,7 +5020,7 @@ async function instalarPWA() {
         try {
             await document.fonts.ready;
             const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', logging: false, windowWidth: 1000, onclone: doc => {
-                doc.documentElement.setAttribute('data-theme', 'light'); doc.documentElement.style.setProperty('--zoom', '1');
+                doc.documentElement.setAttribute('data-theme', 'light'); doc.documentElement.style.setProperty('--zoom', '1'); doc.documentElement.removeAttribute('data-densidad');
                 const e = doc.getElementById('exhExportar'); e.style.left = '0'; e.style.position = 'absolute';
                 e.querySelectorAll('.no-export').forEach(x => x.remove());
                 const st = doc.createElement('style'); st.textContent = '*,*::before,*::after{animation:none!important;transition:none!important}'; doc.head.appendChild(st);
