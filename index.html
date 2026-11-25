@@ -1013,8 +1013,34 @@
     .dlg-msg { white-space: pre-line; text-align: left; }
     .aviso-urg { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 14px; margin-bottom: 12px; border-radius: var(--radius-md); background: var(--red-container); color: var(--red); border: 1px solid var(--red); font-size: .88rem; }
     .aviso-urg.ok { background: var(--blue-soft); color: var(--text-main); border-color: var(--border-light); }
-    .aviso-urg .mini { margin-left: auto; }
     .contact-item.pase.sinconf { border-left: 5px solid var(--red); }
+    /* Contactar (Grupos): banner y tarjetas con proporciones consistentes */
+    .aviso-urg { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; padding: 12px 16px; box-sizing: border-box; }
+    .aviso-txt { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .aviso-txt b { font-size: .95rem; line-height: 1.25; }
+    .aviso-txt span { font-size: .82rem; line-height: 1.35; }
+    .aviso-urg .mini { flex: 0 0 auto; margin: 0; justify-content: center; white-space: nowrap; }
+    .contact-item.pase { align-items: stretch; margin-bottom: 12px; }
+    .contact-item.pase .pase-l { flex: 0 0 132px; box-sizing: border-box; min-width: 0; }
+    .pase-terr, .pase-hora { overflow-wrap: anywhere; }
+    .contact-item.pase .pase-r { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 14px 16px; box-sizing: border-box; }
+    .pase-top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+    .pase-nom { min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
+    .pase-tags { display: flex; flex-wrap: wrap; gap: 4px 6px; min-width: 0; }
+    .pase-tags .tag { flex: 0 1 auto; white-space: nowrap; max-width: 100%; line-height: 1.3; padding: 3px 9px; }
+    .pase-tags .tag.alerta { white-space: normal; border-radius: 12px; }
+    .pase-sub { display: block; line-height: 1.35; overflow-wrap: anywhere; }
+    .contact-item.pase .contact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px !important; }
+    @media (max-width: 520px) {
+        .contact-item.pase { flex-direction: column; }
+        .contact-item.pase .pase-l { flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; text-align: left; gap: 2px 12px; padding: 10px 16px; }
+        .pase-hora { font-size: 1.25rem; }
+        .pase-terr { font-size: .92rem; text-align: right; }
+        .contact-item.pase .pase-r { padding: 12px 16px 14px; }
+        .contact-item.pase .contact-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .contact-item.pase .contact-actions > * { width: 100%; min-width: 0; justify-content: center; text-align: center; }
+    }
+    @media (max-width: 380px) { .aviso-urg .mini { flex: 1 1 100%; } }
     .onb { position: relative; }
     .onb-ind { display: flex; gap: 6px; margin-bottom: 12px; }
     .onb-ind i { flex: 1; height: 5px; border-radius: 4px; background: var(--surface-3); }
@@ -3651,7 +3677,7 @@ async function instalarPWA() {
         const [h, m] = proximos2(), ahoraMin = h.getHours() * 60 + h.getMinutes();
         return filasDeFecha(h).filter(x => estadoTurno(x.f, ahoraMin) !== 'fin').concat(filasDeFecha(m));
     }
-    function fmtMin(m) { if (m < 60) return `${Math.max(1, m)} min`; const h = Math.floor(m / 60), r = m % 60; return `${h} h${r ? ' ' + r + ' min' : ''}`; }
+    function fmtMin(m) { const N = '\u00A0'; if (m < 60) return `${Math.max(1, m)}${N}min`; const h = Math.floor(m / 60), r = m % 60; return `${h}${N}h${r ? ` ${r}${N}min` : ''}`; }
     // Alerta de un turno sin confirmar: 'urgente' (empieza en 3 h o menos), 'curso' (ya empezó), 'cercano' (empieza en 14 h o menos)
     function alertaTurno(x) {
         if (!asignado(x.f) || x.f.confirmado) return null;
@@ -3684,7 +3710,7 @@ async function instalarPWA() {
             const estA = estadoAviso(f), pendTag = estA === 'avisar' ? ' <span class="tag">Por avisar</span>' : estA === 'confirmar' ? ' <span class="tag">Por confirmar</span>' : '';
             const sinTel = asignado(f) && !telOk ? ` <span class="tag sin-tel" title="Edita al conductor para agregar un teléfono válido">${c ? 'Sin teléfono válido' : 'No registrado'}</span>` : '';
             return `<div class="contact-item pase${al ? ' ' + al.cls : ''}${asignado(f) && !f.confirmado ? ' sinconf' : ''}" style="--i:${n}"><div class="pase-l"><div class="pase-dia">${DIAS_LARGOS[f.diaSemana]} ${f.diaMes}</div><div class="pase-hora">${esc(f.hora)}</div><div class="pase-terr">${esc(f.territorio)}</div></div>
-                <div class="pase-r"><strong>${esc(f.conductor)}</strong> ${chk}${pendTag}${tag}${sinTel}<br><small>${f.grupos ? esc(f.grupos) + ' · ' : ''}${esc(f.lugar)}</small>
+                <div class="pase-r"><div class="pase-top"><strong class="pase-nom">${esc(f.conductor)}</strong>${chk}<span class="pase-tags">${pendTag}${tag}${sinTel}</span></div><small class="pase-sub">${f.grupos ? esc(f.grupos) + ' · ' : ''}${esc(f.lugar)}</small>
                 <div class="contact-actions" style="margin-top:10px;flex-wrap:wrap">
                     <button type="button" class="btn-outline mini" onclick="copiarAvisoTurno('${x.k}',${x.i})">Copiar</button>
                     <button type="button" class="btn-whatsapp" onclick="abrirWhatsAppTurno('${x.k}',${x.i})">WhatsApp</button>
@@ -5178,7 +5204,7 @@ async function instalarPWA() {
             if (!telefonoValido(conductorDe(x.f))) sinTel++;
         });
         if (!hoy && !man) return '<div class="aviso-urg ok" role="status">✔ Todo confirmado para hoy y mañana.</div>';
-        return `<div class="aviso-urg" role="alert"><b>⚠ ${hoy + man} turno(s) sin confirmar</b><span>${hoy} hoy · ${man} mañana${urg ? ` · <u>${urg} urgente(s)</u>` : ''}${sinTel ? ` · ${sinTel} sin teléfono válido` : ''}</span><button type="button" class="btn-outline mini" onclick="setFiltroContacto('pend')">Ver pendientes</button></div>`;
+        return `<div class="aviso-urg" role="alert"><div class="aviso-txt"><b>⚠ ${hoy + man} turno(s) sin confirmar</b><span>${hoy} hoy · ${man} mañana${urg ? ` · <u>${urg} urgente(s)</u>` : ''}${sinTel ? ` · ${sinTel} sin teléfono válido` : ''}</span></div><button type="button" class="btn-outline mini" onclick="setFiltroContacto('pend')">Ver pendientes</button></div>`;
     }
     function ordenarUrgentes(v) {
         const p = x => { const a = alertaTurno(x); return a ? (a.cls === 'cercano' ? 1 : 0) : 2; };
@@ -5188,7 +5214,7 @@ async function instalarPWA() {
         const [h] = proximos2(); let hoy = 0, man = 0;
         L.forEach(x => (x.f.parts || []).forEach((n, i) => { if (!n || (x.f.conf || [])[i]) return; if (x.dt.getDate() === h.getDate() && x.dt.getMonth() === h.getMonth()) hoy++; else man++; }));
         if (!hoy && !man) return '<div class="aviso-urg ok" role="status">✔ Todo confirmado para hoy y mañana.</div>';
-        return `<div class="aviso-urg" role="alert"><b>⚠ ${hoy + man} participante(s) sin confirmar</b><span>${hoy} hoy · ${man} mañana</span></div>`;
+        return `<div class="aviso-urg" role="alert"><div class="aviso-txt"><b>⚠ ${hoy + man} participante(s) sin confirmar</b><span>${hoy} hoy · ${man} mañana</span></div></div>`;
     }
 
     // --- Guía de inicio de 3 pasos (primer acceso en el dispositivo; también desde ¿Cómo usar?) ---
