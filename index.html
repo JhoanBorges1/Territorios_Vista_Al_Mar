@@ -21,6 +21,7 @@
     })();
 </script>
 <style>
+/* === MÓDULO 1: ESTILOS BASE, VARIABLES Y TEMAS === */
     :root {
         --blue: #0b57d0;
         --blue-hover: #0842a0;
@@ -452,6 +453,7 @@
     .download-option.full small { color: inherit; }
 
     /* === MODALES === */
+/* === MÓDULO 2: COMPONENTES UI Y MODALES === */
     .modal {
         display: none;
         position: fixed;
@@ -1164,6 +1166,7 @@
     .vinc-banner .vb { display: flex; gap: 8px; flex-wrap: wrap; }
     .exh-res-sec .rot-row { grid-template-columns: minmax(130px, 2.2fr) 44px 44px minmax(70px, 2fr); }
     .exh-res-sec .tag.sat { background: var(--red-container); color: var(--red); margin-left: 6px; }
+    .rol-lector #bannerLector{display:block}
     </style>
 <meta name="theme-color" content="#0b57d0">
 <link rel="icon" type="image/png" href="./icono.png">
@@ -1826,7 +1829,7 @@ async function instalarPWA() {
             <summary>7. Guardar, descargar y compartir la agenda</summary>
             <div class="ayuda-body">
                 <ul>
-                    <li><b>Guardar Historial:</b> deja una copia del mes en <b>Historial Guardado</b>, donde puedes volver a abrirla cuando quieras.</li>
+                    <li><b>Guardar Historial:</b> deja una instantánea del mes en <b>Historial Guardado</b> y la sincroniza con la nube; si no hay conexión queda guardada en este dispositivo como pendiente y se sube al reconectar.</li>
                     <li><b>Descargar Imagen:</b> crea una imagen de la tabla para enviarla por WhatsApp.</li>
                     <li><b>Copiar Resumen Semanal:</b> copia un texto corto por semana, listo para pegar en un chat.</li>
                     <li><b>Exportar PDF</b> y <b>Exportar Excel (.csv)</b> generan los archivos para imprimir o abrir en la computadora.</li>
@@ -1944,6 +1947,10 @@ async function instalarPWA() {
             <span class="hint">Escribe el horario de cada turno y cuántos puntos de exhibidor salen cada día (cada punto = 1 exhibidor con 3 participantes). 0 = no se programa.</span>
             <div id="cfgExhBox"></div></div>
         <div style="display:none"></div>
+        <div class="input-group"><label>Respaldo completo</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn-outline" onclick="descargarRespaldo()">Descargar respaldo (.json)</button><button type="button" class="btn-outline" onclick="document.getElementById('inpRespaldo').click()">Restaurar respaldo</button></div>
+            <input type="file" id="inpRespaldo" accept="application/json,.json" class="hidden" onchange="restaurarRespaldo(this)">
+            <span class="hint">El respaldo incluye todos los datos, también teléfonos: guárdalo en un lugar privado.</span></div>
         <div class="modal-footer">
             <button type="button" class="btn-outline" onclick="setZoom(100)">Restablecer zoom</button>
             <button type="button" class="btn-primary" onclick="closeModal('modalConfig')">Listo</button>
@@ -2063,6 +2070,46 @@ async function instalarPWA() {
 </div>
 
 <script>
+    // === MÓDULO 3: ESTADO GLOBAL, VALIDACIÓN Y CACHÉ LOCAL ===
+    let _rol = 'lector', _rolListo = false, _verBase = 0, _ultAlertaInv = 0, _ultAvisoLector = 0;
+    const puedeEditar = () => _rol === 'editor';
+    // El rol vive en app_metadata del JWT (solo editable con service_role, nunca desde el navegador)
+    function rolDeSesion(ses) { const r = ses && ses.user && ses.user.app_metadata && ses.user.app_metadata.rol; return r === 'editor' ? 'editor' : 'lector'; }
+    function avisoLector() { if (Date.now() - _ultAvisoLector < 3000) return; _ultAvisoLector = Date.now(); mostrarToast('Tu cuenta es de solo lectura: no puedes modificar datos.', 'error'); }
+    function _bloqueadoLector() { if (puedeEditar()) return false; avisoLector(); return true; }
+
+    // Valida la estructura crítica antes de escribir en localStorage o Supabase
+    function validarEstadoApp(p) {
+        const e = [], esObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+        if (!esObj(p)) return { ok: false, errores: ['El estado no es un objeto válido.'] };
+        const lista = (o, k, n) => { if (!Array.isArray(o[k])) { e.push(`«${n}» debe ser una lista`); return []; } return o[k]; };
+        const objeto = (o, k, n) => { if (!esObj(o[k])) { e.push(`«${n}» debe ser un objeto`); return {}; } return o[k]; };
+        const cond = lista(p, 'conductores', 'conductores y grupos'); lista(p, 'territorios', 'territorios'); lista(p, 'actividad', 'actividad');
+        const bor = objeto(p, 'borradores', 'agendas'), his = objeto(p, 'historial', 'historial'); objeto(p, 'excepciones', 'excepciones'); objeto(p, 'config', 'configuración');
+        cond.forEach((c, i) => { if (!esObj(c)) e.push(`conductor #${i + 1} incompleto`); else if (c.ausencias !== undefined && !Array.isArray(c.ausencias)) e.push(`ausencias de conductor #${i + 1} inválidas`); });
+        Object.keys(bor).forEach(k => { if (!Array.isArray(bor[k])) e.push(`agenda «${k}» dañada`); });
+        Object.keys(his).forEach(k => { if (!Array.isArray(his[k])) e.push(`historial «${k}» dañado`); });
+        if (!esObj(p.exhibidores)) e.push('«exhibidores» debe ser un objeto');
+        else { const x = p.exhibidores; lista(x, 'participantes', 'participantes de exhibidores'); lista(x, 'lugares', 'lugares de exhibidores'); objeto(x, 'agendas', 'agendas de exhibidores'); objeto(x, 'historial', 'historial de exhibidores'); objeto(x, 'config', 'configuración de exhibidores'); }
+        if (p.version !== undefined && !Number.isFinite(p.version)) e.push('versión inválida');
+        return { ok: e.length === 0, errores: e };
+    }
+    function alertaEstadoInvalido(errs) {
+        if (Date.now() - _ultAlertaInv < 8000) return; _ultAlertaInv = Date.now();
+        avisar('Se canceló el guardado para proteger tus datos: la información está incompleta o dañada. Detalle: ' + errs.slice(0, 4).join(' · '));
+    }
+
+    // Minimización de datos: ninguna exportación pública lleva teléfonos ni correos
+    function sinDatosContacto(s) {
+        return String(s ?? '').replace(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g, '').replace(/(?<![\d-])(?:\+\d{1,3}[\s.-]?)?\(?\d{3,4}\)?[\s.-]?\d{3}[\s.-]?\d{3,4}(?![\d-])/g, '');
+    }
+    function purgarContactoDOM(el) {
+        el.querySelectorAll('a[href^="tel:"],a[href^="mailto:"],a[href*="wa.me"],a[href*="whatsapp"]').forEach(a => a.remove());
+        const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), ns = []; while (w.nextNode()) ns.push(w.currentNode);
+        ns.forEach(n => { const t = sinDatosContacto(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; });
+    }
+
+    // === MÓDULO 4: SUPABASE AUTH, RLS Y SINCRONIZACIÓN ===
     // === SUPABASE ===
     // La clave "publishable" es pública por diseño: la protección real la dan Supabase Auth + RLS en public.estado_app.
     const SUPABASE_URL = "https://srtoeambotobemygadvy.supabase.co";
@@ -2147,9 +2194,12 @@ async function instalarPWA() {
         }
     }
 
-    function desbloquearInterfaz() {
+    async function desbloquearInterfaz() {
         if (_appIniciada) return;
         _sesionActiva = true; _appIniciada = true;
+        let ses = null; try { const r = await supabaseClient.auth.getSession(); ses = r && r.data && r.data.session; } catch (e) {}
+        if (!ses) { _sesionActiva = false; _appIniciada = false; limpiarCacheLocal(); mostrarLogin(); return; }
+        _rol = rolDeSesion(ses);
         document.getElementById('auth-overlay').style.display = 'none';
         document.getElementById('app-content').style.display = 'block';
         initApp();
@@ -2492,14 +2542,15 @@ async function instalarPWA() {
         return o;
     }
 
-    function payloadCompleto() { return { conductores, territorios, historial: historialAgendas, actividad: historialActividad, borradores: agendasMaestras, excepciones, config, exhibidores: exh }; }
-    function aplicarPayload(p) {
+    function payloadCompleto() { return { version: _verBase, updated_at: new Date().toISOString(), conductores, territorios, historial: historialAgendas, actividad: historialActividad, borradores: agendasMaestras, excepciones, config, exhibidores: exh }; }
+    function aplicarPayload(p, sinGuardar) {
         p = sanearDatos(p || {});
         conductores = p.conductores || []; territorios = p.territorios || [];
         historialAgendas = migrarClaves(p.historial); agendasMaestras = migrarClaves(p.borradores); excepciones = migrarClaves(p.excepciones);
         historialActividad = p.actividad || []; exh = exhNormalizar(p.exhibidores); config = Object.assign(defConfig(), p.config || {}); config.reuniones = migrarReuniones(config.reuniones);
         migrarGruposLegacy(p.grupos);
-        guardarLocal(); initApp(false);
+        if (sinGuardar) { try { localStorage.setItem('vdm_data', JSON.stringify(p)); } catch (e) {} } else guardarLocal();
+        initApp(false);
     }
 
     // === CONFIGURACIÓN (título, reuniones, máximo) ===
@@ -2518,7 +2569,7 @@ async function instalarPWA() {
         const box = document.getElementById('cfgReuniones'), R = reunionesCfg();
         box.innerHTML = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'].map(d => `<div class="reu-row"><b>${DIAS_LARGOS[d]}</b><div class="chip-button-group">${['AM', 'PM'].map(b => `<label class="chip-button"><input type="checkbox" value="${d}-${b}"${R.includes(d + '-' + b) ? ' checked' : ''}> ${b === 'AM' ? IC.sol + ' Mañana' : 'Tarde'}${d === 'DOM' && b === 'AM' ? ' (9:00 AM)' : ''}</label>`).join('')}</div></div>`).join('');
     }
-    function guardarConfig() {
+    function guardarConfig() { if (_bloqueadoLector()) return;
         config.titulo = document.getElementById('cfgTitulo').value; config.subtitulo = document.getElementById('cfgSub').value;
         config.waModo = document.getElementById('cfgWaModo').value; config.maxTurnos = Math.max(1, parseInt(document.getElementById('cfgMax').value, 10) || 4);
         config.reuniones = [...document.querySelectorAll('#cfgReuniones input:checked')].map(i => i.value); config.reunionesInit = true;
@@ -2538,14 +2589,14 @@ async function instalarPWA() {
             return `<div class="hor-row" data-dia="${d}"><b>${DIAS_LARGOS[d]}</b><div class="chip-button-group">${lista.map(h => `<label class="chip-button"><input type="checkbox" value="${esc(h)}"${base.has(h) ? ' checked' : ''}${fijas.includes(h) ? ' disabled title="Regla fija"' : ''}> ${esc(h)}</label>`).join('')}</div><input type="time" id="cfgHN-${d}" aria-label="Añadir hora ${esc(DIAS_LARGOS[d])}"><button type="button" class="btn-outline mini" title="Añadir hora" aria-label="Añadir hora" onclick="anadirHoraBase('${d}')">${IC.mas}</button></div>`;
         }).join('');
     }
-    function anadirHoraBase(dia) {
+    function anadirHoraBase(dia) { if (_bloqueadoLector()) return;
         const e = document.getElementById('cfgHN-' + dia), v = e && e.value; if (!v) return mostrarToast('Elige una hora', 'error');
         const [H, M] = v.split(':').map(Number), h = `${pad(H % 12 || 12)}:${pad(M)} ${H >= 12 ? 'PM' : 'AM'}`;
         guardarConfig(); const hd = {}; DIAS_SEM.forEach(d => { hd[d] = [...new Set([...horariosBase(d), ...horasReglaFija(d)])]; });
         if (!hd[dia].includes(h)) hd[dia].push(h); hd[dia].sort((a, b) => hMin(a) - hMin(b));
         config.horariosDia = hd; guardarLocal(); poblarHorariosUI();
     }
-    function restablecerHorariosBase() { config.horariosDia = null; guardarLocal(); poblarHorariosUI(); mostrarToast('Horarios base restablecidos'); }
+    function restablecerHorariosBase() { if (_bloqueadoLector()) return; config.horariosDia = null; guardarLocal(); poblarHorariosUI(); mostrarToast('Horarios base restablecidos'); }
 
     // === DESHACER / MODO LECTURA ===
     function pushUndo(k) { k = k || agendaKey(); if (!agendasMaestras[k]) return; undoStack.push({ k, j: JSON.stringify(agendasMaestras[k]) }); if (undoStack.length > 10) undoStack.shift(); redoStack.length = 0; updateUndoUI(); }
@@ -2554,13 +2605,13 @@ async function instalarPWA() {
         const [a, m] = e.k.split('-').map(Number); asegurarAnio(a); document.getElementById('anioAgenda').value = a; document.getElementById('mesAgenda').value = m;
         cargarAgendaDelMes();
     }
-    function deshacer() {
+    function deshacer() { if (_bloqueadoLector()) return;
         const e = undoStack.pop(); if (!e) return mostrarToast('Nada que deshacer', 'error');
         // El estado actual pasa a la pila de rehacer antes de restaurar
         if (agendasMaestras[e.k]) { redoStack.push({ k: e.k, j: JSON.stringify(agendasMaestras[e.k]) }); if (redoStack.length > 10) redoStack.shift(); }
         restaurarEstado(e); updateUndoUI(); mostrarToast('Cambio deshecho');
     }
-    function rehacer() {
+    function rehacer() { if (_bloqueadoLector()) return;
         const e = redoStack.pop(); if (!e) return mostrarToast('Nada que rehacer', 'error');
         if (agendasMaestras[e.k]) { undoStack.push({ k: e.k, j: JSON.stringify(agendasMaestras[e.k]) }); if (undoStack.length > 10) undoStack.shift(); }
         restaurarEstado(e); updateUndoUI(); mostrarToast('Cambio rehecho');
@@ -2571,7 +2622,7 @@ async function instalarPWA() {
         if (r) { r.disabled = !redoStack.length; r.innerHTML = `${IC.redo}<span>Rehacer${redoStack.length ? ' (' + redoStack.length + ')' : ''}</span>`; }
         if (l) l.innerHTML = lectura ? `${IC.lock}<span>Modo lectura</span>` : `${IC.unlock}<span>Editando</span>`;
     }
-    function toggleLectura() { lectura = !lectura; try { localStorage.setItem('vdm_lock', lectura ? '1' : '0'); } catch (e) {} refrescarTabla(); mostrarToast(lectura ? 'Modo lectura: edición bloqueada' : 'Edición habilitada'); }
+    function toggleLectura() { if (_bloqueadoLector()) return; lectura = !lectura; try { localStorage.setItem('vdm_lock', lectura ? '1' : '0'); } catch (e) {} refrescarTabla(); mostrarToast(lectura ? 'Modo lectura: edición bloqueada' : 'Edición habilitada'); }
     document.addEventListener('keydown', e => {
         const mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
         if (e.key === 'Escape') { if (window._dlgCancel) { window._dlgCancel(); return; } document.querySelectorAll('.modal').forEach(m => { if (m.style.display === 'flex') m.style.display = 'none'; }); cerrarMenu(); return; }
@@ -2684,7 +2735,7 @@ async function instalarPWA() {
         const sin = `<div class="group-card"><div><strong>Sin Asignar</strong></div><button class="btn-edit-outline" onclick="asignarConductor(-1,false)">Asignar</button></div>`;
         document.getElementById('selLista').innerHTML = L.filter(x => x.sug).map(card).join('') + (modo === 'todos' && !q.trim() ? sin : '') + (L.filter(x => !x.sug).map(card).join('') || (L.some(x => x.sug) ? '' : (sinDisp ? `<div class="sel-vacio" role="alert">${IC.aviso}<span>No hay conductores disponibles para ese horario</span></div>` : '<p class="hint">Sin conductores que coincidan.</p>')));
     }
-    function asignarConductor(ci, wa) {
+    function asignarConductor(ci, wa) { if (_bloqueadoLector()) return;
         const { k, idx } = selCtx, R = agendasMaestras[k], f = R[idx], c = ci >= 0 ? conductores[ci] : null; pushUndo(k);
         const ant = f.conductor; f.conductor = c ? nomC(c) : 'Sin Asignar'; f.avisado = false; f.confirmado = false;
         registrarActividad('Editar celda', `conductor: "${ant}" → "${f.conductor}" (día ${f.diaMes})`);
@@ -2806,7 +2857,7 @@ async function instalarPWA() {
         Object.keys(A).forEach(k => { const [a, m] = k.split('-').map(Number); A[k].forEach(f => { if (f.evento) return; const d = new Date(a, m - 1, f.diaMes); if (d < ini || d > fin) return; const o = out[f.conductor] || (out[f.conductor] = { n: 0, d: {} }); o.n++; o.d[f.diaSemana] = (o.d[f.diaSemana] || 0) + 1; }); });
         return out;
     }
-    function alternarEstado(i) { const c = conductores[i]; c.estado = c.estado === 'pausa' ? 'activo' : 'pausa'; guardarLocal(); renderListaConductores(); registrarActividad('Editar', `${nomC(c)}: ${c.estado === 'pausa' ? 'En pausa' : 'Activo'}`); }
+    function alternarEstado(i) { if (_bloqueadoLector()) return; const c = conductores[i]; c.estado = c.estado === 'pausa' ? 'activo' : 'pausa'; guardarLocal(); renderListaConductores(); registrarActividad('Editar', `${nomC(c)}: ${c.estado === 'pausa' ? 'En pausa' : 'Activo'}`); }
     function renderListaConductores() {
         const cont = document.getElementById('listaConductoresItems'); if (!cont) return;
         conductores.sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -2934,7 +2985,8 @@ async function instalarPWA() {
         { const ce = exhEnExh(f.conductor, exhTelDeNombre(f.conductor), iso); if (ce) out.push(`Choque: ${f.conductor} ya tiene turno de exhibidor el ${DIAS_LARGOS[f.diaSemana]} ${f.diaMes} (${ce.f.hora}, ${ce.f.lugar || 'lugar por definir'})`); }
         return out;
     }
-    async function generarNuevaAgenda() {
+    // === MÓDULO 5: MOTOR DE GENERACIÓN (GRUPOS Y EXHIBIDORES) ===
+    async function generarNuevaAgenda() { if (_bloqueadoLector()) return;
         if (agendasMaestras[agendaKey()] && !(await confirmar(`Ya existe una agenda para ${nombreMesSel()} ${anioSel()}. Si continúas se regenerará y se perderán las ediciones manuales (puedes usar Deshacer).${(() => { const n = (agendasMaestras[agendaKey()] || []).filter(f => f.fijado && !f.evento).length; return n ? ` Se conservarán ${n} turno(s) fijado(s) con candado.` : ''; })()}`, 'Regenerar'))) return;
         _generarNuevaAgenda();
     }
@@ -3007,6 +3059,7 @@ async function instalarPWA() {
     }
 
     // --- Tabla ---
+    // === MÓDULO 6: RENDERIZADO, FILTROS Y EXPORTACIÓN ===
     function refrescarTabla() { const R = agendasMaestras[agendaKey()]; if (R) renderAgenda(R, nombreMesSel()); }
     function refrescarDerivados() { exhRefrescarChoques(); renderEstadisticas(); renderContactos(); renderListaTerritorios(); renderHoy(); actualizarBadge(); updateUndoUI(); actualizarEstadoHistorial(); }
     function renderAgenda(datos, nombreMes) {
@@ -3125,7 +3178,7 @@ async function instalarPWA() {
         e.title = ok ? 'El borrador coincide con la versión guardada en el historial' : (H ? 'Hay cambios respecto a lo guardado en el historial' : 'Este mes aún no se ha guardado en el historial');
         e.innerHTML = (ok ? IC.ok14 : IC.punto) + '<span>' + (ok ? 'Guardado en historial' : 'Con cambios sin guardar en historial') + '</span>';
     }
-    function actualizarCelda(idx, campo, valor) {
+    function actualizarCelda(idx, campo, valor) { if (_bloqueadoLector()) return;
         const R = agendasMaestras[agendaKey()];
         if (R && R[idx]) {
             const v = sanearTexto(valor), anterior = R[idx][campo];
@@ -3138,13 +3191,13 @@ async function instalarPWA() {
             if (v !== String(valor ?? '').trim()) refrescarTabla();
         }
     }
-    function agregarFila(i) {
+    function agregarFila(i) { if (_bloqueadoLector()) return;
         if (lectura) return; const k = agendaKey(), R = agendasMaestras[k]; if (!R || !R[i]) return;
         pushUndo(); const d = R[i].diaMes; let pos = i; R.forEach((f, j) => { if (f.diaMes === d) pos = j; });
         R.splice(pos + 1, 0, { diaSemana: R[i].diaSemana, diaMes: d, hora: '09:00 AM', conductor: 'Sin Asignar', territorio: 'Sin Territorio', terrNum: null, lugar: 'Por Definir', grupos: 'Todos', avisado: false, confirmado: false });
         guardarLocal(); registrarActividad('Agregar turno', `Día ${d} — ${nombreMesSel()}`); refrescarTabla();
     }
-    function eliminarFila(i) {
+    function eliminarFila(i) { if (_bloqueadoLector()) return;
         if (lectura) return; const R = agendasMaestras[agendaKey()]; if (!R || !R[i]) return;
         pushUndo(); const f = R.splice(i, 1)[0]; guardarLocal();
         registrarActividad('Eliminar turno', `Día ${f.diaMes} ${f.hora || ''} — ${nombreMesSel()}`); refrescarTabla();
@@ -3167,7 +3220,7 @@ async function instalarPWA() {
         td.textContent = ''; td.appendChild(s); s.focus();
         try { if (s.showPicker) s.showPicker(); } catch (e) {}
     }
-    function aplicarSeleccion(idx, campo, v) {
+    function aplicarSeleccion(idx, campo, v) { if (_bloqueadoLector()) return;
         const f = agendasMaestras[agendaKey()][idx], ant = f[campo];
         if (ant !== v) {
             pushUndo(); f[campo] = v;
@@ -3272,7 +3325,7 @@ async function instalarPWA() {
         const L = excepciones[agendaKey()] || [];
         document.getElementById('listaExcepciones').innerHTML = L.map((e, i) => `<div class="group-card"><div><strong>${esc(e.motivo)}</strong><br><small>${e.desde === e.hasta ? 'Día ' + e.desde : `Del ${e.desde} al ${e.hasta}`}</small></div><button type="button" class="btn-danger-outline" onclick="borrarExcepcion(${i})">X</button></div>`).join('') || '<p class="hint">Sin excepciones este mes.</p>';
     }
-    function agregarExcepcion() {
+    function agregarExcepcion() { if (_bloqueadoLector()) return;
         const d = document.getElementById('exDesde').value, h = document.getElementById('exHasta').value || d, motivo = document.getElementById('exMotivo').value.trim();
         if (!d || !motivo) return mostrarToast('Indica la fecha y el motivo', 'error');
         let a = +d.slice(8), b = +h.slice(8); if (a > b) [a, b] = [b, a];
@@ -3287,7 +3340,7 @@ async function instalarPWA() {
         renderExcepciones(); cargarAgendaDelMes(); document.getElementById('exMotivo').value = '';
         mostrarToast('Excepción agregada');
     }
-    function borrarExcepcion(i) {
+    function borrarExcepcion(i) { if (_bloqueadoLector()) return;
         excepciones[agendaKey()].splice(i, 1); guardarLocal(); renderExcepciones();
         mostrarToast('Excepción eliminada. Genera de nuevo la agenda para restaurar esos días.');
     }
@@ -3314,7 +3367,7 @@ async function instalarPWA() {
             const m = /^(\d+)\.\s*(.*)$/.exec(f.territorio || ''), terr = m ? `Territorio ${m[1]} - ${m[2]}` : f.territorio;
             t += `\n*${dia} - ${f.hora.replace(/^0/, '')}:* ${f.conductor} — ${terr}${f.lugar ? ` (${f.lugar})` : ''}`;
         });
-        if (await copiar(t)) mostrarToast('Resumen copiado. ¡Pégalo en WhatsApp!'); else mostrarToast('No se pudo copiar el resumen', 'error');
+        if (await copiar(sinDatosContacto(t))) mostrarToast('Resumen copiado. ¡Pégalo en WhatsApp!'); else mostrarToast('No se pudo copiar el resumen', 'error');
     }
 
     // --- Hoy y mañana / Contactar ---
@@ -3454,33 +3507,35 @@ async function instalarPWA() {
     }
     function sincHist(k, f) { const H = historialAgendas[k]; if (H) { const h = H.find(x => x.diaMes === f.diaMes && x.hora === f.hora); if (h) { h.avisado = f.avisado; h.confirmado = f.confirmado; } } }
     function refrescarEstados() { renderContactos(); renderHoy(); actualizarBadge(); }  // renderContactos también redibuja la cola
-    function marcarComoAvisado(k, idx) {
+    function marcarComoAvisado(k, idx) { if (_bloqueadoLector()) return;
         const R = agendasMaestras[k]; if (!R || !R[idx]) return; R[idx].avisado = true; sincHist(k, R[idx]); guardarLocal(); setTimeout(refrescarEstados, 0);
     }
-    function toggleConfirmado(k, idx) {
+    function toggleConfirmado(k, idx) { if (_bloqueadoLector()) return;
         const R = agendasMaestras[k]; if (!R || !R[idx]) return; const f = R[idx]; f.confirmado = !f.confirmado; if (f.confirmado) f.avisado = true;
         sincHist(k, f); guardarLocal(); refrescarEstados();
     }
 
     // --- Historial guardado ---
-    function guardarEnHistorial() {
+    async function guardarEnHistorial() {
+        if (_bloqueadoLector()) return;
         const key = agendaKey();
         if (!agendasMaestras[key]) return mostrarToast('Primero genera una agenda para este mes.', 'error');
-        historialAgendas[key] = clonar(agendasMaestras[key]); guardarLocal(); renderHistorial(); actualizarEstadoHistorial();
+        historialAgendas[key] = clonar(agendasMaestras[key]); const ok = guardarLocal(); renderHistorial(); actualizarEstadoHistorial();
         registrarActividad('Guardar historial', `Agenda de ${nombreMesSel()} ${anioSel()}`);
-        mostrarToast('Agenda guardada localmente en tu dispositivo');
+        if (!ok) return mostrarToast('No se guardó: los datos no pasaron la validación.', 'error');
+        mostrarToast(await esperarSincronizacion() ? 'Instantánea del mes guardada en el historial y sincronizada con la nube' : 'Guardada en el historial local; pendiente de sincronizar con la nube');
     }
     function renderHistorial() {
         const cont = document.getElementById('listaHistorial'); if (!cont) return;
         cont.innerHTML = Object.keys(historialAgendas).filter(k => /^\d{4}-\d{1,2}$/.test(k)).sort((a, b) => { const [x, y] = a.split('-').map(Number), [p, q] = b.split('-').map(Number); return x - p || y - q; })
             .map(k => { const [a, m] = k.split('-').map(Number); return `<div class="group-card"><span>Agenda de ${MESES[m - 1]} ${a}</span> <div><button class="btn-edit-outline" onclick="cargarDeHistorial('${k}')">Cargar</button><button class="btn-danger-outline" onclick="borrarDeHistorial('${k}')">Borrar</button></div></div>`; }).join('');
     }
-    function cargarDeHistorial(k) {
+    function cargarDeHistorial(k) { if (_bloqueadoLector()) return;
         const [a, m] = k.split('-').map(Number); asegurarAnio(a);
         document.getElementById('anioAgenda').value = a; document.getElementById('mesAgenda').value = m;
         agendasMaestras[k] = clonar(historialAgendas[k]); guardarLocal(); cargarAgendaDelMes(); closeModal('modalHistorial');
     }
-    async function borrarDeHistorial(k) {
+    async function borrarDeHistorial(k) { if (_bloqueadoLector()) return;
         if (await confirmar("¿Borrar historial? Se perderá permanentemente del teléfono.", 'Borrar')) { delete historialAgendas[k]; guardarLocal(); renderHistorial(); cargarAgendaDelMes(); }
     }
     function cargarAgendaDelMes() {
@@ -3498,6 +3553,7 @@ async function instalarPWA() {
         a.querySelectorAll('.no-export').forEach(e => e.remove());
         a.querySelectorAll('.sin-asignar,.edit-select,.warn-cond,.warn-lugar').forEach(e => e.classList.remove('sin-asignar', 'edit-select', 'warn-cond', 'warn-lugar'));
         a.querySelectorAll('[contenteditable]').forEach(e => e.removeAttribute('contenteditable'));
+        purgarContactoDOM(a);
     }
 
     // === INICIALIZACIÓN DE DATOS ===
@@ -3522,7 +3578,7 @@ async function instalarPWA() {
     }
     async function initApp(desdeNube = true) {
         if (!_sesionActiva) return;
-        let local = leerLocal();
+        let local = leerLocal(); _verBase = Number(local.version) || 0;
         // Si quedaron cambios locales sin subir, tienen prioridad sobre la nube (y se vuelven a enviar)
         let pendiente = false; try { pendiente = localStorage.getItem('vdm_sync_pendiente') === '1'; } catch (e) {}
         if (desdeNube && supabaseClient) {
@@ -3530,7 +3586,7 @@ async function instalarPWA() {
             else {
                 const nube = await leerNube();
                 if (!_sesionActiva) return;
-                if (nube) { local = nube; try { localStorage.setItem('vdm_data', JSON.stringify(nube)); } catch (e) {} }
+                if (nube) { local = nube; _verBase = Number(nube.version) || 0; try { localStorage.setItem('vdm_data', JSON.stringify(nube)); } catch (e) {} }
             }
         }
 
@@ -3539,7 +3595,7 @@ async function instalarPWA() {
         territorios = local.territorios || [];
         agendasMaestras = migrarClaves(local.borradores); historialAgendas = migrarClaves(local.historial); excepciones = migrarClaves(local.excepciones); poblarAnios();
         historialActividad = local.actividad || []; exh = exhNormalizar(local.exhibidores);
-        config = Object.assign(defConfig(), local.config || {}); config.reuniones = migrarReuniones(config.reuniones); lectura = localStorage.getItem('vdm_lock') === '1';
+        config = Object.assign(defConfig(), local.config || {}); config.reuniones = migrarReuniones(config.reuniones); lectura = !puedeEditar() || localStorage.getItem('vdm_lock') === '1';
         conductores.forEach(c => { const t = limpiarTelefono(c.telefono); if (t) c.telefono = t; });
         if (migrarGruposLegacy(local.grupos)) guardarLocal();
 
@@ -3555,33 +3611,111 @@ async function instalarPWA() {
         switchTab(lastTab);
         exhIniciar();
         actualizarDatalists();
-        updateUndoUI(); actualizarSyncUI();
+        updateUndoUI(); actualizarSyncUI(); aplicarRolUI(); _rolListo = true;
     }
 
-    function guardarLocal() { 
-        if (!_sesionActiva) return;
-        const payload = payloadCompleto();
-        localStorage.setItem('vdm_data', JSON.stringify(payload)); 
+    function guardarLocal() {
+        if (!_sesionActiva) return false;
+        if (!puedeEditar()) { if (_rolListo) avisoLector(); return false; }
+        const payload = payloadCompleto(), v = validarEstadoApp(payload);
+        if (!v.ok) { alertaEstadoInvalido(v.errores); return false; }
+        try { localStorage.setItem('vdm_data', JSON.stringify(payload)); } catch (e) { mostrarToast('No se pudo guardar en este dispositivo (almacenamiento lleno).', 'error'); return false; }
         sincronizarNube();
+        return true;
     }
 
-    // Subida a Supabase en segundo plano (en cola, para que lleguen en orden)
-    let _colaSync = Promise.resolve(), _verSync = 0, _ultAvisoSync = 0, _syncPend = 0, _syncFallo = false, _syncRetryT = null, _syncReintentos = 0;
+    // Subida a Supabase en segundo plano (en cola, para que lleguen en orden) con control de versión
+    let _colaSync = Promise.resolve(), _verSync = 0, _ultAvisoSync = 0, _syncPend = 0, _syncFallo = false, _syncRetryT = null, _syncReintentos = 0, _conflictoAbierto = false;
+    async function subirConVersion(forzar) {
+        const p = payloadCompleto(); p.version = _verBase + 1; p.updated_at = new Date().toISOString();
+        const v = validarEstadoApp(p); if (!v.ok) { alertaEstadoInvalido(v.errores); return 'invalido'; }
+        if (!forzar && _verBase > 0) {
+            // Compara y escribe en una sola operación: solo actualiza si la nube sigue en la versión que leímos
+            const { data, error } = await supabaseClient.from('estado_app').update({ datos: p }).eq('id', 1).eq('datos->>version', String(_verBase)).select('id');
+            if (error) throw error;
+            if (!data || !data.length) return 'conflicto';
+        } else {
+            if (!forzar) {
+                const q = await supabaseClient.from('estado_app').select('ver:datos->>version').eq('id', 1).maybeSingle();
+                if (q.error) throw q.error;
+                if (q.data && (Number(q.data.ver) || 0) > 0) return 'conflicto';
+            }
+            const { error } = await supabaseClient.from('estado_app').upsert({ id: 1, datos: p });
+            if (error) throw error;
+        }
+        _verBase = p.version; try { localStorage.setItem('vdm_data', JSON.stringify(p)); } catch (e) {}
+        return 'ok';
+    }
+    async function resolverConflicto() {
+        if (_conflictoAbierto) return; _conflictoAbierto = true;
+        try {
+            const op = await dialogo('Cambios en la nube', 'Hay cambios más recientes en la nube. ¿Deseas recargar la versión actual o sobrescribir con tus cambios?', [{ t: 'Recargar versión de la nube', v: 'recargar' }, { t: 'Sobrescribir con mis cambios', v: 'sobrescribir', primario: true }]);
+            if (!op) { mostrarToast('Sin sincronizar: hay cambios más recientes en la nube.', 'error'); return; }
+            const nube = await leerNube();
+            if (!nube) { _syncFallo = true; mostrarToast('No se pudo leer la nube. Inténtalo de nuevo.', 'error'); return; }
+            _verBase = Number(nube.version) || 0;
+            if (op === 'recargar') { try { localStorage.removeItem('vdm_sync_pendiente'); } catch (e) {} aplicarPayload(nube, true); mostrarToast('Versión de la nube cargada'); }
+            else if (await subirConVersion(true) === 'ok') { try { localStorage.removeItem('vdm_sync_pendiente'); } catch (e) {} mostrarToast('Tus cambios sobrescribieron la versión de la nube'); }
+        } finally { _conflictoAbierto = false; }
+    }
     function sincronizarNube() {
-        if (!supabaseClient || !_sesionActiva) return;
+        if (!supabaseClient || !_sesionActiva || !puedeEditar()) return;
         const miVer = ++_verSync;
         try { localStorage.setItem('vdm_sync_pendiente', '1'); } catch (e) {}
         _syncPend++; actualizarSyncUI();
         _colaSync = _colaSync.then(async () => {
             if (!_sesionActiva) return;
-            const { error } = await supabaseClient.from('estado_app').upsert({ id: 1, datos: payloadCompleto() });
-            if (error) throw error;
+            const r = await subirConVersion(false);
+            if (r === 'conflicto') { await resolverConflicto(); return; }
+            if (r !== 'ok') return;
             _syncFallo = false; _syncReintentos = 0;
             if (miVer === _verSync) { try { localStorage.removeItem('vdm_sync_pendiente'); } catch (e) {} }
         }).catch(e => {
             _syncFallo = true; programarReintentoSync();
             if (Date.now() - _ultAvisoSync > 10000) { _ultAvisoSync = Date.now(); mostrarToast("Error al sincronizar con la nube", "error"); }
         }).finally(() => { _syncPend = Math.max(0, _syncPend - 1); actualizarSyncUI(); });
+    }
+    async function esperarSincronizacion() {
+        if (!supabaseClient || navigator.onLine === false) return false;
+        await Promise.race([_colaSync, new Promise(r => setTimeout(r, 12000))]);
+        let pend = false; try { pend = localStorage.getItem('vdm_sync_pendiente') === '1'; } catch (e) {}
+        return !pend && !_syncFallo && _syncPend === 0;
+    }
+
+    // --- Respaldo completo (JSON) ---
+    function descargarRespaldo() {
+        const p = payloadCompleto(), v = validarEstadoApp(p); if (!v.ok) return alertaEstadoInvalido(v.errores);
+        const d = new Date(), sello = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}-${pad(d.getMinutes())}`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify({ app: 'territorios-vdm', formato: 1, exportado: d.toISOString(), datos: p }, null, 2)], { type: 'application/json' }));
+        a.download = `Respaldo-Territorios-${sello}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        if (puedeEditar()) registrarActividad('Exportar', 'Respaldo completo (JSON)');
+        mostrarToast('Respaldo descargado');
+    }
+    async function restaurarRespaldo(inp) {
+        const f = inp.files && inp.files[0]; inp.value = ''; if (!f) return;
+        if (_bloqueadoLector()) return;
+        if (f.size > 15 * 1024 * 1024) return avisar('El archivo es demasiado grande para ser un respaldo válido.');
+        let obj; try { obj = JSON.parse(await f.text()); } catch (e) { return avisar('El archivo no es un JSON válido. No se restauró nada.'); }
+        const datos = (obj && obj.app === 'territorios-vdm' && obj.datos) ? obj.datos : obj, v = validarEstadoApp(datos);
+        if (!v.ok) return avisar('El respaldo está incompleto o dañado y no se restauró nada. Detalle: ' + v.errores.slice(0, 4).join(' · '));
+        if (!(await confirmar('Se reemplazarán todos los datos actuales, también en la nube, por los del respaldo. ¿Continuar?', 'Restaurar'))) return;
+        const nube = await leerNube(); if (nube) _verBase = Number(nube.version) || 0;
+        aplicarPayload(datos); mostrarToast('Respaldo restaurado');
+    }
+
+    // Modo lectura por rol: bloquea controles visibles (las funciones de escritura tienen además su propia guarda)
+    function aplicarRolUI() {
+        document.body.classList.toggle('rol-lector', !puedeEditar());
+        if (puedeEditar()) return;
+        if (!document.getElementById('bannerLector')) {
+            const b = document.createElement('div'); b.id = 'bannerLector'; b.setAttribute('role', 'status');
+            b.style.cssText = 'background:#fef3c7;color:#78350f;text-align:center;padding:6px 10px;font-size:.85rem;font-weight:600';
+            b.textContent = 'Modo lectura: tu cuenta no tiene permisos de edición.';
+            const c = document.getElementById('app-content'); c.insertBefore(b, c.firstChild);
+        }
+        const RX = /generarNuevaAgenda|exhGenerar|guardarEnHistorial|openModalConductor|openModalTerritorio|exhAbrirPart|exhAbrirLug|eliminar|borrar|deshacer|rehacer|restaurar|inpRespaldo|agregarExcepcion|exhGuardar|exhCfg|restablecer|toggleLectura|cargarDeHistorial|exhCargarHist/;
+        document.querySelectorAll('[onclick]').forEach(el => { if (RX.test(el.getAttribute('onclick'))) { el.disabled = true; el.setAttribute('aria-disabled', 'true'); el.style.opacity = '.5'; el.style.pointerEvents = 'none'; } });
     }
 
     // Reintento automático (máx. 3 veces) tras un fallo de subida con red disponible
@@ -3769,7 +3903,7 @@ async function instalarPWA() {
         openModal('modalConductor');
     }
 
-    async function eliminarConductor(i) { 
+    async function eliminarConductor(i) { if (_bloqueadoLector()) return; 
         if(await confirmar("¿Eliminar este registro?", 'Eliminar')) { 
             const nombre = `${conductores[i].nombre} ${conductores[i].apellido}`;
             conductores.splice(i,1); 
@@ -3824,7 +3958,7 @@ async function instalarPWA() {
         openModal('modalTerritorio');
     }
 
-    async function eliminarTerritorio(i) { 
+    async function eliminarTerritorio(i) { if (_bloqueadoLector()) return; 
         if(await confirmar("¿Eliminar este registro?", 'Eliminar')) { 
             const nombre = `${territorios[i].numero}. ${territorios[i].nombre}`;
             aislarLugares('grupos', () => { territorios.splice(i,1); });
@@ -3889,7 +4023,7 @@ async function instalarPWA() {
         });
     }
 
-    async function borrarHistorialActividad() {
+    async function borrarHistorialActividad() { if (_bloqueadoLector()) return;
         if(await confirmar("¿Borrar todo el historial de actividad?", 'Borrar')) {
             historialActividad = [];
             guardarLocal();
@@ -3924,7 +4058,7 @@ async function instalarPWA() {
     }
     function exportarCSV() {
         const R = agendasMaestras[agendaKey()]; if (!R || !R.length) return mostrarToast('Primero genera una agenda para este mes.', 'error');
-        const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`, rows = [['Día', 'Fecha', 'Hora', 'Conductor', 'Territorio', 'Lugar', 'Grupos']];
+        const q = v => `"${sinDatosContacto(v ?? '').replace(/"/g, '""')}"`, rows = [['Día', 'Fecha', 'Hora', 'Conductor', 'Territorio', 'Lugar', 'Grupos']];
         R.forEach(f => rows.push(f.evento ? [DIAS_LARGOS[f.diaSemana], f.diaMes, 'Todo el día', f.motivo, '', '', ''] : [DIAS_LARGOS[f.diaSemana], f.diaMes, f.hora, f.conductor, f.territorio, f.lugar, f.grupos]));
         const csv = '\ufeff' + rows.map(r => r.map(q).join(';')).join('\r\n'), a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = `Agenda-${pad(document.getElementById('mesAgenda').value)}-${anioSel()}.csv`; a.click();
@@ -4369,7 +4503,7 @@ async function instalarPWA() {
     }
 
     // ---------- Generación equitativa del mes ----------
-    async function exhGenerar() {
+    async function exhGenerar() { if (_bloqueadoLector()) return;
         const key = exhKey(), a = exhAnio(), m = exhMes();
         if (!exh.participantes.some(p => p.estado !== 'pausa')) return mostrarToast('Primero registra participantes activos en la pestaña Participantes.', 'error');
         if ((exh.agendas[key] || []).length && !(await confirmar(`Ya existe una agenda de exhibidores para ${MESES[m - 1]} ${a}. Si continúas se regenerará y se perderán las ediciones manuales.`, 'Regenerar'))) return;
@@ -4568,7 +4702,7 @@ async function instalarPWA() {
         const f = exh.agendas[key][i], p = exhPartPorNombre(f.parts[pos]); if (!p) return mostrarToast('Participante no registrado.', 'error');
         if (await copiar(exhMensaje(p, f, key))) { mostrarToast('Mensaje copiado al portapapeles'); f.avis[pos] = true; guardarLocal(); exhRenderContactos(); } else mostrarToast('No se pudo copiar el texto', 'error');
     }
-    function exhConfirmar(key, i, pos) { const f = exh.agendas[key][i]; f.conf[pos] = !f.conf[pos]; if (f.conf[pos]) f.avis[pos] = true; guardarLocal(); exhRenderContactos(); }
+    function exhConfirmar(key, i, pos) { if (_bloqueadoLector()) return; const f = exh.agendas[key][i]; f.conf[pos] = !f.conf[pos]; if (f.conf[pos]) f.avis[pos] = true; guardarLocal(); exhRenderContactos(); }
 
     // ---------- Participantes ----------
     function exhConteos() {
@@ -4605,7 +4739,7 @@ async function instalarPWA() {
         if (!exhTmp[t].includes(v)) exhTmp[t].push(v); exhTmp[t].sort(); e.value = ''; exhChips();
     }
     function exhQuitarFecha(t, i) { exhTmp[t].splice(i, 1); exhChips(); }
-    async function exhGuardarPart(e) {
+    async function exhGuardarPart(e) { if (_bloqueadoLector()) return;
         e.preventDefault(); if (!antiDoble(e)) return;
         const i = parseInt(document.getElementById('epIdx').value, 10), nombre = sanearTexto(document.getElementById('epNombre').value), apellido = sanearTexto(document.getElementById('epApellido').value), tel = limpiarTelefono(document.getElementById('epTel').value);
         if (!nombre || !apellido) return mostrarToast('Escribe nombre y apellido', 'error');
@@ -4617,8 +4751,8 @@ async function instalarPWA() {
         if (vinc.otro) { vincSincronizar('P', p, vinc.otro); registrarActividad('Sincronizar', `Conductor ${nomC(vinc.otro)} actualizado desde Exhibidores`); guardarLocal(); renderListaConductores(); }
         closeModal('modalExhPart'); exhRenderTodo();
     }
-    function exhAlternarPart(i) { const p = exh.participantes[i]; p.estado = p.estado === 'pausa' ? 'activo' : 'pausa'; exhReg('Editar', `${exhNom(p)}: ${p.estado === 'pausa' ? 'En pausa' : 'Activo'}`); exhRenderPart(); }
-    async function exhEliminarPart(i) {
+    function exhAlternarPart(i) { if (_bloqueadoLector()) return; const p = exh.participantes[i]; p.estado = p.estado === 'pausa' ? 'activo' : 'pausa'; exhReg('Editar', `${exhNom(p)}: ${p.estado === 'pausa' ? 'En pausa' : 'Activo'}`); exhRenderPart(); }
+    async function exhEliminarPart(i) { if (_bloqueadoLector()) return;
         const p = exh.participantes[i]; if (!(await confirmar(`¿Eliminar a ${exhNom(p)}? Las agendas ya generadas conservarán su nombre.`, 'Eliminar'))) return;
         exh.participantes.splice(i, 1); exhReg('Eliminar', `Participante ${exhNom(p)}`); exhRenderTodo();
     }
@@ -4638,7 +4772,7 @@ async function instalarPWA() {
         document.getElementById('elDias').innerHTML = EXH_DIAS.map(d => `<div class="day-row"><span class="chip-button" style="pointer-events:none">${DIAS_LARGOS[d]}</span><div class="time-options">${exh.config.turnos.map(t => { const v = d + '-' + t.id, chk = l ? (l.dias || []).includes(v) : (t.puntos[d] | 0) > 0; return `<label class="chip-button"><input type="checkbox" value="${v}"${chk ? ' checked' : ''}> ${esc(t.nombre)}</label>`; }).join('')}</div></div>`).join('');
         openModal('modalExhLug');
     }
-    function exhGuardarLug(e) {
+    function exhGuardarLug(e) { if (_bloqueadoLector()) return;
         e.preventDefault(); if (!antiDoble(e)) return;
         const i = parseInt(document.getElementById('elIdx').value, 10), nombre = sanearTexto(document.getElementById('elNombre').value); if (!nombre) return mostrarToast('Escribe el nombre del lugar', 'error');
         if (exh.lugares.some((x, j) => j !== i && norm(x.nombre) === norm(nombre))) return mostrarToast('Ya existe un lugar con ese nombre', 'error');
@@ -4648,7 +4782,7 @@ async function instalarPWA() {
         });
         closeModal('modalExhLug'); exhRenderTodo();
     }
-    async function exhEliminarLug(i) { const l = exh.lugares[i]; if (!(await confirmar(`¿Eliminar el lugar «${l.nombre}»?`, 'Eliminar'))) return; aislarLugares('exh', () => { exh.lugares.splice(i, 1); }); exhReg('Eliminar', `Lugar ${l.nombre}`); exhRenderLug(); }
+    async function exhEliminarLug(i) { if (_bloqueadoLector()) return; const l = exh.lugares[i]; if (!(await confirmar(`¿Eliminar el lugar «${l.nombre}»?`, 'Eliminar'))) return; aislarLugares('exh', () => { exh.lugares.splice(i, 1); }); exhReg('Eliminar', `Lugar ${l.nombre}`); exhRenderLug(); }
 
     // ---------- Actividad ----------
     function exhRenderAct() {
@@ -4656,11 +4790,11 @@ async function instalarPWA() {
         if (!exh.actividad.length) { cont.innerHTML = '<p style="color:var(--text-sub);font-size:.9rem;font-weight:500">No hay actividad registrada aún.</p>'; return; }
         exh.actividad.forEach(a => { const it = document.createElement('div'); it.className = 'historial-item'; const s = document.createElement('strong'); s.textContent = String(a.accion ?? ''); const c = document.createElement('small'); c.textContent = String(a.fecha ?? ''); it.append(s, document.createTextNode(': ' + String(a.detalle ?? '') + ' '), c); cont.appendChild(it); });
     }
-    async function exhBorrarAct() { if (!exh.actividad.length || !(await confirmar('¿Borrar todo el historial de actividad de Exhibidores?', 'Borrar'))) return; exh.actividad = []; guardarLocal(); exhRenderAct(); }
+    async function exhBorrarAct() { if (_bloqueadoLector()) return; if (!exh.actividad.length || !(await confirmar('¿Borrar todo el historial de actividad de Exhibidores?', 'Borrar'))) return; exh.actividad = []; guardarLocal(); exhRenderAct(); }
 
     // ---------- Copia de seguridad (historial) del mes ----------
-    function exhGuardarHist() { const k = exhKey(); if (!(exh.agendas[k] || []).length) return mostrarToast('Primero genera la agenda del mes.', 'error'); exh.historial[k] = { fecha: new Date().toLocaleString('es-VE'), filas: clonar(exh.agendas[k]) }; exhReg('Guardar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); mostrarToast('Copia guardada'); }
-    async function exhCargarHist() { const k = exhKey(), h = exh.historial[k]; if (!h) return mostrarToast('No hay una copia guardada para este mes.', 'error'); if (!(await confirmar(`Restaurar la copia guardada el ${h.fecha}? Se reemplazará la agenda actual del mes.`, 'Restaurar'))) return; exh.agendas[k] = clonar(h.filas); exhReg('Restaurar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); exhRenderTodo(); }
+    function exhGuardarHist() { if (_bloqueadoLector()) return; const k = exhKey(); if (!(exh.agendas[k] || []).length) return mostrarToast('Primero genera la agenda del mes.', 'error'); exh.historial[k] = { fecha: new Date().toLocaleString('es-VE'), filas: clonar(exh.agendas[k]) }; exhReg('Guardar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); mostrarToast('Copia guardada'); }
+    async function exhCargarHist() { if (_bloqueadoLector()) return; const k = exhKey(), h = exh.historial[k]; if (!h) return mostrarToast('No hay una copia guardada para este mes.', 'error'); if (!(await confirmar(`Restaurar la copia guardada el ${h.fecha}? Se reemplazará la agenda actual del mes.`, 'Restaurar'))) return; exh.agendas[k] = clonar(h.filas); exhReg('Restaurar', `Copia de exhibidores de ${MESES[exhMes() - 1]} ${exhAnio()}`); exhRenderTodo(); }
 
     // ---------- Configuración de horarios ----------
     function exhPoblarCfg() {
@@ -4678,7 +4812,7 @@ async function instalarPWA() {
         const [a, m] = key.split('-').map(Number), w = document.createElement('div');
         w.id = 'exhExportar'; w.className = 'exh-export'; w.style.cssText = 'position:fixed;left:-12000px;top:0;width:900px;background:#fff;padding:24px';
         w.innerHTML = `<div class="exh-exp-head"><div class="export-app">${esc(exhTituloApp())}</div><h2>Predicación con Exhibidores</h2><p>${MESES[m - 1]} ${a}</p><div class="export-bar"></div></div>${exhHtmlSemanas(key, { edit: false, solo })}`;
-        document.body.appendChild(w); return w;
+        purgarContactoDOM(w); document.body.appendChild(w); return w;
     }
     function exhAbrirDescarga() {
         const key = exhKey(), ws = exhSemanasDe(key); if (!ws.length) return mostrarToast('Primero genera la agenda del mes.', 'error');
@@ -4716,7 +4850,7 @@ async function instalarPWA() {
     }
     function exhCSV() {
         const key = exhKey(), F = exh.agendas[key] || []; if (!F.length) return mostrarToast('Primero genera la agenda del mes.', 'error');
-        const [a, m] = key.split('-').map(Number), q = v => `"${String(v ?? '').replace(/"/g, '""')}"`, rows = [['Semana', 'Día', 'Fecha', 'Horario', 'Lugar', 'Participante 1', 'Participante 2', 'Participante 3']];
+        const [a, m] = key.split('-').map(Number), q = v => `"${sinDatosContacto(v ?? '').replace(/"/g, '""')}"`, rows = [['Semana', 'Día', 'Fecha', 'Horario', 'Lugar', 'Participante 1', 'Participante 2', 'Participante 3']];
         exhSemanasDe(key).forEach(w => w.idxs.forEach(i => { const f = F[i]; rows.push([exhEtiqueta(key, w.lun), DIAS_LARGOS[f.diaSemana], f.diaMes, f.hora, f.bloqueado ? (f.motivo || 'Predicación de grupos') : f.lugar, ...(f.bloqueado ? ['', '', ''] : f.parts)]); }));
         const csv = '\ufeff' + rows.map(r => r.map(q).join(';')).join('\r\n'), l = document.createElement('a');
         l.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); l.download = `Exhibidores-${pad(m)}-${a}.csv`; l.click();
@@ -4737,7 +4871,7 @@ async function instalarPWA() {
         });
         t += `\n*${EXH_PAUTAS[0]}*\n*${EXH_PAUTAS[1]}*\n*${EXH_PAUTAS[2]}*`;
         closeModal('modalExhResumen');
-        if (await copiar(t)) { mostrarToast('Resumen copiado al portapapeles'); exhReg('Copiar', `Resumen semanal de exhibidores (semana ${wi + 1})`); } else mostrarToast('No se pudo copiar el texto', 'error');
+        if (await copiar(sinDatosContacto(t))) { mostrarToast('Resumen copiado al portapapeles'); exhReg('Copiar', `Resumen semanal de exhibidores (semana ${wi + 1})`); } else mostrarToast('No se pudo copiar el texto', 'error');
     }
 
 </script>
