@@ -15,7 +15,7 @@
  * que envía el botón "Actualizar app" de la configuración.
  * ========================================================================== */
 
-const VERSION = '2026.11.25';
+const VERSION = '2';
 const PREFIJO_CACHE = 'territorios-vdm-';
 const CACHE = PREFIJO_CACHE + VERSION;
 
