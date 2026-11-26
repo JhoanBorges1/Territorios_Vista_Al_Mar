@@ -1,107 +1,103 @@
-/* sw.js — Gestión de Territorios Vista Al Mar
- * - index.html (navegación): Network-First con tiempo límite; si falla la red, usa la copia en caché.
- * - Recursos estáticos (mismo origen y CDNs conocidos): Cache-First.
- * - Supabase (auth, REST, realtime, storage) y cualquier petición con credenciales: NUNCA se interceptan ni se guardan.
- */
-const VERSION = 'vdm-v5';
-const CACHE_SHELL = VERSION + '-shell';
-const CACHE_STATIC = VERSION + '-static';
-const MAX_STATIC = 80;
-const NETWORK_TIMEOUT_MS = 5000;
+/* ==========================================================================
+ * sw.js — Service Worker · Gestión de Territorios Vista Al Mar
+ *
+ * Estrategia:
+ *  - Archivos propios (index.html, styles.css, supabase.js, app.js, icono.png):
+ *    RED PRIMERO (siempre intenta traer la última versión) y, si no hay red o tarda
+ *    demasiado, usa la copia guardada. Así la app abre sin conexión y las
+ *    actualizaciones llegan en cuanto hay internet.
+ *  - Librerías y fuentes de CDN (supabase-js, html2canvas, Google Fonts):
+ *    CACHÉ PRIMERO + actualización en segundo plano (la app abre sin conexión).
+ *  - Supabase (API, login, sincronización) y cualquier otro dominio: NO se intercepta.
+ *
+ * AL PUBLICAR CAMBIOS: sube VERSION (aquí) y el "?v=" de index.html al mismo valor.
+ * Se activa solo (skipWaiting + claim) y también responde al mensaje 'SKIP_WAITING'
+ * que envía el botón "Actualizar app" de la configuración.
+ * ========================================================================== */
 
-const INDEX_URL = new URL('./index.html', self.registration.scope).href;
-const SHELL_URLS = [INDEX_URL];
-const STATIC_HOSTS = ['cdnjs.cloudflare.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
+const VERSION = '2026.11.25';
+const PREFIJO_CACHE = 'territorios-vdm-';
+const CACHE = PREFIJO_CACHE + VERSION;
 
-const esSupabase = (url) =>
-    /(^|\.)supabase\.(co|in|net)$/i.test(url.hostname) ||
-    /supabase/i.test(url.hostname) ||
-    /\/(auth|rest|realtime|storage|functions|graphql)\/v1(\/|$)/.test(url.pathname);
+const BASE = new URL('./', self.location.href).href;          // carpeta donde está sw.js
+const NUCLEO = ['', 'index.html', 'styles.css', 'supabase.js', 'app.js', 'icono.png'].map(p => BASE + p);
+const HOSTS_CDN = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
+const ESPERA_RED_MS = 4000;                                     // si la red tarda más, se usa la copia guardada
 
-const cacheable = (res) => {
-    if (!res) return false;
-    if (res.type === 'opaque') return true;
-    if (!res.ok) return false;
-    return !/no-store|private/i.test(res.headers.get('Cache-Control') || '');
-};
+// Clave de caché sin "?v=..." para que cada archivo tenga una sola copia
+const claveDe = url => { const u = new URL(url); return u.origin + u.pathname; };
 
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_SHELL)
-            .then((cache) => Promise.all(SHELL_URLS.map((u) => cache.add(new Request(u, { cache: 'reload' })).catch(() => {}))))
-            .then(() => self.skipWaiting())
-    );
+/* ---------- Instalación: guarda el núcleo (tolerante: un fallo no impide instalar) ---------- */
+self.addEventListener('install', event => {
+    event.waitUntil((async () => {
+        const cache = await caches.open(CACHE);
+        await Promise.allSettled(NUCLEO.map(async url => {
+            const resp = await fetch(new Request(url, { cache: 'reload' }));
+            if (resp && resp.ok) await cache.put(claveDe(url), resp);
+        }));
+        await self.skipWaiting();
+    })());
 });
 
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys()
-            .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_SHELL && k !== CACHE_STATIC).map((k) => caches.delete(k))))
-            .then(() => self.clients.claim())
-    );
+/* ---------- Activación: limpia cachés antiguas de ESTA app y toma el control ---------- */
+self.addEventListener('activate', event => {
+    event.waitUntil((async () => {
+        const nombres = await caches.keys();
+        await Promise.all(nombres.filter(n => n.startsWith(PREFIJO_CACHE) && n !== CACHE).map(n => caches.delete(n)));
+        await self.clients.claim();
+    })());
 });
 
-self.addEventListener('message', (event) => {
+self.addEventListener('message', event => {
     const d = event.data;
     if (d === 'SKIP_WAITING' || (d && d.type === 'SKIP_WAITING')) self.skipWaiting();
 });
 
-function fetchConLimite(req, ms) {
-    const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    const timer = ctrl ? setTimeout(() => ctrl.abort(), ms) : null;
-    return fetch(req, ctrl ? { signal: ctrl.signal } : undefined).finally(() => { if (timer) clearTimeout(timer); });
-}
-
-async function networkFirstIndex(req) {
-    const cache = await caches.open(CACHE_SHELL);
-    try {
-        const res = await fetchConLimite(req, NETWORK_TIMEOUT_MS);
-        if (cacheable(res) && res.type !== 'opaque') cache.put(INDEX_URL, res.clone()).catch(() => {});
-        return res;
-    } catch (err) {
-        const copia = (await cache.match(INDEX_URL)) || (await cache.match(req, { ignoreSearch: true }));
-        if (copia) return copia;
-        return new Response('Sin conexión y sin copia guardada de la aplicación.', {
-            status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-        });
-    }
-}
-
-async function recortar(cache) {
-    const keys = await cache.keys();
-    if (keys.length > MAX_STATIC) await Promise.all(keys.slice(0, keys.length - MAX_STATIC).map((k) => cache.delete(k)));
-}
-
-async function cacheFirst(req) {
-    const cache = await caches.open(CACHE_STATIC);
-    const hit = await cache.match(req);
-    if (hit) return hit;
-    try {
-        const res = await fetch(req);
-        if (cacheable(res)) { cache.put(req, res.clone()).then(() => recortar(cache)).catch(() => {}); }
-        return res;
-    } catch (err) {
-        return Response.error();
-    }
-}
-
-self.addEventListener('fetch', (event) => {
+/* ---------- Peticiones ---------- */
+self.addEventListener('fetch', event => {
     const req = event.request;
     if (req.method !== 'GET') return;
-
-    let url;
-    try { url = new URL(req.url); } catch (e) { return; }
+    const url = new URL(req.url);
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
-    // Nunca interceptar Supabase ni peticiones autenticadas: sin caché de sesiones ni datos privados
-    if (esSupabase(url) || req.headers.has('authorization') || req.headers.has('apikey')) return;
-
-    const mismoOrigen = url.origin === self.location.origin;
-    if (mismoOrigen && url.pathname.endsWith('/sw.js')) return;
-
-    const esIndex = mismoOrigen && (req.mode === 'navigate' || req.destination === 'document' ||
-        /\/$/.test(url.pathname) || /\/index\.html$/.test(url.pathname));
-
-    if (esIndex) { event.respondWith(networkFirstIndex(req)); return; }
-    if (mismoOrigen || STATIC_HOSTS.includes(url.hostname)) { event.respondWith(cacheFirst(req)); }
+    if (url.origin === self.location.origin) {
+        if (!url.href.startsWith(BASE)) return;                  // fuera de la carpeta de la app
+        event.respondWith(redPrimero(req));
+    } else if (HOSTS_CDN.includes(url.hostname)) {
+        event.respondWith(cachePrimeroYRefresca(event, req));
+    }
+    // Supabase y demás dominios: el navegador los gestiona directamente
 });
+
+async function redPrimero(req) {
+    const cache = await caches.open(CACHE);
+    const clave = claveDe(req.url);
+    const buscarCopia = async () =>
+        (await cache.match(clave)) ||
+        (req.mode === 'navigate' ? ((await cache.match(BASE + 'index.html')) || (await cache.match(BASE))) : undefined);
+
+    // no-cache: revalida contra el servidor (evita servir archivos viejos de la caché HTTP del navegador)
+    const red = fetch(new Request(req.url, { cache: 'no-cache', credentials: 'same-origin' })).then(resp => {
+        if (resp && resp.ok) cache.put(clave, resp.clone());
+        return resp;
+    });
+    const limite = new Promise((_, rechazar) => setTimeout(() => rechazar(new Error('lento')), ESPERA_RED_MS));
+    try {
+        return await Promise.race([red, limite]);
+    } catch (e) {
+        const copia = await buscarCopia();
+        if (copia) { red.catch(() => {}); return copia; }
+        return red;                                              // sin copia: esperar a la red (o fallar como siempre)
+    }
+}
+
+async function cachePrimeroYRefresca(event, req) {
+    const cache = await caches.open(CACHE);
+    const copia = await cache.match(req.url);
+    const actualizar = fetch(new Request(req.url, { mode: 'cors', credentials: 'omit' }))
+        .catch(() => fetch(req))
+        .then(resp => { if (resp && (resp.ok || resp.type === 'opaque')) cache.put(req.url, resp.clone()); return resp; })
+        .catch(() => null);
+    if (copia) { event.waitUntil(actualizar); return copia; }
+    return (await actualizar) || Response.error();
+}
